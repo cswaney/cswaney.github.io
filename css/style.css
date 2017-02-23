@@ -11,7 +11,7 @@ body {
   /*border-bottom: 1px solid rgba(0, 0, 0, 0.5);*/
   font-family: 'Open Sans', sans-serif;
   color: black;
-  padding-left: 25%;
+  padding-left: 15%;
   padding-right: 12px;
   padding-top: 24px;
   background-image: url('../images/seigaiha.png');
@@ -31,8 +31,9 @@ body {
   width: 100%;
   min-height: 750px;
   padding: 12px;
-  padding-left: 25%;
+  padding-left: 15%;
   background-color: rgb(255, 255, 255);
+  font-family: 'Open Sans', sans-serif;
 }
 
 .item {
@@ -51,7 +52,7 @@ body {
   opacity: .9;
   font-family: 'Open Sans', sans-serif;
   color: black;
-  padding-left: 25%;
+  padding-left: 15%;
   padding-right: 12px;
   padding-top: 18px;
   /*border-top: 1px solid rgba(0, 0, 0, 0.5);*/
