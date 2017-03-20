@@ -413,9 +413,15 @@ body {
 .abstract {
   font-size: 14px;
 }
-.about a {
+.ref {
   font-weight: 700;
   font-family: 'Lora', 'Times New Roman', serif;
   font-size: 12px;
   line-height: 10px;
 }
+/*.about a {
+  font-weight: 700;
+  font-family: 'Lora', 'Times New Roman', serif;
+  font-size: 12px;
+  line-height: 10px;
+}*/
