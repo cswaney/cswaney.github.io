@@ -210,9 +210,12 @@ hr.small {
 }
 .post-preview > .post-meta {
   font-family: 'Lora', 'Times New Roman', serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #777777;
-  font-size: 18px;
-  font-style: italic;
+  font-size: 14px;
+  font-weight: 200;
+  /*font-style: italic;*/
+  text-transform: capitalize;
   margin-top: 0;
 }
 
@@ -349,7 +352,7 @@ form .row:first-child .floating-label-form-group {
   letter-spacing: 1px;
   padding: 15px 25px;
   background-color: white;
-  border-radius: 0;
+  border-radius: 10px;
 }
 .pager li > a:hover,
 .pager li > a:focus {

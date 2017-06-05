@@ -9,7 +9,7 @@
     <meta name="description" content="research-blog">
     <meta name="author" content="colin-swaney">
 
-    <title>Reque</title>
+    <title>cswaney.github.io</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -73,50 +73,156 @@
     <!-- Main Content -->
     <div class="container">
         <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div id="previews" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+              <div class="post-preview">
+                  <a href="rl.html">
+                      <h2 class="post-title">Experiment: Q-Learning</h2>
+                      <h3 class="post-subtitle">I solve some environments from the OpenAI Gym using "deep" Q-learning.</h3>
+                  </a>
+                  <p class="post-meta">March 1, 2017</p>
+              </div>
+              <hr>
                 <div class="post-preview">
                     <a href="rl.html">
-                        <h2 class="post-title">
-                            Fun with Q-Learning
-                        </h2>
-                        <h3 class="post-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe nostrum ullam eveniet pariatur voluptates odit, fuga atque ea nobis sit soluta odio, adipisci quas excepturi maxime quae totam ducimus consectetur?
-                        </h3>
+                        <h2 class="post-title">PyForce: Deep Reinforcement Learning.</h2>
+                        <h3 class="post-subtitle">I implement some well-known reinforcement learning algorithms using TensorFlow and OpenAI Gym.</h3>
                     </a>
-                    <p class="post-meta">Posted on March 1, 2017</p>
+                    <p class="post-meta">March 1, 2017</p>
                 </div>
                 <hr>
                 <div class="post-preview">
                     <a href="post.html">
                         <h2 class="post-title">
-                            JSBook: Fun with Limit Order Books and Javascript.
+                          JSBook: Javascript Limit Order Book Simulator.
                         </h2>
                         <h3 class="post-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe nostrum ullam eveniet pariatur voluptates odit, fuga atque ea nobis sit soluta odio, adipisci quas excepturi maxime quae totam ducimus consectetur?
+                          In this post I build a limit order book simulator that runs in a browser.
                         </h3>
                     </a>
-                    <p class="post-meta">Posted on March 1, 2017</p>
+                    <p class="post-meta">March 1, 2017</p>
                 </div>
                 <hr>
                 <div class="post-preview">
                     <a href="rnn.html">
                         <h2 class="post-title">
-                            HomeRNN: Mimicking Homer with Recurrent Neural Networks.
+                          HomeRNN: Homeric Text Generation.
                         </h2>
                         <h3 class="post-subtitle">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe nostrum ullam eveniet pariatur voluptates odit, fuga atque ea nobis sit soluta odio, adipisci quas excepturi maxime quae totam ducimus consectetur?
+                          I train a recurrent neural network to generate Homeric text using TensorFlow.
                         </h3>
                     </a>
-                    <p class="post-meta">Posted on March 1, 2017</p>
+                    <p class="post-meta">March 1, 2017</p>
                 </div>
                 <hr>
-                <!-- Pager -->
-                <!-- <ul class="pager">
-                    <li class="next">
-                        <a href="#">Older Posts &rarr;</a>
-                    </li>
-                </ul> -->
+                <div class="post-preview">
+                    <a href="rnn.html">
+                        <h2 class="post-title">
+                          Technical Note: Multiscale Resolution Analysis.
+                        </h2>
+                        <h3 class="post-subtitle">
+                          III. Wavelet Variance.
+                        </h3>
+                    </a>
+                    <p class="post-meta">March 1, 2017</p>
+                </div>
+                <hr>
+                <div class="post-preview">
+                    <a href="rnn.html">
+                        <h2 class="post-title">
+                          Technical Note: Multiscale Resolution Analysis.
+                        </h2>
+                        <h3 class="post-subtitle">
+                          II. Discrete Wavelet Transform.
+                        </h3>
+                    </a>
+                    <p class="post-meta">March 1, 2017</p>
+                </div>
+                <hr>
+                <div class="post-preview">
+                    <a href="rnn.html">
+                        <h2 class="post-title">
+                          Technical Note: Multiscale Resolution Analysis.
+                        </h2>
+                        <h3 class="post-subtitle">
+                          1. Wavelet Basis Functions.
+                        </h3>
+                    </a>
+                    <p class="post-meta">March 1, 2017</p>
+                </div>
+
+                <!-- <script>
+                  function element(type, className) {
+                    var node = document.createElement(type);
+                    if (className) node.className = className;
+                    for (var i = 2; i < arguments.length; i++) {
+                      var child = arguments[i];
+                      if (typeof child == "string")
+                        child = document.createTextNode(child);
+                      node.appendChild(child);
+                    }
+                    return node;
+                  }
+                  function createPreview(title, subtitle, date, href) {
+                    // Create individual nodes
+                    var div = document.createElement("div");
+                    div.className = "post-preview";
+                    var a = document.createElement("a");
+                    a.href = href;
+                    var h2 = document.createElement("h2");
+                    var child = document.createTextNode(title);
+                    h2.append(child)
+                    var h3 = document.createElement("h3");
+                    child = document.createTextNode(subtitle);
+                    h3.appendChild(child);
+                    var p = document.createElement("p");
+                    p.className = "post-meta";
+                    child = document.createTextNode("Posted on " +  date);
+                    p.appendChild(child);
+                    // Append the nodes together
+                    a.appendChild(h2);
+                    a.appendChild(h3);
+                    div.appendChild(a);
+                    div.appendChild(p);
+                    return div;
+                  }
+                  var previews = [["Title", "Subtitle", "March 25, 2017", 'post.html'],
+                                  ["Title", "Subtitle", "March 25, 2017", 'post.html'],
+                                  ["Title", "Subtitle", "March 25, 2017", 'post.html']];
+                  function extendPreviews() {
+                    // document.getElementById("previews").removeChild(document.getElementById("pager"));
+                    for (i = 0; i < previews.length; i++) {
+                      var title = previews[i][0];
+                      var subtitle = previews[i][1];
+                      var date = previews[i][2];
+                      var href = previews[i][3];
+                      var preview = createPreview(title, subtitle, date, href);
+                      document.getElementById("previews").appendChild(preview);
+                    };
+                    // document.getElementById("previews").appendChild(
+                    //   element("center", null,
+                    //           element("a", null,
+                    //                   element("span", "fa-stack fa-lg",
+                    //                           element("i", "fa fa-chevron-down fa-stack-2x")))));
+                    window.scrollBy({
+                      top: 550, // could be negative value
+                      left: 0,
+                      behavior: 'smooth'
+                    });
+                  }
+                </script> -->
+
             </div>
+
+            <!-- Pager -->
+            <!-- <center id="pager">
+              <a onclick="javascript:extendPreviews()">
+              <a>
+                <span class="fa-stack fa-lg">
+                  <i class="fa fa-chevron-down fa-stack-2x"></i>
+                </span>
+              </a>
+            </center> -->
+
         </div>
     </div>
 
@@ -136,14 +242,6 @@
                                 </span>
                             </a>
                         </li>
-                        <!-- <li>
-                            <a href="#">
-                                <span class="fa-stack fa-lg">
-                                    <i class="fa fa-circle fa-stack-2x"></i>
-                                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                                </span>
-                            </a>
-                        </li> -->
                         <li>
                             <a href="https://github.com/cswaney">
                                 <span class="fa-stack fa-lg">
@@ -153,7 +251,6 @@
                             </a>
                         </li>
                     </ul>
-                    <!-- <p class="copyright text-muted">Copyright &copy; Colin Swaney 2017</p> -->
                     <p class="copyright text-muted">Requeue @ github/cswaney</p>
                 </div>
             </div>
