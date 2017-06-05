@@ -26,58 +26,65 @@
 
 <body>
 
-    <!-- Navigation -->
-    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header page-scroll">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    Menu <i class="fa fa-bars"></i>
-                </button>
-                <!-- <a class="navbar-brand" href="index.html">Home</a> -->
-            </div>
+  <!-- Navigation -->
+  <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+      <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header page-scroll">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                  <span class="sr-only">Toggle navigation</span>
+                  Menu <i class="fa fa-bars"></i>
+              </button>
+              <!-- <a class="navbar-brand" href="index.html">Home</a> -->
+          </div>
 
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav navbar-right">
-                    <!-- <li>
-                        <a href="http://www.colinswaney.com">Portfolio</a>
-                    </li> -->
-                    <li>
-                        <a href="index.html">Home</a>
-                    </li>
-                    <li>
-                        <a href="about.html">About</a>
-                    </li>
-                    <!-- <li>
-                        <a href="contact.html">Contact</a>
-                    </li> -->
-                </ul>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+              <ul class="nav navbar-nav navbar-right">
+                  <!-- <li>
+                      <a href="http://www.colinswaney.com">Portfolio</a>
+                  </li> -->
+                  <li>
+                      <a href="index.html">Home</a>
+                  </li>
+                  <li>
+                      <a href="about.html">About</a>
+                  </li>
+                  <!-- <li>
+                      <a href="contact.html">Contact</a>
+                  </li> -->
+              </ul>
+          </div>
+          <!-- /.navbar-collapse -->
+      </div>
+      <!-- /.container -->
+  </nav>
 
-    <!-- Page Header -->
-    <header class="intro-header" style="background-image: url('img/glyph-bw.jpg')">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <div class="post-heading">
-                        <h1>HomeRNN: Mimicking Homer with Recurrent Neural Networks</h1>
-                        <h2 class="subheading">If you like the Illiad and the Odyssey, then you're going to hate this.</h2>
-                        <span class="meta">March 6, 2017</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
+  <!-- Page Header -->
+  <header class="intro-header" style="background-image: url('img/glyph-bw.jpg')">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <div class="post-heading">
+                      <h1>Building Faster Python Packages</h1>
+                      <h2 class="subheading">A Quick Tutorial</h2>
+                      <span class="meta">June 5, 2017</span>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </header>
 
-<h1>Building Faster Python Packages with Cython and OpenMP</h1>
+  <article>
+    <div class="container">
+      <div class="row">
+          <div class="col-sm-10 col-sm-offset-1">
 
-<p>The fun and beauty of Python is that it is often shockingly easy to get things done. But as every economist knows, there is no free lunch—the ease of programming comes at a cost paid in the form of poor performance. In many cases the speed to development outweights the need for high performance, at least in the short run, but there may come a time in your Python programming life when you need something more. That time in my life has come, and in this article I’m going to lay out the basics to of how to <em>build</em> a faster Python package using Cython and OpenMP. The package we’ll build is going to be quite useless: the Cython code will be correct, but not much else. In a future article I’ll discuss how to actually write Cython code, but for now let’s assume you’ve written (or inherited) some Cython code, and you’d like to include it in a Python package. Out package structure looks like this:</p>
+                <!-- <h1>Building Faster Python Packages with Cython and OpenMP</h1> -->
+
+                <h1>Introduction</h1>
+
+                <p>The fun and beauty of Python is that it is often shockingly easy to get things done. But as every economist knows, there is no free lunch—the ease of programming comes at a cost paid in the form of poor performance. In many cases the speed to development outweights the need for high performance, at least in the short run, but there may come a time in your Python programming life when you need something more. That time in my life has come, and in this article I’m going to lay out the basics to of how to <em>build</em> a faster Python package using Cython and OpenMP. The package we’ll build is going to be quite useless: the Cython code will be correct, but not much else. In a future article I’ll discuss how to actually write Cython code, but for now let’s assume you’ve written (or inherited) some Cython code, and you’d like to include it in a Python package. Out package structure looks like this:</p>
 
 <pre><code>hello
   hello
@@ -87,11 +94,11 @@
   setup.py
 </code></pre>
 
-<p>It consists of a single module called <code>hello</code> that contains a basic version of the package, <code>hello.py</code>, and a faster version of the package, <code>hello_ext.pyx</code>.</p>
+                <p>It consists of a single module called <code>hello</code> that contains a basic version of the package, <code>hello.py</code>, and a faster version of the package, <code>hello_ext.pyx</code>.</p>
 
-<h2>Pure Python</h2>
+                <h2>Pure Python</h2>
 
-<p>Let’s start with the pure Python version of the package. The code is contained in <code>hello.py</code>. It looks like this:</p>
+                <p>Let’s start with the pure Python version of the package. The code is contained in <code>hello.py</code>. It looks like this:</p>
 
 <pre><code>import numpy as np
 
@@ -106,17 +113,17 @@ def duplicate(X, Y):
     return Y
 </code></pre>
 
-<p>As the name suggests, this function makes a copy of the matrix <code>X</code> and returns the copy. Passing the <code>Y</code> argument in the method might seem unnatural—why not just create the output matrix within the body of the function and return it? We are doing it this way because we will have to do it this way for the Cython version of <code>duplicate</code>: including it here as well keeps the two methods as similar as possible.</p>
+                <p>As the name suggests, this function makes a copy of the matrix <code>X</code> and returns the copy. Passing the <code>Y</code> argument in the method might seem unnatural—why not just create the output matrix within the body of the function and return it? We are doing it this way because we will have to do it this way for the Cython version of <code>duplicate</code>: including it here as well keeps the two methods as similar as possible.</p>
 
-<h2>Cython Extension</h2>
+                <h2>Cython Extension</h2>
 
-<p>The pure Python implementation is slow. The matrix operations are independent, so it is tempting to consider speeding the our code up using parallel for-loops. It turns out that a much larger improvement can be made by simply writing the the for-loops in C. The <code>cython</code> package makes the process of implementing Python code in C easy—much of the code can stay <em>exactly</em> the same.</p>
+                <p>The pure Python implementation is slow. The matrix operations are independent, so it is tempting to consider speeding the our code up using parallel for-loops. It turns out that a much larger improvement can be made by simply writing the the for-loops in C. The <code>cython</code> package makes the process of implementing Python code in C easy—much of the code can stay <em>exactly</em> the same.</p>
 
-<h3>The Extension File</h3>
+                <h3>The Extension File</h3>
 
-<h4>Cython</h4>
+                <h4>Cython</h4>
 
-<p>Now let’s turn to the Cython extension of the package contained in <code>hello_ext.pyx</code>. The code looks like this:</p>
+                <p>Now let’s turn to the Cython extension of the package contained in <code>hello_ext.pyx</code>. The code looks like this:</p>
 
 <pre><code>import numpy as np
 import cython
@@ -133,11 +140,11 @@ def duplicate_cython(double [:,:] X, double [:,:] Y):
             Y[i, j] = X[i, j]
 </code></pre>
 
-<p>As I said, this post isn’t about the Cython code per say, but let me just mention what is going on here. First, notice that the Cython code looks similar to the pure Python version. The main difference is that a bunch of variables have been defined in a C-like manner: preceeded by <code>def</code> and a variable type. The only other difference infact is the inclusion of Cython in the imports and a curious <code>cython.boundscheck(false)</code> decorator preceeding the function. This decorator isn’t necessary, but it supposedly increases the speed by not bothering to check whether your function has accidentally accessed memory outside of the bounds of the variables passed to it. (You might consider keeping this <em>on</em> until you’re happy with your code, then turning it <em>off</em> when you ship).</p>
+                <p>As I said, this post isn’t about the Cython code per say, but let me just mention what is going on here. First, notice that the Cython code looks similar to the pure Python version. The main difference is that a bunch of variables have been defined in a C-like manner: preceeded by <code>def</code> and a variable type. The only other difference infact is the inclusion of Cython in the imports and a curious <code>cython.boundscheck(false)</code> decorator preceeding the function. This decorator isn’t necessary, but it supposedly increases the speed by not bothering to check whether your function has accidentally accessed memory outside of the bounds of the variables passed to it. (You might consider keeping this <em>on</em> until you’re happy with your code, then turning it <em>off</em> when you ship).</p>
 
-<h4>Cython + OpenMP</h4>
+                <h4>Cython + OpenMP</h4>
 
-<p>Now let’s look an alternative version of <code>hello_ext.pyx</code> that makes use of OpenMP to parallelize the outer for loop.</p>
+                <p>Now let’s look an alternative version of <code>hello_ext.pyx</code> that makes use of OpenMP to parallelize the outer for loop.</p>
 
 <pre><code>import numpy as np
 import cython
@@ -156,11 +163,11 @@ def duplicate_openmp(double [:,:] X, double [:,:] Y):
                 Y[i, j] = X[i, j]
 </code></pre>
 
-<p>The<code>nogil</code> context by-passes Python’s global interpreter lock, or GIL, which allows the code to run in parallell on multiple threads, a possibility that the GIL normally prevents. Again, there is a cost to this: within the <code>nogil</code> context we aren’t able to access Python objects—notice that all of the objects within the for loops have been declared with Cython syntax either in the body of the function or argument list. </p>
+                <p>The<code>nogil</code> context by-passes Python’s global interpreter lock, or GIL, which allows the code to run in parallell on multiple threads, a possibility that the GIL normally prevents. Again, there is a cost to this: within the <code>nogil</code> context we aren’t able to access Python objects—notice that all of the objects within the for loops have been declared with Cython syntax either in the body of the function or argument list. </p>
 
-<h3>The Setup File</h3>
+                <h3>The Setup File</h3>
 
-<p>Enough of the code, let’s see how to build this package. Our setup files looks like this:</p>
+                <p>Enough of the code, let’s see how to build this package. Our setup files looks like this:</p>
 
 <pre><code>from distutils.core import setup
 from Cython.Build import cythonize
@@ -180,48 +187,48 @@ setup(name=&#39;hello&#39;,
 )
 </code></pre>
 
-<p>I’ve highlighted the parts of the code that are different from what a pure Python package might look like. The main idea is that we look into the package for files that contain Cython code, “cythonize” these files, and pass them as <code>ext_modules</code> in the <code>setup</code> call. For extension files that use OpenMP we also need to add ‘-fopenmp’ as a compile an link argument.</p>
+                <p>I’ve highlighted the parts of the code that are different from what a pure Python package might look like. The main idea is that we look into the package for files that contain Cython code, “cythonize” these files, and pass them as <code>ext_modules</code> in the <code>setup</code> call. For extension files that use OpenMP we also need to add ‘-fopenmp’ as a compile an link argument.</p>
 
-<h3>Building the Package</h3>
+                <h3>Building the Package</h3>
 
-<p>Getting Cython code with OpenMP to compile requires a few tricks on my Mac (macOS 10.12 “Sierra”), which I’ll show below.</p>
+                <p>Getting Cython code with OpenMP to compile requires a few tricks on my Mac (macOS 10.12 “Sierra”), which I’ll show below.</p>
 
-<p>The first trick is to change the default compiler. Most likely your Mac defaults to the <code>clang</code> complier. The clang compiler is supposed to support OpenMP code, but unfortunately the version that apple has installed does not—if you try to compile your Cython + OpenMP package with the default compiler, your computer will yell at you:</p>
+                <p>The first trick is to change the default compiler. Most likely your Mac defaults to the <code>clang</code> complier. The clang compiler is supposed to support OpenMP code, but unfortunately the version that apple has installed does not—if you try to compile your Cython + OpenMP package with the default compiler, your computer will yell at you:</p>
 
 <pre><code>clang: error: unsupported option &#39;-fopenmp&#39;
 error: command &#39;clang&#39; failed with exit status 1
 </code></pre>
 
-<p>We could potentially <code>brew install clang</code>, but brew will be unhappy multiple versions of clang hanging around. Instead, let’s install <code>gcc</code>:</p>
+                <p>We could potentially <code>brew install clang</code>, but brew will be unhappy multiple versions of clang hanging around. Instead, let’s install <code>gcc</code>:</p>
 
-<p><code>brew install gcc -without--multilib</code></p>
+                <p><code>brew install gcc -without--multilib</code></p>
 
-<p>Now tell your machine you want to use your new compiler:</p>
+                <p>Now tell your machine you want to use your new compiler:</p>
 
 <pre><code>export CC=&quot;/usr/local/bin/gcc-x&quot;  # version x
 export CXX=&quot;/usr/local/bin/g++-x&quot;  # version x
 </code></pre>
 
-<p>At this point we can build and install the package in “developer mode” using the <code>-e</code> option with <code>pip</code>:</p>
+                <p>At this point we can build and install the package in “developer mode” using the <code>-e</code> option with <code>pip</code>:</p>
 
 <pre><code>pip install -e .
 </code></pre>
 
-<p>If you’re not familiar with this option, it allows you to make and test changes to your package without having to re-build inbetween. Unfortunately, this convenience only extends to changes made to the pure Python code—you will still need to recompile after changes to extensions files.</p>
+                <p>If you’re not familiar with this option, it allows you to make and test changes to your package without having to re-build inbetween. Unfortunately, this convenience only extends to changes made to the pure Python code—you will still need to recompile after changes to extensions files.</p>
 
-<h4>Numpy and Cython</h4>
+                <h4>Numpy and Cython</h4>
 
-<p>If you’re using Numpy you can get access to its C function by including a<code>cimport numpy as np</code> in addition to <code>import numpy as np</code>. In this case you will need to change your setup file to let the complier know where to find header files for Numpy. To do this, just add this line to <code>setup.py</code> within the <code>setup</code> function (and make sure to import Numpy):</p>
+                <p>If you’re using Numpy you can get access to its C function by including a<code>cimport numpy as np</code> in addition to <code>import numpy as np</code>. In this case you will need to change your setup file to let the complier know where to find header files for Numpy. To do this, just add this line to <code>setup.py</code> within the <code>setup</code> function (and make sure to import Numpy):</p>
 
-<p><code>include_dirs=[np.get_include(), ],</code></p>
+                <p><code>include_dirs=[np.get_include(), ],</code></p>
 
-<p>If this doesn’t work you and you get a message saying that the compiler couldn’t find <code>numpy/arrayobject.h</code>, then you can manually tell the complier where it is:</p>
+                <p>If this doesn’t work you and you get a message saying that the compiler couldn’t find <code>numpy/arrayobject.h</code>, then you can manually tell the complier where it is:</p>
 
-<p><code>export CFLAGS=&quot;-I /usr/local/lib/python2.7/site-packages/numpy/core/include $CFLAGS&quot;</code></p>
+                <p><code>export CFLAGS=&quot;-I /usr/local/lib/python2.7/site-packages/numpy/core/include $CFLAGS&quot;</code></p>
 
-<h3>Example</h3>
+                <h3>Example</h3>
 
-<p>For completeness, let’s check that the extension methods return the same value as the Python method, and are hopefully faster. You can run a little script like <code>example.py</code>:</p>
+                <p>For completeness, let’s check that the extension methods return the same value as the Python method, and are hopefully faster. You can run a little script like <code>example.py</code>:</p>
 
 <pre><code>from hello import hello, hello_ext
 import numpy as np
@@ -250,9 +257,9 @@ print(&#39;Y1 = Y2? {}&#39;.format(np.allclose(Y1, Y2)))
 print(&#39;Y2 = Y3? {}&#39;.format(np.allclose(Y2, Y3)))
 </code></pre>
 
-<h3>Running in iPython</h3>
+                <h4>Running in iPython</h4>
 
-<p>You can also test your Cython code interactively in an iPython session. Fire up an iPython session and type <code>%load_ext Cython</code>. Then <code>%paste</code> the following:</p>
+                <p>You can also test your Cython code interactively in an iPython session. Fire up an iPython session and type <code>%load_ext Cython</code>. Then <code>%paste</code> the following:</p>
 
 <pre><code>import numpy as np
 
@@ -271,6 +278,88 @@ def duplicate_cython(double [:,:] X, double [:,:] Y):
             Y[i, j] = X[i, j]
 </code></pre>
 
-<p>Now you can use the <code>duplicate_cython</code> method in this session.</p>
+                <p>Now you can use the <code>duplicate_cython</code> method in this session.</p>
+
+                <p>That's it! Go forth an speed up your Python.</p>
+
+            </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Disqus -->
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+        <div id="disqus_thread"></div>
+        <script>
+
+        var disqus_config = function () {
+        this.page.url = "https://cswaney.github.io";  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = "rnn"; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://cswaney-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <ul class="list-inline text-center">
+                      <li>
+                          <a href="https://twitter.com/SwaneyColin">
+                              <span class="fa-stack fa-lg">
+                                  <i class="fa fa-circle fa-stack-2x"></i>
+                                  <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                              </span>
+                          </a>
+                      </li>
+                      <li>
+                          <a href="https://github.com/cswaney">
+                              <span class="fa-stack fa-lg">
+                                  <i class="fa fa-circle fa-stack-2x"></i>
+                                  <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                              </span>
+                          </a>
+                      </li>
+                  </ul>
+                  <!-- <p class="copyright text-muted">Copyright &copy; Colin Swaney 2017</p> -->
+                  <p class="copyright text-muted">Requeue @ github/cswaney</p>
+              </div>
+          </div>
+      </div>
+  </footer>
+
+  <!-- jQuery -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+
+  <!-- Bootstrap Core JavaScript -->
+  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+  <!-- Contact Form JavaScript -->
+  <script src="js/jqBootstrapValidation.js"></script>
+  <script src="js/contact_me.js"></script>
+
+  <!-- Theme JavaScript -->
+  <script src="js/clean-blog.min.js"></script>
+
+
 
 </body>
+
+</html>
