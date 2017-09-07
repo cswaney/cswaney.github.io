@@ -6,16 +6,15 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="research-blog">
-    <meta name="author" content="colin-swaney">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-    <title>cswaney.github.io</title>
+    <title>Colin Swaney - Portfolio</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Theme CSS -->
-    <!-- <link href="css/clean-blog.min.css" rel="stylesheet"> -->
     <link href="css/clean-blog.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
@@ -30,24 +29,21 @@
     <!-- Navigation -->
     <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
         <div class="container-fluid">
-
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header page-scroll">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
                     Menu <i class="fa fa-bars"></i>
                 </button>
-                <!-- <a class="navbar-brand" href="http://www.colinswaney.com">Colin Swaney</a> -->
+                <a class="navbar-brand" href="https://github.com/cswaney"><< Github Repo</a>
             </div>
 
+            <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
                     <!-- <li>
-                        <a href="index.html">Home</a>
-                    </li> -->
-                    <li>
                         <a href="about.html">About</a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -60,10 +56,14 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                    <div class="site-heading">
-                        <h1>cswaney.github.io</h1>
-                        <hr class="small">
-                        <span class="subheading">an R&amp;D blog</span>
+                    <div class="page-heading">
+                        <h1>Colin Swaney</h1>
+                        <!-- <hr class="small"> -->
+                        <span class="subheading">Visiting Assistant Professor of Finance, University of Mississippi</span>
+                        <span>&</span>
+                        <span class="subheading">Doctoral Candidate, University of Iowa</span>
+                        <br></br>
+                        <center><a href="doc/colin-swaney-cv-current.pdf" target="_blank" class="btn btn-default">Curriculum Vitae</a></center>
                     </div>
                 </div>
             </div>
@@ -71,107 +71,42 @@
     </header>
 
     <!-- Main Content -->
-    <div class="container">
-        <div class="row">
-            <div id="previews" class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-              <div class="post-preview">
-                  <a href="cython_tutorial.html">
-                      <h2 class="post-title">Faster Python Packages with Cython</h2>
-                      <h3 class="post-subtitle">A short tutorial that outlines a method to package Cython code.</h3>
-                  </a>
-                  <p class="post-meta">June 5, 2017</p>
+    <section class="about">
+      <div class="container">
+          <div class="row">
+              <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                  <h2 class="section-heading">Working Papers</h2>
+
+                  <h4><a href="doc/hft.pdf" target="_blank">Price Formation and the Shape of Limit Order Books</i> (Job market paper)</a></h4>
+                  <!-- <a href="doc/hft.pdf" class="ref"><i>Price Formation and the Shape of Limit Order Books</i> (Working Paper).</a> -->
+                  <p class="abstract">With a view towards exploring the information content of limit orders, as opposed to market orders, I propose a factor model of order book shape. I start by building a unique dataset of Nasdaq limit order books that tracks order activity at ultra high-frequency. Analyzing over 20,000 stock-days, I find that the limit order book comprises three common factors, which I characterize as level, slope, and curvature. By combining these factors alongside price increments in a vector autoregression, I demonstrate that the factors not only explain limit order book shape but also predict returns over one-minute time intervals.</p>
+                  <!-- <center style="padding-top: 20px; padding-bottom: 20px"><img src="img/weights.jpg"/ width="60%"></center> -->
+                  <!-- <a href="doc/hft-pca.pdf" target="_blank" class="btn btn-default">Paper</a> -->
+                  <hr>
+
+                  <h4>Order Book Events on a Poisson Network</h4>
+                  <!-- <a href="doc/hft.pdf" class="ref"><i>The Information Content of Limit Order Books</i> (Working Paper).</a> -->
+                  <p class="abstract">In this paper, I explore the dynamics of a fully electronic limit order book. Using recent advances from the field of machine learning, I demonstrate how to estimate a continuous-time, event-driven model of market dynamics in a fully Bayesian fashion. I estimate the model using event message data from the Nasdaq exchange for two stocks with contrasting order book characteristics over a one month period. My results highlight the importance of order book shape in explaining patterns in order arrivals, and because the model reacts to incoming orders, it serves as a plausible testing environment for evaluating the fitness of algorithmic order execution and trading strategies.</p>
+                  <!-- <center style="padding-top: 20px; padding-bottom: 20px"><img src="img/weights.jpg"/ width="60%"></center> -->
+                  <hr>
+
+                  <h4>Evaluating Fund Manager Skill: A Mixture Model Approach</h4>
+                  <!-- <a href="doc/em.pdf" class="ref"><i>Evaluating Fund Manager Skill: A Mixture Model Approach</i> (Working Paper).</a> -->
+                  <p class="abstract">Evaluating the performance of actively managed equity mutual funds is among the most important topics in the field of finance. In this paper, I present a new assessment of the stock picking ability of actively managed funds that accounts for the occurrence of false positives, an issue that complicates traditional assessments. I find that while the data is consistent with a small group of alpha-generating funds, the composition of this population experiences significant annual turnover and is, therefore, difficult to identify in advance. Between 1975 and 2015, the returns to a fund selection strategy based on the classification method fail to generate alpha.</p>
+                  <!-- <center style="padding-top: 20px; padding-bottom: 20px"><img src="img/mixture.jpg"/ width="100%"></center> -->
+                  <hr>
+
+                  <h2 class="section-heading">Publications</h2>
+                  <h4><a href="doc/bdsom.pdf" target="_blank">C. Swaney, et al. Efficient Skin Segmentation via Neural Networks: HP-ELM and BD-SOM. <i>Procedia Computer Science</i>, 2015.</a></h4>
+                  <!-- <a href="doc/bdsom.pdf" target="_blank" class="ref"><i>Efficient Skin Segmentation via Neural Networks: HP-ELM and BD-SOM</i>, Procedia Computer Science, 2015.</a> -->
+                  <hr>
+
+                  <h2 class="section-heading">About</h2>
+                  <p>I'm an educator and researcher working at the University of Mississippi ("Ole Miss") during the final year of my Ph.D. In a former life, I was a captain on the Kansas State University track and field team, where my most noteworthy achievements include earning All-Big 12 honors at the indoor Big 12 Championships and running the 5th fastest 3000m in school history. Besides running, my hobbies include programming and listening to history lectures from the Yale Open Courses website: I highly recommend <i>Introduction to Ancient Greek History</i>—Dr. Kagan is a national treasure. I speak a <i>little bit</i> of Mandarin, and I have had a lot of fun (a minor medical emergencies!) traveling in China. In keeping with my French roots, I enjoy baking bread on the weekends.</p>
               </div>
-              <hr>
-              <!-- <div class="post-preview">
-                  <a href="rl.html">
-                      <h2 class="post-title">Experiment: Q-Learning</h2>
-                      <h3 class="post-subtitle">I solve some environments from the OpenAI Gym using "deep" Q-learning.</h3>
-                  </a>
-                  <p class="post-meta">March 1, 2017</p>
-              </div>
-              <hr>
-                <div class="post-preview">
-                    <a href="rl.html">
-                        <h2 class="post-title">PyForce: Deep Reinforcement Learning.</h2>
-                        <h3 class="post-subtitle">I implement some well-known reinforcement learning algorithms using TensorFlow and OpenAI Gym.</h3>
-                    </a>
-                    <p class="post-meta">March 1, 2017</p>
-                </div>
-                <hr>
-                <div class="post-preview">
-                    <a href="post.html">
-                        <h2 class="post-title">
-                          JSBook: Javascript Limit Order Book Simulator.
-                        </h2>
-                        <h3 class="post-subtitle">
-                          In this post I build a limit order book simulator that runs in a browser.
-                        </h3>
-                    </a>
-                    <p class="post-meta">March 1, 2017</p>
-                </div>
-                <hr>
-                <div class="post-preview">
-                    <a href="rnn.html">
-                        <h2 class="post-title">
-                          HomeRNN: Homeric Text Generation.
-                        </h2>
-                        <h3 class="post-subtitle">
-                          I train a recurrent neural network to generate Homeric text using TensorFlow.
-                        </h3>
-                    </a>
-                    <p class="post-meta">March 1, 2017</p>
-                </div>
-                <hr>
-                <div class="post-preview">
-                    <a href="rnn.html">
-                        <h2 class="post-title">
-                          Technical Note: Multiscale Resolution Analysis.
-                        </h2>
-                        <h3 class="post-subtitle">
-                          III. Wavelet Variance.
-                        </h3>
-                    </a>
-                    <p class="post-meta">March 1, 2017</p>
-                </div>
-                <hr>
-                <div class="post-preview">
-                    <a href="rnn.html">
-                        <h2 class="post-title">
-                          Technical Note: Multiscale Resolution Analysis.
-                        </h2>
-                        <h3 class="post-subtitle">
-                          II. Discrete Wavelet Transform.
-                        </h3>
-                    </a>
-                    <p class="post-meta">March 1, 2017</p>
-                </div>
-                <hr>
-                <div class="post-preview">
-                    <a href="rnn.html">
-                        <h2 class="post-title">
-                          Technical Note: Multiscale Resolution Analysis.
-                        </h2>
-                        <h3 class="post-subtitle">
-                          1. Wavelet Basis Functions.
-                        </h3>
-                    </a>
-                    <p class="post-meta">March 1, 2017</p>
-                </div> -->
-
-            </div>
-
-            <!-- Pager -->
-            <!-- <center id="pager">
-              <a onclick="javascript:extendPreviews()">
-              <a>
-                <span class="fa-stack fa-lg">
-                  <i class="fa fa-chevron-down fa-stack-2x"></i>
-                </span>
-              </a>
-            </center> -->
-
-        </div>
-    </div>
+          </div>
+      </div>
+    </section>
 
     <hr>
 
@@ -198,7 +133,7 @@
                             </a>
                         </li>
                     </ul>
-                    <p class="copyright text-muted">Requeue @ github/cswaney</p>
+                    <p class="copyright text-muted"><i>Last updated on 9-7-17</i></p>
                 </div>
             </div>
         </div>
