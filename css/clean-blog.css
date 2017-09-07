@@ -171,7 +171,8 @@ hr.small {
 .intro-header .site-heading .subheading,
 .intro-header .post-heading .subheading,
 .intro-header .page-heading .subheading {
-  font-size: 28px;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-size: 22px;
   line-height: 1.1;
   display: block;
   font-weight: 200;
@@ -186,7 +187,6 @@ hr.small {
 }
 .intro-header .meta {
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-family:
   color: #FFF;
   font-size: 20px;
   font-weight: 300;
@@ -335,7 +335,7 @@ form .row:first-child .floating-label-form-group {
 .btn-default:hover,
 .btn-default:focus {
   /*background-color: #0085A1;*/
-  background-color: rgba(0, 0, 0, 0.50);
+  background-color: rgba(0, 0, 0, 0.75);
   /*border: 1px solid #0085A1;*/
   border: 1px solid rgba(0, 0, 0, 0.50);
   color: white;

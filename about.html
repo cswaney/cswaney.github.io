@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Reque</title>
+    <title>Colin Swaney - Portfolio</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -35,15 +35,15 @@
                     <span class="sr-only">Toggle navigation</span>
                     Menu <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand" href="index.html">Reque Home</a>
+                <a class="navbar-brand" href="https://github.com/cswaney"><< Github Repo</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav navbar-right">
-                    <li>
+                    <!-- <li>
                         <a href="about.html">About</a>
-                    </li>
+                    </li> -->
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
@@ -57,10 +57,13 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                     <div class="page-heading">
-                        <h1>About Me</h1>
-                        <hr class="small">
-                        <!-- <span class="subheading">nice to meet me</span> -->
-                        <span class="subheading">colin swaney</span>
+                        <h1>Colin Swaney</h1>
+                        <!-- <hr class="small"> -->
+                        <span class="subheading">Visiting Assistant Professor of Finance, University of Mississippi</span>
+                        <span>&</span>
+                        <span class="subheading">Doctoral Candidate, University of Iowa</span>
+                        <br></br>
+                        <center><a href="doc/colin-swaney-cv-current.pdf" target="_blank" class="btn btn-default">Curriculum Vitae</a></center>
                     </div>
                 </div>
             </div>
@@ -72,24 +75,34 @@
       <div class="container">
           <div class="row">
               <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                  <h2 class="section-heading">Biography</h2>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe nostrum ullam eveniet pariatur voluptates odit, fuga atque ea nobis sit soluta odio, adipisci quas excepturi maxime quae totam ducimus consectetur?</p>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius praesentium recusandae illo eaque architecto error, repellendus iusto reprehenderit, doloribus, minus sunt. Numquam at quae voluptatum in officia voluptas voluptatibus, minus!</p>
-                  <br></br>
-                  <center><a href="img/colin-swaney-resume-current.pdf" target="_blank" class="btn btn-default">Résumé</a></center>
-                  <h2 class="section-heading">Research</h2>
-                  <h4>A Limit Order Book Factor Model</h4>
-                  <a href="doc/hft.pdf" class="ref"><i>The Information Content of Limit Order Books</i> (Working Paper).</a>
-                  <p class="abstract">In this paper I develop a factor model of limit order book dynamics. I analyze a unique dataset of limit order book snapshots reconstructed from nanosecond timestamped messages from the NASDAQ exchange. I find that the limit order book is characterized by three familiar factors in the finance literature: level, slope and curvature. Not only are these features found to characterize limit order books, but they also correlate with changes in the order book midprice over one-minute time intervals. The results help explain the success of several other limit order book factors proposed in the literature.</p>
-                  <center style="padding-top: 20px; padding-bottom: 20px"><img src="img/factors.png"/ width="60%"></center>
+                  <h2 class="section-heading">Working Papers</h2>
+
+                  <h4><a href="doc/hft.pdf" target="_blank">Price Formation and the Shape of Limit Order Books</i> (Job market paper)</a></h4>
+                  <!-- <a href="doc/hft.pdf" class="ref"><i>Price Formation and the Shape of Limit Order Books</i> (Working Paper).</a> -->
+                  <p class="abstract">With a view towards exploring the information content of limit orders, as opposed to market orders, I propose a factor model of order book shape. I start by building a unique dataset of Nasdaq limit order books that tracks order activity at ultra high-frequency. Analyzing over 20,000 stock-days, I find that the limit order book comprises three common factors, which I characterize as level, slope, and curvature. By combining these factors alongside price increments in a vector autoregression, I demonstrate that the factors not only explain limit order book shape but also predict returns over one-minute time intervals.</p>
+                  <!-- <center style="padding-top: 20px; padding-bottom: 20px"><img src="img/weights.jpg"/ width="60%"></center> -->
+                  <!-- <a href="doc/hft-pca.pdf" target="_blank" class="btn btn-default">Paper</a> -->
                   <hr>
-                  <h4>Fund Manager Skill, Mixture Models, and Expectation Maximization</h4>
-                  <a href="doc/em.pdf" class="ref"><i>Evaluating Fund Manager Skill: A Mixture Model Approach</i> (Working Paper).</a>
-                  <p class="abstract">From the average investor’s perspective, the performance of actively managed mutual funds is among the most important topics in the field of finance. In this paper I present a new analysis of activtely-managed funds based on mixture modeling and expectation maximization estimation. The analysis accounts for the likelihood of false positives in the multiple regresssion setting. Analyzing the performance of mutual funds over nearly thirty years, I find that the data consistent with the assumption that a small subpopulation of talented funds. Consistent with the prior literature, the proposed methodology is unable to identify these talented funds on a consistent basis.</p>
+
+                  <h4>Order Book Events on a Poisson Network</h4>
+                  <!-- <a href="doc/hft.pdf" class="ref"><i>The Information Content of Limit Order Books</i> (Working Paper).</a> -->
+                  <p class="abstract">In this paper, I explore the dynamics of a fully electronic limit order book. Using recent advances from the field of machine learning, I demonstrate how to estimate a continuous-time, event-driven model of market dynamics in a fully Bayesian fashion. I estimate the model using event message data from the Nasdaq exchange for two stocks with contrasting order book characteristics over a one month period. My results highlight the importance of order book shape in explaining patterns in order arrivals, and because the model reacts to incoming orders, it serves as a plausible testing environment for evaluating the fitness of algorithmic order execution and trading strategies.</p>
+                  <!-- <center style="padding-top: 20px; padding-bottom: 20px"><img src="img/weights.jpg"/ width="60%"></center> -->
                   <hr>
-                  <h4>Efficient Skin Segmentation via Neural Networks: HP-ELM and BD-SOM</h4>
-                  <a href="doc/bdsom.pdf" class="ref"><i>Efficient Skin Segmentation via Neural Networks: HP-ELM and BD-SOM</i>, Procedia Computer Science, 2015.</a>
-                  <p class="abstract">Self-organizing maps are unsupervised neural networks. In this paper we develop a self-organizing map algorithm suitable for classification tasks invovling Big Data. Our implementation takes advantage of GPU acceleration to simultaneously classify hundreds of thousands of observations. The algorithm achieves near state-of-the-art performance on a pixel-level skin-segmentation task.</p>
+
+                  <h4>Evaluating Fund Manager Skill: A Mixture Model Approach</h4>
+                  <!-- <a href="doc/em.pdf" class="ref"><i>Evaluating Fund Manager Skill: A Mixture Model Approach</i> (Working Paper).</a> -->
+                  <p class="abstract">Evaluating the performance of actively managed equity mutual funds is among the most important topics in the field of finance. In this paper, I present a new assessment of the stock picking ability of actively managed funds that accounts for the occurrence of false positives, an issue that complicates traditional assessments. I find that while the data is consistent with a small group of alpha-generating funds, the composition of this population experiences significant annual turnover and is, therefore, difficult to identify in advance. Between 1975 and 2015, the returns to a fund selection strategy based on the classification method fail to generate alpha.</p>
+                  <!-- <center style="padding-top: 20px; padding-bottom: 20px"><img src="img/mixture.jpg"/ width="100%"></center> -->
+                  <hr>
+
+                  <h2 class="section-heading">Publications</h2>
+                  <h4><a href="doc/bdsom.pdf" target="_blank">C. Swaney, et al. Efficient Skin Segmentation via Neural Networks: HP-ELM and BD-SOM. <i>Procedia Computer Science</i>, 2015.</a></h4>
+                  <!-- <a href="doc/bdsom.pdf" target="_blank" class="ref"><i>Efficient Skin Segmentation via Neural Networks: HP-ELM and BD-SOM</i>, Procedia Computer Science, 2015.</a> -->
+                  <hr>
+
+                  <h2 class="section-heading">About</h2>
+                  <p>I'm an educator and researcher working at the University of Mississippi ("Ole Miss") during the final year of my Ph.D. In a former life, I was a captain on the Kansas State University track and field team, where my most noteworthy achievements include earning All-Big 12 honors at the indoor Big 12 Championships and running the 5th fastest 3000m in school history. Besides running, my hobbies include programming and listening to history lectures from the Yale Open Courses website: I highly recommend <i>Introduction to Ancient Greek History</i>—Dr. Kagan is a national treasure. I speak a <i>little bit</i> of Mandarin, and I have had a lot of fun (a minor medical emergencies!) traveling in China. In keeping with my French roots, I enjoy baking bread on the weekends.</p>
               </div>
           </div>
       </div>
@@ -120,8 +133,7 @@
                             </a>
                         </li>
                     </ul>
-                    <!-- <p class="copyright text-muted">Copyright &copy; Colin Swaney 2017</p> -->
-                    <p class="copyright text-muted">Requeue @ github/cswaney</p>
+                    <p class="copyright text-muted"><i>Last updated on 9-7-17</i></p>
                 </div>
             </div>
         </div>
