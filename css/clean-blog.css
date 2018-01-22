@@ -14,7 +14,13 @@ h1, h2 {
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 800;
 }
-h3, h4, h5, h6 {
+h3 {
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-weight: 800;
+  font-size: 14pt;
+  line-height: 1;
+}
+h4, h5, h6 {
   font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 300;
   margin-top: 20px;
@@ -439,3 +445,12 @@ article {
   font-size: 12px;
   line-height: 10px;
 }*/
+
+.about li {
+  font-family: 'Lora', 'Times New Roman', serif;
+}
+
+.about th, td {
+  font-family: 'Lora', 'Times New Roman', serif;
+  text-align: center;
+}
