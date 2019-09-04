@@ -6,7 +6,7 @@ date: 2019-07-15
 categories: [research]
 category: research
 tags: [reinforcement learning]
-excerpt: "<p>The second in a series of notes on deep reinforcement learning.</p>"
+excerpt: "<p>In this mini-lecture I continue looking at some of the basic concepts underlying deep reinforcement learning and control. I'll define what is meant by a \"policy\" and how we might characterize the value of a policy. Finally, I'll discuss Bellman's optimality condition, which lies at the heart of the dynamic optimization problems we hope to solve in deep reinforcement learning.</p>"
 ---
 
 In the last lecture I introduced the general setting of deep reinforcement learning, which consists of computational agents interacting with a digital environment, earning rewards, and observing how its actions affect the future state of the world. Formally, this system is described as a Markov Decision Process. In this lecture I want to discuss how agents interact with their environment, describe how we evaluate the fitness of agents' strategies, and finish by defining what is meant by "optimality" in reinforcement learning.
@@ -56,16 +56,24 @@ $$ Q^{\pi}(s, a) = \mathbb{E}_{\pi} \left[ r_t + \gamma V^{\pi}(s_{t + 1}) \ \ve
 
 
 ### Optimality & The Bellman Equation
-Clearly this value function is important---in some sense it is the only thing that matters (it's what we're trying optimize after all). But how do I calculate the value of a policy? Let's consider a simplified problem where we can directly compute the value of a policy.
+Clearly this value function is important---in some sense it is the only thing that matters (it's what we're trying optimize after all). But how do I calculate the value of a policy? Let's consider a simplified problem where we can directly compute the value of a policy. So imagine that we are faced with a sequence of heads-or-tails decisions and that reward we receive depends in some arbitrary way on the sequence of coin flips we've seen so far. The situation is represented by a binary tree, where the value at each node represents the reward associated with the corresponding sequence of coin flips, as depicted below.
 
 ![Bellman](/assets/img/bellman/bellman.png)
+
+As shown, we flip the coin four times before the game ends. How do we decide what path to follow? The first step is to ask what the expected value of the game is after the second to last coin flip (the last columns of red nodes). The game ends on the next step no matter what, meaning that all states lead to the terminal state with no reward. So the expected reward at each node is the reward received at that node plus zero.
+
 ![Bellman](/assets/img/bellman/bellman_2.png)
+
+Now we repeat this analysis for the states following the second coin flip. We'll fill in each of the expectations we just calculated (the new green nodes), and we can now ignore the terminal state. Our goal is to calculate the expected return from each node, which (if we are dealing with a fair coin) is equal to its reward plus the average of its childrens values. For example, the top node earns a reward of one, and the average of its children is one-half, so that node is overwritten by one and one-half.
+
 ![Bellman](/assets/img/bellman/bellman_3.png)
+
+We keep repeating this process until we arrive at the root node, at which point we have calculated the expected value of the policy. 
+
 ![Bellman](/assets/img/bellman/bellman_4.png)
-![Bellman](/assets/img/bellman/bellman_5.png)
+![Bellman](/assets/img/bellman/bellman_5.png) 
 
-
-There is a simple method to compute the value of the policy: start from the end and work backwards. At the end of the game---at time $$T+1$$---the value is zero, so we can write $$V_{T + 1} = 0$$. Now we take one step back and ask what the value is going forward. At time $$T$$ we earn a random reward $$r_T$$, then transtion to $$s_{\text{end}}$$ and earn zero additional reward, so the value is $$V_T = \mathbb{E}_{\pi}\left[ r_T \right]$$. Let's continue to move backward in time: at time $$T - 1$$ we earn a random reward $$r_{T-1}$$, then we transition to state $$s_T$$ where we already know that we will earn a value of $$\mathbb{E}_{\pi}\left[ r_{T} \right]$$ going forward. Therefore the value at time $$T-1$$ is $$\mathbb{E}_{\pi} \left[ r_{T-1} + \mathbb{E}_{\pi} \left[ r_T \right] \right] = \mathbb{E}_{\pi} \left[ r_{T - 1} + V_T \right].$$
+This example motivates a straightforward method to compute the value of the policy: start from the end and work backwards. At the end of the game---at time $$T+1$$---the value is zero, so we can write $$V_{T + 1} = 0$$. Now we take one step back and ask what the value is going forward. At time $$T$$ we earn a random reward $$r_T$$, then transtion to $$s_{\text{end}}$$ and earn zero additional reward, so the value is $$V_T = \mathbb{E}_{\pi}\left[ r_T \right]$$. Let's continue to move backward in time: at time $$T - 1$$ we earn a random reward $$r_{T-1}$$, then we transition to state $$s_T$$ where we already know that we will earn a value of $$\mathbb{E}_{\pi}\left[ r_{T} \right]$$ going forward. Therefore the value at time $$T-1$$ is $$\mathbb{E}_{\pi} \left[ r_{T-1} + \mathbb{E}_{\pi} \left[ r_T \right] \right] = \mathbb{E}_{\pi} \left[ r_{T - 1} + V_T \right].$$
 
 If we continue moving backwards in this fashion we'll see that every step along the way the value at step $$t$$ is always equal to $$\mathbb{E}_{\pi} \left[ r_{t} + V_{t + 1} \right],$$ which we can always compute because we started by saying that $$V_{T+1} = 0$$. Thus, we have figured out a simple algorithm to compute the value of our random policy. The key was recursion: relate the value today to the value tomorrow. In this example we didn't worry about states of the world, but essentially the same logic works in the Markov Decision Process setting of reinforcement learning. The *Bellman equation* demonstrates that the value of a given policy satisfies a particular recursive property:
 
