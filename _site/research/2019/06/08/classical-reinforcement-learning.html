@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Classical Reinforcement Learning</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- theme -->
+        <link rel="stylesheet" href="/assets/css/prism.css"/>
+        <!-- UIKit -->
+        <link rel="stylesheet" href="/assets/css/uikit.min.css"/>
+        <script src="/assets/js/uikit.min.js"></script>
+        <script src="/assets/js/uikit-icons.min.js"></script>
+        <!-- Prism -->
+        <link rel="stylesheet" href="/assets/css/theme.css"/>
+        <script src="/assets/js/prism.js"></script>
+        <!-- GoogleFonts -->
+        <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+        <!-- KaTeX -->
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"></script>
+    </head>
+
+    <body class="uk-background uk-height-viewport">
+
+        <div class="tm-navbar-container" uk-sticky="animation: uk-animation-slide-top; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-transparent; top: 300">
+
+    <nav class="uk-navbar-container" uk-navbar style="position: relative; z-index: 980;">
+
+        <div class="uk-navbar-center">
+
+            <div class="uk-navbar-center-left">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        
+                            <li class="uk-active"><a class="tm-navbar-item" href="/index.html">Blog</a></li>
+                        
+
+                        
+                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+
+            <a class="uk-navbar-item uk-logo" href="#">
+                <img uk-svg src="/assets/img/penguin.svg" style="width:56px; height: 56px;">
+            </a>
+
+            <div class="uk-navbar-center-right">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        <li>
+                            <a href="https://github.com/cswaney" uk-icon="icon: github; ratio: 1.5"></a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/SwaneyColin?lang=en" uk-icon="icon: twitter; ratio: 1.5"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </nav>
+
+</div>
+
+
+        <div class="uk-section uk-section-default uk-section-small uk-padding-remove-top uk-margin-small-top">
+
+                <div class="uk-container uk-container-small uk-position-relative">
+
+    <div>
+        <article class="uk-article">
+
+            <h1 class="uk-article-title"><a class="uk-link-reset" href="">Classical Reinforcement Learning</a></h1>
+
+            <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Saturday, June 8, 2019</a></p>
+
+            <!-- tags... -->
+
+            <p>“Old school” approaches to reinforcement learning (dynamic programming).</p>
+
+<p>To the uninitiated, deep reinforcement learning is sort of magical. Through some sorcery, we tell the computer to play a video game, and a few hours (or days) later its beating the best humans in the world. Before diving into these algorithms, it’s worth taking a moment to review some of the core ideas and methods that provide the foundation for modern reinforcement learning. There are basically two central methods in reinforcement learning: dynamic programming, and Monte Carlo methods. Most of the recent advances in reinforcement learning involve some combination of these two methods combined with neural networks and a bunch of clever tricks to try to stabilize training and speed up convergence.</p>
+
+<h2 id="dynamic-programming">Dynamic Programming</h2>
+<p>Let’s start with dynamic programming. Remember that our goal is to come up with an optimal policy, and that an optimal policy is one that generates the highest return on average, a quantity we’re calling the <em>value</em> of the policy. In the last post, I introduced the Bellman equation</p>
+
+<script type="math/tex; mode=display">V^{\pi}(s) = \sum_a \pi(a \ \vert \ s) \sum_{r_t, \ s_{t + 1}} p(r_t, s_{t + 1} \ \vert \ s_t = s, a_t = a) \left[ r_t + \gamma V^{\pi}(s_{t + 1}) \right]</script>
+
+<p>The right way to think about this equation is that it tells us the <script type="math/tex">V^{\pi}</script> is a <em>fixed-point</em>. Fixed-points are nice because we can typically find them through a fixed-point iteration algorithm. If <script type="math/tex">x^{\ast}</script> is a fixed-point of <script type="math/tex">f</script> (so that <script type="math/tex">f(x^{\ast}) = x^{\ast}</script>), then <script type="math/tex">x_{k + 1} \leftarrow f(x_k)</script> converges to <script type="math/tex">x^{\ast}</script>. This means that for any policy <script type="math/tex">\pi</script> we might be interested in, we can determine its value to arbitrary precision by turning the Bellman equation into a fixed-point iteration. Think of <script type="math/tex">V^{\pi}</script> as a vector with one element per state or world. Say we start out by setting all elements of <script type="math/tex">V^{\pi}</script> to zero and call this vector <script type="math/tex">V_0</script>. Now we’ll write out the Bellman equation as an element-wise update rule for this vector:</p>
+
+<script type="math/tex; mode=display">V_k[s] = \sum_a \pi(a \ \vert \ s) \sum_{r, \ s'} p(r, s' \ \vert \ s_t = s, a_t = a) \left[ r + \gamma V_{k + 1}[s'] \right]</script>
+
+<p>Under pretty mild conditions these iterations will converge to the value of our policy, providing a simple tool to determine how good any policy is.</p>
+
+<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Algorithm (Policy Evaluation)</span>
+<span class="k">function</span><span class="nf"> policy_evaluation</span><span class="x">(</span><span class="n">V0</span><span class="x">,</span> <span class="n">pA</span><span class="x">,</span> <span class="n">pR</span><span class="x">,</span> <span class="n">pS</span><span class="x">,</span> <span class="n">R</span><span class="x">,</span> <span class="n">gamma</span><span class="x">;</span> <span class="n">tol</span><span class="o">::</span><span class="kt">Float64</span><span class="o">=</span><span class="mf">1e-6</span><span class="x">)</span>
+    <span class="s">"""Evaluate policy via dynamic programming.
+
+        - `V0`: initial guess of value.
+        - `pA`: array of action probabilities, p(a | s).
+        - `pR`: array of reward probabilities, p(r | s, a).
+        - `pS`: array of action probabilities, p(s' | s, a).
+        - `R`: array of reward values *corresponding* to p(r | s, a).
+
+        # Returns
+        - `V`: vector of policy values, V(s).
+    """</span>
+
+    <span class="n">V</span> <span class="o">=</span> <span class="n">copy</span><span class="x">(</span><span class="n">V0</span><span class="x">)</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">while</span> <span class="n">true</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="x">(</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">v</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">V</span><span class="x">)</span>
+            <span class="n">v_update</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="x">(</span><span class="n">a_idx</span><span class="x">,</span> <span class="n">pa</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">pA</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="x">:])</span>
+                <span class="k">for</span> <span class="x">(</span><span class="n">r_idx</span><span class="x">,</span> <span class="n">pr</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">pR</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">a_idx</span><span class="x">,</span> <span class="x">:])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">R</span><span class="x">[</span><span class="n">r_idx</span><span class="x">]</span>
+                    <span class="k">for</span> <span class="x">(</span><span class="n">s_idx</span><span class="x">,</span> <span class="n">ps</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">pS</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">a_idx</span><span class="x">,</span> <span class="x">:])</span>
+                        <span class="n">v_update</span> <span class="o">+=</span> <span class="n">pa</span> <span class="o">*</span> <span class="n">pr</span> <span class="o">*</span> <span class="n">ps</span> <span class="o">*</span> <span class="x">(</span><span class="n">r</span> <span class="o">+</span> <span class="n">gamma</span> <span class="o">*</span> <span class="n">V</span><span class="x">[</span><span class="n">s_idx</span><span class="x">])</span>
+                    <span class="k">end</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+            <span class="n">V</span><span class="x">[</span><span class="n">v_idx</span><span class="x">]</span> <span class="o">=</span> <span class="n">v_update</span>
+            <span class="c"># println("V[$v_idx] = $(V[v_idx])")</span>
+            <span class="n">delta</span> <span class="o">=</span> <span class="n">max</span><span class="x">(</span><span class="n">delta</span><span class="x">,</span> <span class="n">abs</span><span class="x">(</span><span class="n">v</span> <span class="o">-</span> <span class="n">v_update</span><span class="x">))</span>  <span class="c"># update maximum change</span>
+        <span class="k">end</span>
+        <span class="c"># println(V)</span>
+        <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c"># println("delta=$delta")</span>
+        <span class="k">if</span> <span class="n">delta</span> <span class="o">&lt;</span> <span class="n">tol</span>
+            <span class="n">break</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c"># println("converged in $steps steps (delta=$delta)")</span>
+    <span class="k">return</span> <span class="n">V</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Finding the value of a policy is all good and well, but we want to improve our policy. How do we do that? Now that we know the value of the policy in any possible future state of the world, we can calculate the expected return from performing any available action, and then following our current policy after that, which is exactly what I defined as the action-value in a previous post:</p>
+
+<script type="math/tex; mode=display">Q^{\pi}(s, a) = \mathbb{E}_{\pi} \left[ r_t + \gamma V^{\pi}(s_{t + 1}) \ \vert \ s_t = s, a_t = a \right]</script>
+
+<p>Suppose for a second that we only consider deterministic policies. Now if some action produces a higher action-value than the value of our policy in <em>some</em> state <script type="math/tex">s</script>, then we can improve our policy by choosing that action in that state instead of the action specified by our policy. The reason is clear enough: in every other state of the world we still get the same value, and we get a higher value in state <script type="math/tex">s</script>. To improve our policy further, we can choose the action that maximizes the action-value, and we can repeat this update for each state:</p>
+
+<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Algorithm (Policy Improvement)</span>
+<span class="k">function</span><span class="nf"> policy_improvement</span><span class="x">(</span><span class="n">V</span><span class="x">,</span> <span class="n">nactions</span><span class="x">,</span> <span class="n">pR</span><span class="x">,</span> <span class="n">pS</span><span class="x">,</span> <span class="n">R</span><span class="x">,</span> <span class="n">gamma</span><span class="x">)</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">zeros</span><span class="x">(</span><span class="n">length</span><span class="x">(</span><span class="n">V</span><span class="x">),</span> <span class="n">nactions</span><span class="x">)</span>  <span class="c"># policy[s, a] = π(a | s)</span>
+    <span class="k">for</span> <span class="x">(</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">v</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">V</span><span class="x">)</span>
+        <span class="n">a_max</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">Q_max</span> <span class="o">=</span> <span class="o">-</span><span class="kt">Inf</span>
+        <span class="k">for</span> <span class="n">a_idx</span> <span class="k">in</span> <span class="mi">1</span><span class="x">:</span><span class="n">nactions</span>
+            <span class="n">Q</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="x">(</span><span class="n">s_idx</span><span class="x">,</span> <span class="n">ps</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">pS</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">a_idx</span><span class="x">,</span> <span class="x">:])</span>
+                <span class="n">v_next</span> <span class="o">=</span> <span class="n">V</span><span class="x">[</span><span class="n">s_idx</span><span class="x">]</span>
+                <span class="k">for</span> <span class="x">(</span><span class="n">r_idx</span><span class="x">,</span> <span class="n">pr</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">pR</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">a_idx</span><span class="x">,</span> <span class="x">:])</span>
+                    <span class="n">r</span> <span class="o">=</span> <span class="n">R</span><span class="x">[</span><span class="n">r_idx</span><span class="x">]</span>
+                    <span class="n">Q</span> <span class="o">+=</span> <span class="n">ps</span> <span class="o">*</span> <span class="n">pr</span> <span class="o">*</span> <span class="x">(</span><span class="n">r</span> <span class="o">+</span> <span class="n">v_next</span><span class="x">)</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+            <span class="k">if</span> <span class="n">Q</span> <span class="o">&gt;</span> <span class="n">Q_max</span>
+                <span class="n">a_max</span> <span class="o">=</span> <span class="n">a_idx</span>
+                <span class="n">Q_max</span> <span class="o">=</span> <span class="n">Q</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="c"># println("state={$v_idx}, new action={$a_max}")</span>
+        <span class="n">policy</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">a_max</span><span class="x">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">policy</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Putting the policy evaluation and policy improvement steps together gives a solution to our problem. All we need to do is iterate between learning the value of a policy and improving that policy:</p>
+
+<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Algorithm (Policy Iteration)</span>
+<span class="k">function</span><span class="nf"> policy_iteration</span><span class="x">(</span><span class="n">policy</span><span class="x">,</span> <span class="n">pR</span><span class="x">,</span> <span class="n">pS</span><span class="x">,</span> <span class="n">R</span><span class="x">,</span> <span class="n">gamma</span><span class="x">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="x">)</span>
+    <span class="n">nstates</span><span class="x">,</span> <span class="n">nactions</span> <span class="o">=</span> <span class="n">size</span><span class="x">(</span><span class="n">policy</span><span class="x">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">zeros</span><span class="x">(</span><span class="n">nstates</span><span class="x">)</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">true</span>
+        <span class="n">value_new</span> <span class="o">=</span> <span class="n">policy_evaluation</span><span class="x">(</span><span class="n">value</span><span class="x">,</span> <span class="n">policy</span><span class="x">,</span> <span class="n">pR</span><span class="x">,</span> <span class="n">pS</span><span class="x">,</span> <span class="n">R</span><span class="x">,</span> <span class="n">gamma</span><span class="x">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="x">)</span>
+        <span class="n">policy</span> <span class="o">=</span> <span class="n">policy_improvement</span><span class="x">(</span><span class="n">value_new</span><span class="x">,</span> <span class="n">nactions</span><span class="x">,</span> <span class="n">pR</span><span class="x">,</span> <span class="n">pS</span><span class="x">,</span> <span class="n">R</span><span class="x">,</span> <span class="n">gamma</span><span class="x">)</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">println</span><span class="x">(</span><span class="s">"iter=</span><span class="si">$</span><span class="s">i, max_diff=</span><span class="si">$</span><span class="s">(maximum(abs.(value_new - value)))"</span><span class="x">)</span>
+        <span class="k">if</span> <span class="n">isapprox</span><span class="x">(</span><span class="n">value</span><span class="x">,</span> <span class="n">value_new</span><span class="x">)</span>
+            <span class="n">break</span>
+        <span class="k">else</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value_new</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">policy</span><span class="x">,</span> <span class="n">value</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>(Note that we don’t need to start out our policy evaluation procedure from scratch each iteration. The value of our new policy is likely to be closer to the value of our previous policy than it is to zero, so we can initialize our value to the value found in the previous step). It turns out that we don’t need to actually run the policy evaluation step to convergence each iteration. In fact, it will be good enough to run a <em>single</em> step of the policy evaluation procedure! In addition, the policy improvement algorithm always results in a greedy, <em>deterministic</em> policy. As a result, computing the expectation <script type="math/tex">\mathbb{E}_{\pi} \left[ r + V[s'] \ \vert \ s_t = s \right]</script> is the same as taking the maximum over all actions of <script type="math/tex">\mathbb{E}_{\pi} \left[ r + V[s'] \ \vert \ s_t = s, a_t = a \right]</script> (because all of the <script type="math/tex">\pi(a \ \vert \ s)</script> terms drop out of the prior except for the the term where <script type="math/tex">a = a_{\text{max}}</script>. This implies that we can combine the policy evaluation and policy improvement steps into a single update,</p>
+
+<script type="math/tex; mode=display">V_{k + 1}[s] = \argmax_{a} \mathbb{E}_{\pi} \left[ r + V_k[s'] \ \vert \ s_t = s, a_t = a \right],</script>
+
+<p>which turn out to be exactly the update we would get by translating the Bellman <em>optimality</em> equation into an update rule. The resulting algorithm (demonstrated below) is known as the <em>Value Iteration</em> algorithm.</p>
+
+<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Algorithm (Value Iteration)</span>
+<span class="k">function</span><span class="nf"> value_iteration</span><span class="x">(</span><span class="n">pR</span><span class="x">,</span> <span class="n">pS</span><span class="x">,</span> <span class="n">R</span><span class="x">,</span> <span class="n">gamma</span><span class="x">;</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-6</span><span class="x">)</span>
+    <span class="n">nstates</span><span class="x">,</span> <span class="n">nactions</span><span class="x">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">size</span><span class="x">(</span><span class="n">pS</span><span class="x">)</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">zeros</span><span class="x">(</span><span class="n">nstates</span><span class="x">)</span>
+    <span class="n">policy</span> <span class="o">=</span> <span class="n">zeros</span><span class="x">(</span><span class="n">nstates</span><span class="x">,</span> <span class="n">nactions</span><span class="x">)</span>  <span class="c"># policy[s, a] = π(a | s)</span>
+    <span class="n">Δ</span> <span class="o">=</span> <span class="kt">Inf</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">Δ</span> <span class="o">&gt;</span> <span class="n">tol</span>
+        <span class="n">Δ</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="x">(</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">v</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">V</span><span class="x">)</span>
+            <span class="n">a_max</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">Q_max</span> <span class="o">=</span> <span class="o">-</span><span class="kt">Inf</span>
+            <span class="k">for</span> <span class="n">a_idx</span> <span class="k">in</span> <span class="mi">1</span><span class="x">:</span><span class="n">nactions</span>
+                <span class="n">Q</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="k">for</span> <span class="x">(</span><span class="n">s_idx</span><span class="x">,</span> <span class="n">ps</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">pS</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">a_idx</span><span class="x">,</span> <span class="x">:])</span>
+                    <span class="n">v_next</span> <span class="o">=</span> <span class="n">V</span><span class="x">[</span><span class="n">s_idx</span><span class="x">]</span>
+                    <span class="k">for</span> <span class="x">(</span><span class="n">r_idx</span><span class="x">,</span> <span class="n">pr</span><span class="x">)</span> <span class="k">in</span> <span class="n">enumerate</span><span class="x">(</span><span class="n">pR</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">a_idx</span><span class="x">,</span> <span class="x">:])</span>
+                        <span class="n">r</span> <span class="o">=</span> <span class="n">R</span><span class="x">[</span><span class="n">r_idx</span><span class="x">]</span>
+                        <span class="n">Q</span> <span class="o">+=</span> <span class="n">ps</span> <span class="o">*</span> <span class="n">pr</span> <span class="o">*</span> <span class="x">(</span><span class="n">r</span> <span class="o">+</span> <span class="n">v_next</span><span class="x">)</span>
+                    <span class="k">end</span>
+                <span class="k">end</span>
+                <span class="k">if</span> <span class="n">Q</span> <span class="o">&gt;</span> <span class="n">Q_max</span>
+                    <span class="n">a_max</span> <span class="o">=</span> <span class="n">a_idx</span>
+                    <span class="n">Q_max</span> <span class="o">=</span> <span class="n">Q</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+            <span class="n">V</span><span class="x">[</span><span class="n">v_idx</span><span class="x">]</span> <span class="o">=</span> <span class="n">Q_max</span>
+            <span class="n">policy</span><span class="x">[</span><span class="n">v_idx</span><span class="x">,</span> <span class="n">a_max</span><span class="x">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">Δ</span> <span class="o">=</span> <span class="n">max</span><span class="x">(</span><span class="n">Δ</span><span class="x">,</span> <span class="n">abs</span><span class="x">(</span><span class="n">V</span><span class="x">[</span><span class="n">v_idx</span><span class="x">]</span> <span class="o">-</span> <span class="n">v</span><span class="x">))</span>
+        <span class="k">end</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">end</span>
+    <span class="n">println</span><span class="x">(</span><span class="s">"Converged in </span><span class="si">$</span><span class="s">i steps (Δ = </span><span class="si">$</span><span class="s">Δ)."</span><span class="x">)</span>
+    <span class="k">return</span> <span class="n">policy</span><span class="x">,</span> <span class="n">value</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>What’s required to perform these operations? We need to know the policy (<script type="math/tex">\pi(a \ \vert \ s)</script>), and we need to know the <em>complete</em> dynamics of the system (<script type="math/tex">p(s', r \ \vert \ s, a)</script>)—or at least be able to make accurate estimates of the transition probabilities.</p>
+
+<h3 id="extensions">Extensions</h3>
+<ul>
+  <li>Importance weighting updates?</li>
+</ul>
+
+<h2 id="monte-carlo">Monte Carlo</h2>
+
+
+        </article>
+
+    </div>
+
+    <div style="position: absolute; width: 200px; top: 0px; left: 860px;">
+        <div uk-sticky="offset: 260">
+            <ul class="uk-nav uk-nav-default uk-nav-parent-icon tm-nav" uk-scrollspy-nav="closest: li; scroll: true; offset: 100">
+                
+            </ul>
+        </div>
+    </div>
+
+    <div id="disqus_thread" class="uk-margin-large-top"></div>
+    <script>
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        /*
+        var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://katabaticwindblog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+
+        </div>
+
+        <div class="uk-section uk-section-xsmall tm-footer">
+    <div class="uk-container uk-container-small uk-position-relative">
+        <ul class="uk-navbar-nav uk-align-center">
+            <li>
+                <a href="#">cswaney.github.io</a>
+            </li>
+            <!-- <li>
+                <p class="uk-text-center uk-text-small">Created with <a href="https://getuikit.com" uk-icon="icon: uikit; ratio: 1.0"></a></p>
+            </li> -->
+        </ul>
+    </div>
+</div>
+
+
+        <!-- convert MathJax to KaTex -->
+        <script>
+          $("script[type='math/tex']").replaceWith(function() {
+              var tex = $(this).text();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: false});
+          });
+
+          $("script[type='math/tex; mode=display']").replaceWith(function() {
+              var tex = $(this).html();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: true});
+          });
+        </script>
+
+    </body>
+
+</html>

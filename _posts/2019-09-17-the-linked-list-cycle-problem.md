@@ -1,0 +1,18 @@
+---
+layout: post
+author: Colin Swaney
+title: The Linked List Cycle Problem
+date: 2019-09-17
+categories: [programming]
+category: programming
+tags: [programming]
+excerpt: "<p>I've been studying basic computer science concepts recently because I don't have a traditional programming background, but people like to ask these types of questions at interviews for some reason (I don't exactly understand why). In any case, some of the practice problems are kind of fun, like this one concerning linked lists.</p>"
+---
+
+I've been studying basic computer science concepts recently because I don't have a "traditional" programming background, but people like to ask these types of questions at interviews for some reason (I don't exactly understand why). In any case, some of the practice problems are kind of fun, like the one I'm about to describe concerning linked lists. First, what is a linked list? It's merely a collection of objects (usually called "nodes") in which each object holds a value and a pointer to one of the other objects. Linked lists are useful for implementing stacks and queues because it is easy to remove objects from the beginning or end of a linked list. (On the other hand, they aren't too useful as iterable objects due to the way the memory of the nodes is laid out). However, a linked list could contain a cycle in which the "last" object points back to an object that came before it. The question is simply how to detect whether a linked list contains such a cycle assuming that you've been told which node is "first" in the list.
+
+There is an obvious answer to this question: iterate through the linked list, keeping track of each node you see in a dictionary and return `true` if you find a node that points back to a node in your dictionary. This solution is $$\mathcal{O}(n)$$ in time and space. It turns out, however, that there is a simple solution that reduces the space complexity to $$\mathcal{O}(1)$$, which I'll now explain.
+
+Let's imagine two people "walking" through the linked list. The first person walks slowly, moving one node each step; the second person walks twice as fast (two nodes per iteration). We start our walkers out at the first node and pause each step to check each walker's position. Now our first claim is that the walkers will meet at some point in time if and only if the linked list contains a cycle. Intuitively, if the walkers enter a cycle, we know that the faster walker will eventually catch up with the slower walker. Otherwise, the speedier walker will always remain ahead of his leisurely partner, so this method will return `true` if and only the linked list contains a cycle. But how can we be sure that the faster walker will catch the slower walker in $$\mathcal{O}(n)$$ time?
+
+In fact, we can calculate *exactly* when the walkers will meet. The reason boils down to the following observation: a person starting $$k$$ steps behind but walking twice as fast as another person will catch the slower person in precisely $$k$$ steps! Now consider the moment when our slow walker has just arrived at the beginning of a cycle that contains $$k$$ nodes. Wherever our fast walker is, we can be sure that it is at most $$k$$ nodes ahead. In terms of catching up to the slow walker, that means the fast walker is effectively at most $$k$$ nodes *behind*. But that means that she will catch the slow walker in $$k$$ steps. So not only will our walkers cross, but they will in fact land on the same node after some number of steps, and that will always happen within at worst $$n$$ iterations. 
