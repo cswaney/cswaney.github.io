@@ -160,7 +160,7 @@
 <p>If I kept replacing <script type="math/tex">V</script> terms like this until I reached the end of the episode, then I’d end up with the full reward-to-go! In other words, as I increase the expansion my update gradually turns into the Monte Carlo algorithm. In terms of our implementation, the only difference is that we need to keep track of <script type="math/tex">N</script>-step transitions, and feed these to the graph–the graph itself is exactly the same. Small values of <script type="math/tex">N</script> (e.g., <script type="math/tex">N = 3, 4</script>) can help stabilize the A2C learning curve in the CartPole environment the same way they help stabilize DQN.</p>
 
 <h3 id="memory-replay">Memory Replay</h3>
-<p>DQN uses another trick to stabilize the training process, which is to keep a memory of transitions instead of just using the most recent <code class="highlighter-rouge">batch_size</code> transitions to update the value function. Can we use the same trick to stabilize A2C?</p>
+<p>DQN uses another trick to stabilize the training process, which is to keep a memory of transitions instead of just using the most recent <code class="language-plaintext highlighter-rouge">batch_size</code> transitions to update the value function. Can we use the same trick to stabilize A2C?</p>
 
 <h3 id="entropy">Entropy</h3>
 <p><a href="">Mnih et al. (2016)</a> include the entropy of the policy as an additional term in their policy update. The idea is to <em>encourage</em> policies to be more random than they would be otherwise, which can be seen as a way to encourage exploration (entropy is maximized by a uniform random variable–that is, a policy that picks actions at random with equal probability). The update now maximizes the quantity</p>
@@ -174,9 +174,9 @@
 <p>In Tensorflow, we adjust our policy update as follows:</p>
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">entropy_loss</span> <span class="o">=</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
     <span class="n">tf</span><span class="o">.</span><span class="n">multiply</span><span class="p">(</span>
-        <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">policy_logits</span><span class="p">),</span>  <span class="c"># probabilities</span>
-        <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">policy_logits</span><span class="p">)</span>  <span class="c"># log probabilities</span>
-    <span class="p">)</span>
+        <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">policy_logits</span><span class="p">),</span>  <span class="c1"># probabilities
+</span>        <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">log_softmax</span><span class="p">(</span><span class="n">policy_logits</span><span class="p">)</span>  <span class="c1"># log probabilities
+</span>    <span class="p">)</span>
 <span class="p">)</span>
 <span class="n">policy_update</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">train</span><span class="o">.</span><span class="n">AdamOptimizer</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="n">lr</span><span class="p">)</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="n">policy_loss</span> <span class="o">+</span> <span class="n">entropy_loss</span><span class="p">)</span>
 </code></pre></div></div>

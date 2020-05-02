@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Event-Driven Bayesian Models</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- theme -->
+        <link rel="stylesheet" href="/assets/css/prism.css"/>
+        <!-- UIKit -->
+        <link rel="stylesheet" href="/assets/css/uikit.min.css"/>
+        <script src="/assets/js/uikit.min.js"></script>
+        <script src="/assets/js/uikit-icons.min.js"></script>
+        <!-- Prism -->
+        <link rel="stylesheet" href="/assets/css/theme.css"/>
+        <script src="/assets/js/prism.js"></script>
+        <!-- GoogleFonts -->
+        <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+        <!-- KaTeX -->
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"></script>
+    </head>
+
+    <body class="uk-background uk-height-viewport">
+
+        <div class="tm-navbar-container" uk-sticky="animation: uk-animation-slide-top; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-transparent; top: 300">
+
+    <nav class="uk-navbar-container" uk-navbar style="position: relative; z-index: 980;">
+
+        <div class="uk-navbar-center">
+
+            <div class="uk-navbar-center-left">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        
+                            <li class="uk-active"><a class="tm-navbar-item" href="/index.html">Blog</a></li>
+                        
+
+                        
+                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+
+            <a class="uk-navbar-item uk-logo" href="#">
+                <img uk-svg src="/assets/img/penguin.svg" style="width:56px; height: 56px;">
+            </a>
+
+            <div class="uk-navbar-center-right">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        <li>
+                            <a href="https://github.com/cswaney" uk-icon="icon: github; ratio: 1.5"></a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/SwaneyColin?lang=en" uk-icon="icon: twitter; ratio: 1.5"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </nav>
+
+</div>
+
+
+        <div class="uk-section uk-section-default uk-section-small uk-padding-remove-top uk-margin-small-top">
+
+                <div class="uk-container uk-container-small uk-position-relative">
+
+    <div>
+        <article class="uk-article">
+
+            <h1 class="uk-article-title"><a class="uk-link-reset" href="">Event-Driven Bayesian Models</a></h1>
+
+            <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Saturday, April 25, 2020</a></p>
+
+            <!-- tags... -->
+
+            <h2 id="network-models">Network Models</h2>
+
+<h3 id="spike-and-slab">Spike-and-Slab</h3>
+<p>So-called “spike-and-slab” models separate concerns between the existence of connections in a network and the strength of those connections.</p>
+
+<h3 id="erdos-renyi-network">Erdos-Renyi Network</h3>
+<p>In the Erdos-Renyi model, each connection in the model is sampled independently from a <script type="math/tex">Bernoulli(\rho)</script> distribution.</p>
+
+<h3 id="stochastic-block-network">Stochastic Block Network</h3>
+<p>In the Stochastic Block model, each node is assigned a class, and each connection in the model is sampled independently <em>conditional</em> on the node classes:</p>
+
+<script type="math/tex; mode=display">A_{i, j} \sim Bernoulli(\rho_{z_i}, \rho_{z_j}),</script>
+
+<p>where <script type="math/tex">z_k</script> is the latent class of the <script type="math/tex">k</script>-th node.</p>
+
+<h3 id="latent-distance-network">Latent Distance Network</h3>
+<p>In the Latent Distance Network, the distance between networks determines the probability of a connection between nodes.</p>
+
+<h2 id="point-processes">Point Processes</h2>
+<p>Point processes model sequences of events:</p>
+
+<script type="math/tex; mode=display">\{s_m\}_{m=1}^M</script>
+
+<ul>
+  <li>Typically, point processes model events in time, <script type="math/tex">s_m \in \left[0, T\right]</script>, but they could also model events in space, <script type="math/tex">s_m \in \mathbb{R}^D</script>.</li>
+  <li>A <em>Poisson process</em> is a point process in which the probability of events is determined by an intensity function <script type="math/tex">\lambda(t)</script> such that the number of events occuring in a period <script type="math/tex">\left[t, t + \Delta t \right]</script> has a Poisson distribution:</li>
+</ul>
+
+<script type="math/tex; mode=display">M \sim \text{Poisson}(\mu),</script>
+
+<script type="math/tex; mode=display">\mu = \int_{t}^{t + \Delta t} \lambda(t) dt</script>
+
+<ul>
+  <li>The number of events in non-overlapping periods <script type="math/tex">\mathcal{V}</script> and <script type="math/tex">\mathcal{W}</script> are independent.</li>
+  <li>A general process for simulating a Poisson process consists of sampling a number of events according to the Poisson distribution above, then sampling the time of the events according to the distribution of <script type="math/tex">\lambda(t)</script> throuhout <script type="math/tex">\left[0, T\right]</script>:</li>
+</ul>
+
+<script type="math/tex; mode=display">s_m \sim p(s) = \frac{\lambda(t)}{\int_0^T \lambda(t) dt}</script>
+
+<ul>
+  <li>The likelihood of a sequence of events generated according to a Poisson process is calculated accordingly. First, calculate the probability of observing <script type="math/tex">M</script> events:</li>
+</ul>
+
+<script type="math/tex; mode=display">p(M) = \frac{\lambda^{M}e^{-\int_0^T \lambda(t) dt}}{M!}</script>
+
+<ul>
+  <li>Next, calculate the likelihood of the <em>collection</em> <script type="math/tex">\{s_m\}_{m=1}^M</script>:</li>
+</ul>
+
+<script type="math/tex; mode=display">\left( \prod_{m=1}^M \frac{\lambda(s_m)}{\int_0^T \lambda(t) dt} \right) M!</script>
+
+<ul>
+  <li>
+    <p>Notice that these events are not “ordered”, thus we multiply by <script type="math/tex">M!</script> to account for all the possible ways of observing the times in <script type="math/tex">\{s_m\}_{m=1}^M</script>.</p>
+  </li>
+  <li>
+    <p>After simplifying, the overall likelihood is given by</p>
+  </li>
+</ul>
+
+<script type="math/tex; mode=display">L(\{s_m\} \ | \ \lambda) = \exp \left(-\int_0^T \lambda(t) dt \right) \prod_{m=1}^M \lambda(s_m)</script>
+
+<h3 id="homogeneous-processes">Homogeneous Processes</h3>
+<ul>
+  <li>In the simplest model, the intensity is constant: <script type="math/tex">\lambda(t) \equiv \lambda</script>. In this case the location of events in the simulation process has a uniform distribution, and the likelihood function simplifies to</li>
+</ul>
+
+<script type="math/tex; mode=display">L(\{s_m\} \ | \ \lambda) = \exp \left(- \lambda T \right) \lambda^M</script>
+
+<p><img src="/assets/img/homogeneous-poisson-process-likelihood.svg" alt="homogeneous-poisson-process-likelihood" /></p>
+
+<ul>
+  <li>The chart above displays the likelihood as a function of <script type="math/tex">\lambda</script> for sequence that consists of ten events occuring over the period <script type="math/tex">[0, 10]</script>.</li>
+  <li>Notice that for a homogeneous Poisson process, the timing of events is unimportant because they are uniformly distributed throughout time.</li>
+</ul>
+
+<h3 id="hawkes-processes">Hawkes Processes</h3>
+<p>Homogeneous Poisson processes wont get us too far. In interesting applications, the probability of events changes over time in response to environmental factors, perhaps dramatically so. We can model such environments through time-varying intensity functions augmented by environmental variables:</p>
+
+<script type="math/tex; mode=display">\lambda(t) = \lambda(t, x_t)</script>
+
+<ul>
+  <li>For some processes, the intensity is better characterized as “self-exciting”: when one event occurs, it <em>causes</em> additional events. Hawkes processes are a class of point processes with this property.</li>
+</ul>
+
+<h4 id="model">Model</h4>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\lambda(t) = \lambda^{(0)} + \sum_{s_m < t} w \cdot \theta e^{-\theta (t - s_m)} %]]></script>
+
+<ul>
+  <li>With this formulation, each event directly causes <script type="math/tex">W</script> events in expectation because <script type="math/tex">\theta e^{-\theta (t - s_m)}</script> is proper probability distribution. If no events occur, we expect <script type="math/tex">\lambda^{(0)}</script> events per unit of time.</li>
+  <li>The effect of each event is infinitely long, but its relevance decays exponentially.</li>
+</ul>
+
+<h4 id="simulation">Simulation</h4>
+<ul>
+  <li>Hawkes models also permit a straight-forward generative model, which relies on an interesting property of Poisson processes.</li>
+</ul>
+
+<h4 id="the-poisson-superposition-principle">The Poisson Superposition Principle</h4>
+<p>Simply stated, the Poisson superposition principle states that there is no observational difference between a collection of independent Poisson processes and a single Poisson process whose intensity equals the sum of the intensities in the collection.</p>
+
+<script type="math/tex; mode=display">\lambda_{tot}(t) = \sum_{k=1}^K \lambda_k(t)</script>
+
+<script type="math/tex; mode=display">L(\{s_m\}_{m=1}^M \ | \ \lambda_{tot}) = L(\{ \{s_m\}_{m=1}^{M_k} \}_{k=1}^K \ | \ \{ \lambda_k \}_{k=1}^K)</script>
+
+<ul>
+  <li>The likelihood of a univariate Hawkes is calculated exactly as stated above.</li>
+</ul>
+
+<h3 id="multivariate-hawkes-processes">Multivariate Hawkes Processes</h3>
+<p>In a multivariate, <script type="math/tex">N</script> processes generate events, and each event amplifies the intensity of every process. The processes are <em>dependent</em>, which complicates the calculation of likelihood, but allows us to model interactions between processes.</p>
+
+<h4 id="model-1">Model</h4>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\lambda_n(t) = \lambda_n^{(0)} + \sum_{s_m < t} W_{c_m, n} \cdot \theta_{c_m, n} \cdot e^{-\theta_{c_m, n} (t - s_m)} %]]></script>
+
+<h4 id="simulation-1">Simulation</h4>
+<ul>
+  <li>We can simulate a multivariate Hawkes process using a similar approach based on the Poisson Superposition Principle. The only difference in the multivariate case is that each event spawns an (independent) Poisson process on each of the other <script type="math/tex">N</script> channels.</li>
+</ul>
+
+<h4 id="likelihood">Likelihood</h4>
+<ul>
+  <li>We can use the Poisson Superposition Principle to calculate likelihood. The principle requires <em>independent</em> processes. If we observe the “parent” of each event, <script type="math/tex">\omega_m</script>, then we can calculate the likelihood by computing <script type="math/tex">\lambda_{tot}(s_m)</script> at each <script type="math/tex">s_m</script> and applying the Poisson likelihood formula (noting that the integral of the exponential distribution is easy to compute).</li>
+  <li>In practice, <script type="math/tex">\omega_m</script> are latent variables. But the likelihood of the events can be obtained by marginalizing over the parent variables. That is, by summing over all possible parents at each event (including the background process on the given node).</li>
+  <li>Applying this to each of the <script type="math/tex">N</script> processes, we get</li>
+</ul>
+
+<script type="math/tex; mode=display">L(\{s_m, c_m\} \ | \ \theta, W) = \dots</script>
+
+<h2 id="combining-network-models-and-point-processes">Combining Network Models and Point Processes</h2>
+<p>To combine the spike-and-slab network model with the multivariate Hawkes process we simply modify the impulse-response to include the “spike” parameters, <script type="math/tex">A_{i, j}</script>.</p>
+
+<script type="math/tex; mode=display">% <![CDATA[
+\lambda_n(t) = \lambda_n^{(0)} + \sum_{s_m < t} A_{c_m, n} \cdot W_{c_m, n} \cdot \theta_{c_m, n} \cdot e^{-\theta_{c_m, n} (t - s_m)}, %]]></script>
+
+<p>where <script type="math/tex">A_{c_m, n} \in \{0, 1\}</script>.</p>
+
+<ul>
+  <li>The network model and the temporal model are <em>almost</em> disjoint: they connect through the influence of <script type="math/tex">A</script> on the latent parent variables.</li>
+</ul>
+
+
+
+        </article>
+
+    </div>
+
+    <div style="position: absolute; width: 200px; top: 0px; left: 860px;">
+        <div uk-sticky="offset: 260">
+            <ul class="uk-nav uk-nav-default uk-nav-parent-icon tm-nav" uk-scrollspy-nav="closest: li; scroll: true; offset: 100">
+                
+            </ul>
+        </div>
+    </div>
+
+    <div id="disqus_thread" class="uk-margin-large-top"></div>
+    <script>
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        /*
+        var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://katabaticwindblog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+
+        </div>
+
+        <div class="uk-section uk-section-xsmall tm-footer">
+    <div class="uk-container uk-container-small uk-position-relative">
+        <ul class="uk-navbar-nav uk-align-center">
+            <li>
+                <a href="#">cswaney.github.io</a>
+            </li>
+            <!-- <li>
+                <p class="uk-text-center uk-text-small">Created with <a href="https://getuikit.com" uk-icon="icon: uikit; ratio: 1.0"></a></p>
+            </li> -->
+        </ul>
+    </div>
+</div>
+
+
+        <!-- convert MathJax to KaTex -->
+        <script>
+          $("script[type='math/tex']").replaceWith(function() {
+              var tex = $(this).text();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: false});
+          });
+
+          $("script[type='math/tex; mode=display']").replaceWith(function() {
+              var tex = $(this).html();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: true});
+          });
+        </script>
+
+    </body>
+
+</html>
