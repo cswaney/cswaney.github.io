@@ -143,7 +143,7 @@
 <p>As mentioned above, there is (potentially) a strong behavioral motivation behind discount factors in either case, but the most successful applications of deep reinforcement learning thus far have come in settings where time-preference over rewards plays an minor role (think <script type="math/tex">\gamma \approx 0.99</script>). Nonetheless, if a reinforcement learning agent is used to learn an economic task, choosing an appropriate discount factor might be critical to finding an acceptable solution.</p>
 
 <h3 id="examples">Examples</h3>
-<p>Let’s take a brief look at three example environments. While admittedly contrived, these examples are useful for testing algorithms and simple to understand. Each of these examples is available in OpenAI’s <a href="https://gym.openai.com"><code class="highlighter-rouge">gym</code></a> package.</p>
+<p>Let’s take a brief look at three example environments. While admittedly contrived, these examples are useful for testing algorithms and simple to understand. Each of these examples is available in OpenAI’s <a href="https://gym.openai.com"><code class="language-plaintext highlighter-rouge">gym</code></a> package.</p>
 
 <h4 id="cartpole">CartPole</h4>
 
@@ -153,7 +153,7 @@
 
 <p>The only information that the agent needs to know is the position of the cart, <script type="math/tex">x_t</script>, and the angle of the pole, <script type="math/tex">\theta_t</script>. Therefore the state is two-dimensional: <script type="math/tex">s_t = (x_t, \theta_t).</script> There are two available actions: “push left”, and “push right” (assume that the agent can only push with some fixed amount of force). We say that the state space is continuous, while the action space is discrete. You could make the problem more complicated by allowing the agent to choose the direction to push <em>and</em> the amount of force to use. In that case, the action space would be mixed, the direction being discrete, and the force continuous.</p>
 
-<p>The <code class="highlighter-rouge">gym</code> package’s implementation of the pole-balancing problem is called <code class="highlighter-rouge">CartPole</code> (shown above). The environment is extremely simple to solve. We don’t need any fancy algorithms to solve it, but it is useful for debugging: if it doesn’t solve <code class="highlighter-rouge">CartPole</code>, it doesn’t work. I also like to think of the inverse statement as being <em>almost</em> true: if it solves <code class="highlighter-rouge">CartPole</code>, it <em>probably</em> works—so if you’re having problems with some other environment, maybe focus on errors in the environment-specific part of your code.</p>
+<p>The <code class="language-plaintext highlighter-rouge">gym</code> package’s implementation of the pole-balancing problem is called <code class="language-plaintext highlighter-rouge">CartPole</code> (shown above). The environment is extremely simple to solve. We don’t need any fancy algorithms to solve it, but it is useful for debugging: if it doesn’t solve <code class="language-plaintext highlighter-rouge">CartPole</code>, it doesn’t work. I also like to think of the inverse statement as being <em>almost</em> true: if it solves <code class="language-plaintext highlighter-rouge">CartPole</code>, it <em>probably</em> works—so if you’re having problems with some other environment, maybe focus on errors in the environment-specific part of your code.</p>
 
 <!-- ```python
 import gym
@@ -183,21 +183,21 @@ convert -delay 20 -loop 0 ./frames/*.jpg pong.gif
 
 <p>A classic problem in optimal control considers how to land a rocket on the moon. The goal is actually to land the rocket using the minimal amount of fuel (as otherwise you could always make a pillow-soft landing by burning through as much fuel as you want). Landing the rocket means that you arrive at a specific location (or within a specified region) with zero velocity and zero acceleration (and you don’t crash). In a standard version of this problem—which can be solved analytically [E]—the rocket drops straight down under the influence of gravity alone, and the pilot/onboard computer only needs to determine how much upward thrust to provide. In that case, the state space is continuous and one-dimensional (<script type="math/tex">y_t =</script> height), as is the action space (<script type="math/tex">a_t =</script> thrust).</p>
 
-<p>The <code class="highlighter-rouge">gym</code> version of this problem is a bit more interesting. First, the lander is dropped with a random orientation, so that every episode begins in a random state. Second, the lander is equipped with left-oriented and right-oriented thrusters in addition to a bottom thruster. The agent can only fire one of the thrusters (or none) at any instant, and the thrusters only have one setting (“full blast”). The state is described by eight variables:</p>
+<p>The <code class="language-plaintext highlighter-rouge">gym</code> version of this problem is a bit more interesting. First, the lander is dropped with a random orientation, so that every episode begins in a random state. Second, the lander is equipped with left-oriented and right-oriented thrusters in addition to a bottom thruster. The agent can only fire one of the thrusters (or none) at any instant, and the thrusters only have one setting (“full blast”). The state is described by eight variables:</p>
 <ul>
-  <li><code class="highlighter-rouge">x_position</code></li>
-  <li><code class="highlighter-rouge">y_position</code></li>
-  <li><code class="highlighter-rouge">x_velocity</code></li>
-  <li><code class="highlighter-rouge">y_velocity</code></li>
-  <li><code class="highlighter-rouge">angle</code></li>
-  <li><code class="highlighter-rouge">angular_velocity</code></li>
-  <li><code class="highlighter-rouge">left_leg_contact</code></li>
-  <li><code class="highlighter-rouge">right_leg_contact</code></li>
+  <li><code class="language-plaintext highlighter-rouge">x_position</code></li>
+  <li><code class="language-plaintext highlighter-rouge">y_position</code></li>
+  <li><code class="language-plaintext highlighter-rouge">x_velocity</code></li>
+  <li><code class="language-plaintext highlighter-rouge">y_velocity</code></li>
+  <li><code class="language-plaintext highlighter-rouge">angle</code></li>
+  <li><code class="language-plaintext highlighter-rouge">angular_velocity</code></li>
+  <li><code class="language-plaintext highlighter-rouge">left_leg_contact</code></li>
+  <li><code class="language-plaintext highlighter-rouge">right_leg_contact</code></li>
 </ul>
 
 <p>The first six variables are continuous, while the last two are discrete (they just indicate whether the legs are on the ground or not).</p>
 
-<p>Solving this environment is more difficult than solving the <code class="highlighter-rouge">CartPole</code> environment, but still simple enough that it can serve as a useful testing ground for rapid prototyping of new algorithms. It doesn’t require any special handling of the observations, and if the algorithm works, it will converge relatively quickly.</p>
+<p>Solving this environment is more difficult than solving the <code class="language-plaintext highlighter-rouge">CartPole</code> environment, but still simple enough that it can serve as a useful testing ground for rapid prototyping of new algorithms. It doesn’t require any special handling of the observations, and if the algorithm works, it will converge relatively quickly.</p>
 
 <h4 id="pong">Pong</h4>
 
@@ -205,7 +205,7 @@ convert -delay 20 -loop 0 ./frames/*.jpg pong.gif
 
 <p>Dominating video games is the application of reinforcement learning that has received a lot of attention in the last few years. Pong is one of the easiest/fastest video games to learn. Reinforcement learning researchers use Atari games as benchmarks in research because they offer a wide range of tasks (from Pong to Seaquest), and because packages like OpenAi provide a standardized platform for training new algorithms against the full range of tasks. Computer agents learn to play Pong using essentially the same information that human players have access to: a “visual” representation of the game provided as a matrix of pixels. Agents are allowed perform any of the actions that a human can take. In Pong, this means “do nothing” (also referred to as “NOOP” for “No Operation”), “move paddle up”, or “move paddle down”.</p>
 
-<p>The following snippet of code demonstrates how to run a random policy on Pong for one episode with <code class="highlighter-rouge">gym</code>:</p>
+<p>The following snippet of code demonstrates how to run a random policy on Pong for one episode with <code class="language-plaintext highlighter-rouge">gym</code>:</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">gym</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s">'Pong-v4'</span><span class="p">)</span>
