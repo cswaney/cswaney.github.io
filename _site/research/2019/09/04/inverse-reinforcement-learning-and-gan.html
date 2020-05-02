@@ -83,29 +83,29 @@
             <!-- tags... -->
 
             <blockquote>
-  <p><strong>Note</strong>: This post is based on <a href="http://rail.eecs.berkeley.edu/deeprlcourse-fa18/static/slides/lec-16.pdf">this lecture</a> given by Sergey Levine in his course on deep reinforcement learning at Berkeley in the fall of 2018.</p>
+  <p><strong>Note</strong>: This post is based on <a href="http://rail.eecs.berkeley.edu/deeprlcourse-fa18/static/slides/lec-16.pdf">a lecture</a> given by Sergey Levine in his course on deep reinforcement learning at Berkeley in the fall of 2018.</p>
 </blockquote>
 
-<p>The typical goal of reinforcement learning is to discover optimal—or at least satisfactory—policies to interact with a given environment. A critical part of the environment is the agent’s reward function. It doesn’t really matter whether I know the laws of physics if I don’t know what task I’m meant to achieve. In constrast, the goal of inverse reinforcement learning is to discover the reward function given a policy function.</p>
+<p>The typical goal of reinforcement learning is to discover optimal—or at least satisfactory—policies to interact with a given environment. A critical part of the problem is the agent’s reward function, which motivates the agent to perform optimal actions. We can’t merely provide intelligent agents with the laws of physics and expect them to perform interesting and desirable behaviors: we need to be able to communicate the tasks they are meant to achieve. Designing such reward functions by hand is extremely challenging, and can lead to entirely unexpected outcomes. The idea of inverse reinforcement learning is to learn reward functions by observing experts that already know how to perform a given task.</p>
 
-<p>Imagine that you’ve been shown how to perform a task, for example, how to throw a ball. You have many, many examples of an expert performing this task, but now you need to learn the task. For you or I it might be obvious that the task is to hit a target, but your robot doesn’t have this intuition. One strategy would be to imitate or mimic the expert behavior. That’s a reasonable approach, although there are some <a href="**TODO**">practical difficulties</a> involved. More importantly, it doesn’t actually get to the heart of the matter: we would really like our robot to “understand” her environment so that she can easily learn to perform additional, related tasks.</p>
+<p>Imagine that we want to teach a robot a new task, for example, how to throw a ball so that it hits a target. We have collected many samples of experts performing this task, and we want to transfer that knowledge to the robot. For you or I, it is obvious that the task is to hit the target, but the robot doesn’t have this intuition. One strategy is to imitate or mimic the expert’s behavior. That’s a reasonable approach, but it doesn’t get to the heart of the matter. We want our robot to “understand” its environment so that it can quickly learn to perform additional, related tasks.</p>
 
-<p>An alternative approach is for the robot to learn the implicit reward function that the expert policy optimizes. With the its learned reward function, the agent can figure out its own policy and will be able to re-learn optimal policies if its environment is modified in some way. In fact, we can learn the reward function and an associated policy at the same time.</p>
+<p>An alternative approach is to infer the implicit reward function that the expert policy optimizes and train our robot using standard reinforcement learning algorithms. With a learned reward function, the agent can figure out a  policy and will be able to re-learn optimal policies if we modify its environment. We can even learn the reward function and an associated policy at the same time.</p>
 
 <h2 id="maximum-entropy-inverse-reinforcement-learning">Maximum Entropy Inverse Reinforcement Learning</h2>
-<p>Let’s take as a starting point the same setting as the <a href="/research/2019/09/04/inferring-optimal-policies.html">this post</a> on optimal policies through probabilistic inference. Namely, image that we observe an expert performing a task. We see what states she visits (<script type="math/tex">s_t</script>), what actions she performs (<script type="math/tex">a_t</script>), as well as the rewards she receives, <script type="math/tex">r(s_t, a_t)</script>. We imagine a latent variable <script type="math/tex">\mathcal{O}_t</script> which codes whether each action performed is optimal: <script type="math/tex">\mathcal{O}_t = 1</script> if action <script type="math/tex">a_t</script> is optimal in state <script type="math/tex">s_t</script>, and zero otherwise. We assume that optimal actions are exponentially more likely such that</p>
+<p>Let’s take as a starting point the same setting as the <a href="/research/2019/09/04/inferring-optimal-policies.html">this post</a> on learning optimal policies through probabilistic inference. In this setting, we observe an expert performing a task numerous times. We see what states she visits (<script type="math/tex">s_t</script>), what actions she performs (<script type="math/tex">a_t</script>), as well as the rewards she receives, <script type="math/tex">r(s_t, a_t)</script>. We imagine a latent variable <script type="math/tex">\mathcal{O}_t</script> which codes whether each action performed is optimal: <script type="math/tex">\mathcal{O}_t = 1</script> if action <script type="math/tex">a_t</script> is optimal in state <script type="math/tex">s_t</script>, and zero otherwise. We assume that optimal actions are exponentially more likely such that</p>
 
 <script type="math/tex; mode=display">p(\mathcal{O}_t \vert s_t, a_t) \propto \exp \left( r(s_t, a_t) \right)</script>
 
-<p>The graphical model for this scenario is shown below.</p>
+<p>The figure below shows the graphical model for this scenario.</p>
 
 <p><img src="/assets/img/graphical-model.png" alt="graphical-model" /></p>
 
-<p>Now let’s return to the inverse reinforcement learning setting. We don’t know <script type="math/tex">r(s_t, a_t)</script>; we want to learn a parameterized estimate <script type="math/tex">r_{\psi}(s_t, a_t)</script> that is consistent with a set of observed trajectories. The basic way to do that is to maximize the likelihood of the trajectories <em>assuming that the agent acts optimally at each step</em>:</p>
+<p>Let’s return to the inverse reinforcement learning setting. Here, we don’t know <script type="math/tex">r(s_t, a_t)</script>; we want to learn a parameterized estimate <script type="math/tex">r_{\psi}(s_t, a_t)</script> that is consistent with our observations. The basic way to do that is to maximize the likelihood of the trajectories assuming that the agent acts optimally at each step:</p>
 
 <script type="math/tex; mode=display">\max_{\psi} \frac{1}{N} \sum_{i = 1}^{N} \log p(\tau_i \vert \mathcal{O}_{1:T}, \psi)</script>
 
-<p>We are immediately presented with the question, “What is the probability of an optimal trajectory?” By simply applying Bayes rule we find that</p>
+<p>We are immediately presented with the question, “What is the probability of an optimal trajectory?” By applying Bayes rule, we find that</p>
 
 <script type="math/tex; mode=display">p(\tau \vert \mathcal{O}_{1:T}) = \frac{p(\tau)}{Z} p(\mathcal{O}_{1:T} \vert \tau) = \frac{p(\tau)}{Z} \prod_{t=1}^T p(\mathcal{O}_t \vert \tau) = \frac{p(\tau)}{Z} \exp \left( \sum_{t=1}^T r_\psi(s_t, a_t) \right)</script>
 
@@ -113,11 +113,11 @@
 
 <script type="math/tex; mode=display">\max_{\psi} \frac{1}{N} \sum_{i = 1}^{N}  r_{\psi}(\tau_i) - \log Z</script>
 
-<p>Where did <script type="math/tex">Z</script> come from? Bayes rule tells that <script type="math/tex">p(\tau \vert \mathcal{O}_{1:T})</script> is <em>proportional</em> to <script type="math/tex">p(\tau) p(\mathcal{O}_{1:T} \vert \tau)</script>. To make this a proper probability, we need to normalize the right-hand side so that it integrates to one. The <em>partition function</em>, <script type="math/tex">Z</script>, is the normalizer, which in this case is given by</p>
+<p>Where did <script type="math/tex">Z</script> come from (and why does it depend of <script type="math/tex">\psi</script>)? Bayes rule tells that <script type="math/tex">p(\tau \vert \mathcal{O}_{1:T})</script> is <em>proportional</em> to <script type="math/tex">p(\tau) p(\mathcal{O}_{1:T} \vert \tau)</script>. To make this a proper probability, we need to normalize the right-hand side so that it integrates to one. The <em>partition function</em>, <script type="math/tex">Z</script>, is the normalizer, which in this case is given by</p>
 
 <script type="math/tex; mode=display">Z = \int_{\tau} p(\tau) \exp \left( \sum_{t=1}^T r_\psi(s_t, a_t) \right) d \tau</script>
 
-<p>This isn’t a pretty integral. Notice that we are trying to integrate over <em>all</em> the trajectories in the environment. In general, this is impossible, but let’s consider the case in which the number of states and actions are small and countable.</p>
+<p>This isn’t a pretty integral. Notice that we are trying to integrate over <em>all</em> the trajectories in the environment. In general, this is impossible, so let’s consider the case in which the number of states and actions are small and countable.</p>
 
 <p>Let’s first take a closer look at the gradient of the objective function,</p>
 
@@ -125,11 +125,7 @@
 
 <p>Pushing the gradients inside the sum and integral we get</p>
 
-<script type="math/tex; mode=display">\nabla_{\psi} \mathcal{L} = \frac{1}{N} \sum_{i = 1}^{N} \nabla_{\psi} r_{\psi}(\tau_i) - \frac{1}{Z} \int_{\tau} p(\tau) \exp \left( r_{\psi}(\tau) \right) \nabla_{\psi} r_{\psi}(\tau) d \tau</script>
-
-<blockquote>
-  <p><strong>Comment</strong>: The loss itself is the expectation of the reward under the expert minus the log of <script type="math/tex">Z</script>. There is actually some intuition here. On the one hand, the expert is assumed to visit state-action pairs that are close to optimal, so we want to encourage our reward function to be high along trajectories the expert visited. On the other hand, we don’t want to go assigning probability all over the place. <script type="math/tex">Z</script> is sort of the “total probability” associated with <script type="math/tex">r_{\psi}</script>—we want to minimize this, so its negative in <script type="math/tex">\mathcal{L}</script>. Also, note that if you know the true reward function, then the gradient of the loss zeros out—the expectations are the same because the policies are the same in that case.</p>
-</blockquote>
+<script type="math/tex; mode=display">\nabla_{\psi} \mathcal{L} = \frac{1}{N} \sum_{i = 1}^{N} \nabla_{\psi} r_{\psi}(\tau_i) - \frac{1}{Z} \int_{\tau} p(\tau) \exp \left( r_{\psi}(\tau) \right) \nabla_{\psi} r_{\psi}(\tau) \ d \tau</script>
 
 <p>The first term is clearly a sample approximation to the expectation of <script type="math/tex">\nabla_{\psi} r_{\psi}</script> under the expert policy:</p>
 
@@ -139,19 +135,21 @@
 
 <script type="math/tex; mode=display">\frac{1}{Z} \int_{\tau} p(\tau) \exp \left( r_{\psi}(\tau) \right) \nabla_{\psi} r_{\psi}(\tau) d \tau = \int_{\tau} p(\tau \vert \mathcal{O}_{1:T}) \nabla_{\psi} r_{\psi}(\tau) d \tau = \mathbb{E}_{\pi_\psi^*} \left[ \nabla_\psi r_\psi (\tau) \right]</script>
 
-<p>One way to estimate this expectation is to estimate the probability of each state-action pair under optimality, <script type="math/tex">p(s_t, a_t \vert \mathcal{O}_t)</script>.</p>
-
 <p>If we know the dynamics of the system and the combined state-action space is small and countable, then we can estimate this expectation by first estimating the probability of each state-action pair, <script type="math/tex">p(s_t, a_t \vert \mathcal{O}_t)</script>. In a <a href="/research/2019/09/04/inferring-optimal-policies.html">previous post</a>, we saw that</p>
 
 <script type="math/tex; mode=display">p(s_t, a_t \vert \mathcal{O}_{1:T}) \propto \beta(s_t, a_t) \alpha(s_t),</script>
 
-<p>where <script type="math/tex">\alpha_t</script> and <script type="math/tex">\beta_t</script> are the forward and backward messages from a standard forward-backward inference algorithm. Thus, we can estimate the integral by</p>
+<p>where <script type="math/tex">\alpha_t</script> and <script type="math/tex">\beta_t</script> are the forward and backward messages from a standard forward-backward inference algorithm (e.g., for performing inference in a hidden Markov model). Thus, we can estimate the integral by</p>
 
 <script type="math/tex; mode=display">\mathbb{E}_{\pi_\psi^*} \left[ \nabla_\psi r_\psi (\tau) \right] \approx \sum_{t = 1}^T \sum_{(s_t, \ a_t)} \mu(s_t, a_t) \nabla_\psi r(s_t, a_t),</script>
 
-<p>where <script type="math/tex">\mu(s_t, a_t) \propto \beta(s_t, a_t) \alpha(s_t)</script> estimates the conditional probability of each state-action pair (normalized by summing over all state-action pairs). For details, see <a href="https://www.aaai.org/Papers/AAAI/2008/AAAI08-227.pdf">Ziebart et al., 2008</a>).</p>
+<p>where <script type="math/tex">\mu(s_t, a_t) \propto \beta(s_t, a_t) \alpha(s_t)</script> estimates the conditional probability of each state-action pair (normalized by summing over all state-action pairs). For details, see <a href="https://www.aaai.org/Papers/AAAI/2008/AAAI08-227.pdf">Ziebart et al., 2008</a>.</p>
 
-<p>Phew! That’s a lot to take in. Let’s summarize. We assume that the expert performs optimal actions with respect to some reward function that we parameterize in a clever way. We learn the parameters of the reward function using maximum-likelihood estimation, where we use a forward-backward algorithm to estimate the partition function, and estimate the remaining part using the expert demonstrations. This procedure amounts to the following algorithm[^1].</p>
+<blockquote>
+  <p><strong>Comment</strong>: The loss itself is the expectation of the reward under the expert minus the log of <script type="math/tex">Z</script>. There is some intuition here. On the one hand, the expert is assumed to visit state-action pairs that are close to optimal, so we want to encourage our reward function to be high along trajectories the expert visited. On the other hand, we don’t want to go assigning probability all over the place. <script type="math/tex">Z</script> is the “total probability” associated with <script type="math/tex">r_{\psi}</script>—we want to minimize this, so it is negative in <script type="math/tex">\mathcal{L}</script>. Also, note that if you know the true reward function, then the gradient of the loss zeros out—the expectations are the same because the policies are the same in that case.</p>
+</blockquote>
+
+<p>Let’s summarize. We assume that the expert performs optimal actions with respect to some reward function that we parameterize cleverly. We learn the parameters of the reward function using maximum-likelihood estimation, where we use a forward-backward algorithm to estimate the partition function, and estimate the remaining part using the expert demonstrations. This procedure amounts to the following algorithm.</p>
 
 <blockquote>
   <h4 id="algorithm-maximum-entropy-inverse-reinforcement-learning">Algorithm: Maximum Entropy Inverse Reinforcement Learning</h4>
@@ -169,13 +167,11 @@
 
 <!-- code -->
 
-<blockquote>
-  <p><strong>Comment</strong> Why is this “maximum entropy” inverse reinforcement learning? One interpretation is that the algorithm is the result of maximizing the entropy of the distribution of trajectories subject to a “feature-matching” constraint. That is, we find a reward whose optimal policy generates the most random trajectories possible while visiting states with the same frequency as the expert:</p>
+<p>Why is this “maximum entropy” inverse reinforcement learning? One interpretation is that the algorithm is the result of maximizing the entropy of the distribution of trajectories subject to a “feature-matching” constraint. That is, we find a reward whose optimal policy generates the most random trajectories possible while visiting states with the same frequency as the expert:</p>
 
-  <script type="math/tex; mode=display">\max_\psi \mathcal{H(\pi_\psi)} \ s.t. \ \mathbb{E}_{\pi_\psi}\left[ \mathbf{f} \right] = \mathbb{E}_{\pi^*} \left[ \mathbf{f} \right]</script>
+<script type="math/tex; mode=display">\max_\psi \mathcal{H(\pi_\psi)} \ s.t. \ \mathbb{E}_{\pi_\psi}\left[ \mathbf{f} \right] = \mathbb{E}_{\pi^*} \left[ \mathbf{f} \right],</script>
 
-  <p>where we assume that <script type="math/tex">r_\psi(s, a) = \theta^\top \mathbf{f}</script>. Another way to think about this is simply that the policy used to estimate the partition function corresponds to a soft optimal policy, or maximum entropy policy, because we have derived it from the probabilistic inference framework.</p>
-</blockquote>
+<p>where we assume that <script type="math/tex">r_\psi(s, a) = \theta^\top \mathbf{f}</script>. Another way to think about this is that the policy used to estimate the partition function corresponds to a soft optimal—or “maximum entropy”—policy, because we derived it from the probabilistic inference framework.</p>
 
 <h2 id="guided-cost-learning">Guided Cost Learning</h2>
 <p>The maximum entropy approach works well for small problems where state-action pairs can be counted and the system dynamics are known (or can be easily learned). In deep reinforcement learning, we are interested in problems with large, continuous state-actions spaces where the dynamics of the environment are unknown. In these settings, we need a different strategy to estimate the part of the loss function that depends on the partition function, <script type="math/tex">Z</script>. Recall that this term amounted to the expectation of <script type="math/tex">\nabla_{\psi} r_{\psi}(\tau)</script> under the distribution of trajectories generated by the optimal policy corresponding to <script type="math/tex">r_{\psi}</script>. In the probabilistic inference framework, such optimal policies are known as “soft” optimal policies or “maximum entropy policies” because they solve</p>
