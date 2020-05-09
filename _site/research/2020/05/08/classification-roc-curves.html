@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Receiver Operating Characteristic (ROC) Curves</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- theme -->
+        <link rel="stylesheet" href="/assets/css/prism.css"/>
+        <!-- UIKit -->
+        <link rel="stylesheet" href="/assets/css/uikit.min.css"/>
+        <script src="/assets/js/uikit.min.js"></script>
+        <script src="/assets/js/uikit-icons.min.js"></script>
+        <!-- Prism -->
+        <link rel="stylesheet" href="/assets/css/theme.css"/>
+        <script src="/assets/js/prism.js"></script>
+        <!-- GoogleFonts -->
+        <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+        <!-- KaTeX -->
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"></script>
+    </head>
+
+    <body class="uk-background uk-height-viewport">
+
+        <div class="tm-navbar-container" uk-sticky="animation: uk-animation-slide-top; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-transparent; top: 300">
+
+    <nav class="uk-navbar-container" uk-navbar style="position: relative; z-index: 980;">
+
+        <div class="uk-navbar-center">
+
+            <div class="uk-navbar-center-left">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        
+                            <li class="uk-active"><a class="tm-navbar-item" href="/index.html">Blog</a></li>
+                        
+
+                        
+                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+
+            <a class="uk-navbar-item uk-logo" href="#">
+                <img uk-svg src="/assets/img/penguin.svg" style="width:56px; height: 56px;">
+            </a>
+
+            <div class="uk-navbar-center-right">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        <li>
+                            <a href="https://github.com/cswaney" uk-icon="icon: github; ratio: 1.5"></a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/SwaneyColin?lang=en" uk-icon="icon: twitter; ratio: 1.5"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </nav>
+
+</div>
+
+
+        <div class="uk-section uk-section-default uk-section-small uk-padding-remove-top uk-margin-small-top">
+
+                <div class="uk-container uk-container-small uk-position-relative">
+
+    <div>
+        <article class="uk-article">
+
+            <h1 class="uk-article-title"><a class="uk-link-reset" href="">Receiver Operating Characteristic (ROC) Curves</a></h1>
+
+            <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Friday, May 8, 2020</a></p>
+
+            <!-- tags... -->
+
+            <h2 id="background">Background</h2>
+<p>From time to time, an idea emerges that basically has merit, but is also a bit confused, and persists in large part because it has simply been around long enough that everyone has decided to except it for what it is (which is also a pretty accurate description of many professors, and perhaps quite a few spouses). I think the receiver operating characteristic (ROC) curve falls into this category of ideas. It is useful, and it does make sense, but if someone proposed the idea to me now, I would be skeptical of its utility.</p>
+
+<p>For background, the ROC curve was first proposed during World War II. Radar technology—pioneered in the U.K., and imported by the U.S.— was used throughout the war to monitor and detect incoming enemy aircraft. Radar “receiver operators” were assigned the task of analyzing radar signals to distinguish enemy aircraft from friendly aircraft (and noise). The ROC curve was developed as a part of “signal detection theory” as a means of assessing the “characteristics” of receiver operator ability.</p>
+
+<p>Decades later, the ROC concept was revived by medical researchers as a means of assessing diagnostic tests, and is now a basic tool of data science and machine learning research, where it is used a means of quantifying the quality of classification methods.</p>
+
+<h2 id="description">Description</h2>
+<p>The ROC curve of a classifier is defined as the graph of the classifier’s “true positive rate” as a function of its “false positive rate.” The horizontal axis—false positive rate—is the number of negative examples that are labeled positive divided by the total number of negative examples. A more descriptive name would be “one minus the accuracy on negative examples.” The vertical axis—true positive rate—is the number of positive examples that are labeled positive divided by the total number of positive examples, which is just the “accuracy on positive examples”.</p>
+
+<p>Typically, a classifier, or “expert”, assigns a “score” to examples, which are then labeled as positive or negative based on whether the score exceeds a fixed threshold. For example, the score generated by a logistic regression is the probability that the example is positive. We can label examples as positive if the score exceeds 50%, or we could require a higher threshold, say 75%. Varying the threshold leads to a tradeoff between accuracy on positive examples and accuracy on negative examples. As the threshold is increased, accuracy increases on negative examples and decreases on positive examples. At the extreme, when the threshold is set to 100%, we have 0% accuracy on positive examples and 100% accuracy on negative examples. The ROC curve is generated by “tracing out” this tradeoff as we varying the threshold from a lower bound to an upper bound as shown in the chart below.</p>
+
+<p><img src="/assets/img/roc-example.png" alt="roc-example" /></p>
+
+<p>The dotted line in this chart represents a “random guess” model in which examples are labeled at random according to a fixed probability <script type="math/tex">p \in [0, 1]</script>. If <script type="math/tex">p = 0</script>, then all examples are labeled negative. In this case, accuracy on true examples is zero, but accuracy on negative examples is one, which puts us in the lower lefthand corner. Conversely, if <script type="math/tex">p = 1</script>, we find ourselves at the upper righthand corner where accuracy on positive examples is 100% and accuracy on negative examples is 0%. The solid curve is the actual ROC curve. The ROC curve always agrees with the random guess model at the extremes where it collapses to a deterministic guess.</p>
+
+<p>Moving from right-to-left or bottom-to-top in the FPR-TPR space leads to a classifier that is more accurate on negative examples or positive examples, respectively, while moving in both directions leads to a classifier with higher overall accuracy. Looking at the example ROC curve, we see that it lies northwest of the diagonal line, suggesting that this model is “better” than the random guess model. Notice, though, that the two dimensions represented by the ROC curve (FPR and TPR) are <em>independent</em> of the prevalence of positive and negative examples in the data. A not-totally-obvious implication (to me, at least) is that improving a classifier’s performance in the ROC framework will not generally lead to a classifier that performs better at the task you care about (e.g., increasing overall accuracy).</p>
+
+<p>Everything that I have said thus far is the standard representation of the ROC curve. I have always found the idea of putting the false positive rate on the horizontal axis to be rather odd. If the task at hand is such that false positives are particularly costly, then I can understand the motivation for using FPR. It seems to me, however, that being concerned about false positives is just being concerned about accuracy on negative examples: they are equivalent, in fact. In that case, it seems more natural, and easier to understand, to plot the “true negative rate” along the horizontal axis, as the true negative rate is the accuracy on negative examples. Represented this way, moving out along <em>either</em> axis improves classification (instead of moving in opposite directions, as in the standard setup):</p>
+
+<p><img src="/assets/img/roc-alternative.png" alt="roc-example" /></p>
+
+<p>That’s better! Now an ideal classifier is at <script type="math/tex">(1,1)</script>—perfect classification of positive and negative examples. This representation also clarifies the goal of the ROC framework, which is to separate two dimensions of performance: accuracy on positive examples, and accuracy on negative examples. And we can still calculate all ROC-related metrics (see following section).</p>
+
+<h2 id="interpretation">Interpretation</h2>
+<p>In the ROC framework, we focus on comparison of a classifier or expert against the random guess classifier described above (the diagonal, dotted line). The random guess classifier is accurate on positive examples with probability <script type="math/tex">p</script>, and can only improve her accuracy on positive examples by giving up exactly the same amount of accuracy on negative examples, and vice-a-versa. An ROC curve that plots above the random guess model is in some sense informed, but it would be nice to quantify how much better a particular model is. Let’s look at a few popular methods that accomplish this.</p>
+
+<p>First, there is the “Area Under Curve” or “AUC”, which is the just area underneath the ROC curve. While this quantity seems intuitively appealing, it in fact has a precise meaning: it is the probability of ranking examples in the correctly. Specifically, suppose we choose one positive example and one negative example at random and use the classification model assign each example a score. The AUC is the probability that the positive example receives a higher score (assuming higher scores align with positive examples). Thus, we can say that a classifier with a higher AUC is more likely to rank examples correctly.</p>
+
+<p>(A related value is the “Gini coefficient,” which is twice the AUC minus one:</p>
+
+<script type="math/tex; mode=display">Gini = 2 \times AUC - 1 = 2 \times (AUC - AUC_{\text{Random}})</script>
+
+<p>To understand the rationale of this quantity, note that the random guess model has an AUC equal to 0.5, so the Gini coefficient is equal to twice the <em>improvement</em> in ranking ability of the model over the random guess model).</p>
+
+<p>Second, we have “Youden’s J Statistic”, which is defined as the distance between the diagonal and the ROC curve at any given false positive rate. This statistic also has a meaningful interpretation: it is the probability of making an “informed decision”. Specifically, imagine we select a desired false positive rate, <script type="math/tex">p</script>. At the point on the ROC curve where the false positive rate equals <script type="math/tex">p</script>, the random guess model has the same false positive rate, and in that regard the two models are equal. Given a random positive example, and assuming the ROC curve lies above the diagonal, the probability that the model correctly classifies the example is the true positive rate at the point, <script type="math/tex">TPR(p)</script>, while the random guess correctly classifies the example with probability <script type="math/tex">% <![CDATA[
+p < TPR(p) %]]></script>. We can consider that the model makes an “informed” decision when it correctly predicts an example that the random model guesses incorrectly, which happens with probability <script type="math/tex">TPR(p) - p</script>—i.e., Youden’s J.</p>
+
+<p>Generic credit scoring models commonly use the so-called “KS Statistic” to measure quality. It turns out that the KS statistic is equal to the maximum Youden’s J statistic along the ROC curve, and thus represents the maximum probability of making informed decisions across all possible thresholds—the maximum “informativeness” the model can attain. In this sense, a model with a higher KS statistic can be thought as being more informative.</p>
+
+<p>Finally, as a brief aside on interpretation of the ROC curve, while not generally seen in practice, it is possible to for a model to have an ROC curve that lies <em>below</em> the diagonal. Following the advice of such an expert is <em>worse</em> than randomly guessing. However, following the <em>opposite</em> of their advice is better! I am often reminded of this fact when I hear Donald Trump speak: as generally rule, it seems profitable to assume the opposite of what he says as the truth.</p>
+
+<h2 id="limitations">Limitations</h2>
+<p>Here’s the thin about the ROC framework: the random guess model doesn’t know <em>anything</em> about the world. In practice, we typically know something. At a minimum, we usually have a decent idea what the proportions of positive and negative examples are. Thus, if we want to know whether our classification model really learned anything meaningful, we ought compare against a “constant model” (think of logistic regression model that only includes an intercept). The constant model guesses all one way or the other, depending on the threshold. In terms of the ROC curve, it doesn’t have one: it is always in one of the corners on the diagonal. As a result, the ROC framework doesn’t really allow us to compare our model with a constant model. In order to do that, we need to pick a metric that we care about and see whether our model performs better than the constant model with respect to that metric. But this begs the question: “Why use the ROC curve in the first place?”</p>
+
+<p>If you truly know what your objective is, then I think the answer is, “Don’t use it!” But sometimes we just want to find a “good” classifier, and the ROC curve provides a framework for that task.</p>
+
+
+        </article>
+
+    </div>
+
+    <div style="position: absolute; width: 200px; top: 0px; left: 860px;">
+        <div uk-sticky="offset: 260">
+            <ul class="uk-nav uk-nav-default uk-nav-parent-icon tm-nav" uk-scrollspy-nav="closest: li; scroll: true; offset: 100">
+                
+            </ul>
+        </div>
+    </div>
+
+    <div id="disqus_thread" class="uk-margin-large-top"></div>
+    <script>
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        /*
+        var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://katabaticwindblog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+
+        </div>
+
+        <div class="uk-section uk-section-xsmall tm-footer">
+    <div class="uk-container uk-container-small uk-position-relative">
+        <ul class="uk-navbar-nav uk-align-center">
+            <li>
+                <a href="#">cswaney.github.io</a>
+            </li>
+            <!-- <li>
+                <p class="uk-text-center uk-text-small">Created with <a href="https://getuikit.com" uk-icon="icon: uikit; ratio: 1.0"></a></p>
+            </li> -->
+        </ul>
+    </div>
+</div>
+
+
+        <!-- convert MathJax to KaTex -->
+        <script>
+          $("script[type='math/tex']").replaceWith(function() {
+              var tex = $(this).text();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: false});
+          });
+
+          $("script[type='math/tex; mode=display']").replaceWith(function() {
+              var tex = $(this).html();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: true});
+          });
+        </script>
+
+    </body>
+
+</html>

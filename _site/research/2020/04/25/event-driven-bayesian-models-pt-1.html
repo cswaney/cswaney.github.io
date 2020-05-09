@@ -2,7 +2,7 @@
 <html>
 
     <head>
-        <title>Event-Driven Bayesian Models</title>
+        <title>Event-Driven Bayesian Models (Pt. I)</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <!-- theme -->
@@ -76,29 +76,55 @@
     <div>
         <article class="uk-article">
 
-            <h1 class="uk-article-title"><a class="uk-link-reset" href="">Event-Driven Bayesian Models</a></h1>
+            <h1 class="uk-article-title"><a class="uk-link-reset" href="">Event-Driven Bayesian Models (Pt. I)</a></h1>
 
             <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Saturday, April 25, 2020</a></p>
 
             <!-- tags... -->
 
-            <h2 id="network-models">Network Models</h2>
+            <p>I want to discuss a machine learning algorithm that transformed my understanding of what machine learning is, or rather what it <em>can be</em> in the hands of an brilliance. The class of models I want to discuss are rather complicated, but I hope to hold your hand through the process so that you can understand what is going on and hopefully illuminate to the model’s brilliance and underlying simplicity.</p>
+
+<p>To set the scene, imagine we wish to predict the occurrence of a stream of events. The events come from a variety of related sources or “channels”. (The paper that developed this model was motivated by computational neuroscience research, so you can think of these channels as being neurons and the events as electric impulses being fired off). We want to quantify the probability of an event on each of these channels in real-time, but we would also like a model that is interpretable, allowing us to understand the structure of the system.</p>
+
+<h2 id="network-models">Network Models</h2>
 
 <h3 id="spike-and-slab">Spike-and-Slab</h3>
-<p>So-called “spike-and-slab” models separate concerns between the existence of connections in a network and the strength of those connections.</p>
+<p>So-called “spike-and-slab” models separate concerns between the existence of connections in a network and the strength of those connections. In particular, the network is represented by a random matrix of the form</p>
 
-<h3 id="erdos-renyi-network">Erdos-Renyi Network</h3>
-<p>In the Erdos-Renyi model, each connection in the model is sampled independently from a <script type="math/tex">Bernoulli(\rho)</script> distribution.</p>
+<script type="math/tex; mode=display">A \odot W,</script>
 
-<h3 id="stochastic-block-network">Stochastic Block Network</h3>
-<p>In the Stochastic Block model, each node is assigned a class, and each connection in the model is sampled independently <em>conditional</em> on the node classes:</p>
+<p>where <script type="math/tex">A</script> is a binary matrix and <script type="math/tex">W \in \mathbb{R}^{N \times N}</script>. <script type="math/tex">A</script> represents the presence of a connection between nodes; <script type="math/tex">W</script> captures the strength of the connection. To simplify, let’s ignore <script type="math/tex">W</script> for a moment and focus our attention on the connection matrix, <script type="math/tex">A</script>. How we chose to model <script type="math/tex">A</script> reflects our understanding and beliefs about the nature of the system we are investigating. Consider the following three popular models:</p>
 
-<script type="math/tex; mode=display">A_{i, j} \sim Bernoulli(\rho_{z_i}, \rho_{z_j}),</script>
+<h4 id="erdös-rényi-network">Erdös-Rényi Network</h4>
+<p>In the Erdös-Rényi model, each connection in the model (<script type="math/tex">a_{i, j}</script>) is sampled independently from a \text{Bern} distribution:</p>
 
-<p>where <script type="math/tex">z_k</script> is the latent class of the <script type="math/tex">k</script>-th node.</p>
+<script type="math/tex; mode=display">a_{i, j} \sim \text{Bern}(\rho)</script>
 
-<h3 id="latent-distance-network">Latent Distance Network</h3>
-<p>In the Latent Distance Network, the distance between networks determines the probability of a connection between nodes.</p>
+<p>This modeling approach reflects a <em>lack</em> of structure in the network.</p>
+
+<h4 id="stochastic-block-network">Stochastic Block Network</h4>
+<p>The Stochastic Block model adds (latent) structure to the network by assigning a class, <script type="math/tex">z_i</script>, to each node. Connections are sampled independently <em>conditional</em> on their class:</p>
+
+<script type="math/tex; mode=display">a_{i, j} \sim \text{Bern}(\rho_{z_i}, \rho_{z_j}),</script>
+
+<p>where <script type="math/tex">z_k</script> is the latent class of the <script type="math/tex">k</script>-th node. The latent class itself requires a prior distribution, and a standard choice is a compound discrete distribution:</p>
+
+<script type="math/tex; mode=display">z_i \sim \text{Discrete}(\pi),</script>
+
+<script type="math/tex; mode=display">\pi \sim \text{Dir}(\alpha \mathbf{1}_K).</script>
+
+<p>This approach is analogous to a Gaussian mixture model and reflects a belief that connections between particular nodes are more or less likely.</p>
+
+<h4 id="latent-distance-network">Latent Distance Network</h4>
+<p>If nodes are associated with characteristics/features, then it may be appropriate to model the likelihood of connections as dependent on the similarity between these features. In the Latent Distance Network, the distance between networks determines the probability of a connection between nodes. For a given metric, <script type="math/tex">\| \cdot \|</script>, the probability of a connection between nodes is</p>
+
+<script type="math/tex; mode=display">p(a_{i, j} = 1 \ | \ z) = \sigma \left( - \| z_i -z_j \|_2^2 + \gamma_0 \right)</script>
+
+<p>The features <script type="math/tex">z</script> can be either observed features or latent class features. In the latter case, we need to specify a prior distribution of latent locations. A Normal-InverseGamma prior is a standard choice:</p>
+
+<script type="math/tex; mode=display">z_i \sim \mathcal{N} (0, \tau I),</script>
+
+<script type="math/tex; mode=display">\tau \sim \text{IGa}(1, 1).</script>
 
 <h2 id="point-processes">Point Processes</h2>
 <p>Point processes model sequences of events:</p>
@@ -226,7 +252,6 @@
 <ul>
   <li>The network model and the temporal model are <em>almost</em> disjoint: they connect through the influence of <script type="math/tex">A</script> on the latent parent variables.</li>
 </ul>
-
 
 
         </article>

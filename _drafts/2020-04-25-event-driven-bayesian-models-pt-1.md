@@ -1,31 +1,59 @@
 ---
 layout: post
 author: Colin Swaney
-title: Event-Driven Bayesian Models
+title: Event-Driven Bayesian Models (Pt. I)
 date: 2020-04-25
 categories: [research]
 category: research
 tags: [machine learning, high-frequency trading]
 excerpt: "<p></p>"
 ---
+I want to discuss a machine learning algorithm that transformed my understanding of what machine learning is, or rather what it *can be* in the hands of an brilliance. The class of models I want to discuss are rather complicated, but I hope to hold your hand through the process so that you can understand what is going on and hopefully illuminate to the model's brilliance and underlying simplicity.
+
+To set the scene, imagine we wish to predict the occurrence of a stream of events. The events come from a variety of related sources or "channels". (The paper that developed this model was motivated by computational neuroscience research, so you can think of these channels as being neurons and the events as electric impulses being fired off). We want to quantify the probability of an event on each of these channels in real-time, but we would also like a model that is interpretable, allowing us to understand the structure of the system.
+
 
 ## Network Models
 
+
 ### Spike-and-Slab
-So-called "spike-and-slab" models separate concerns between the existence of connections in a network and the strength of those connections.  
+So-called "spike-and-slab" models separate concerns between the existence of connections in a network and the strength of those connections. In particular, the network is represented by a random matrix of the form
 
-### Erdos-Renyi Network
-In the Erdos-Renyi model, each connection in the model is sampled independently from a $$Bernoulli(\rho)$$ distribution.
+$$ A \odot W, $$
 
-### Stochastic Block Network
-In the Stochastic Block model, each node is assigned a class, and each connection in the model is sampled independently *conditional* on the node classes:
+where $$A$$ is a binary matrix and $$W \in \mathbb{R}^{N \times N}$$. $$A$$ represents the presence of a connection between nodes; $$W$$ captures the strength of the connection. To simplify, let's ignore $$W$$ for a moment and focus our attention on the connection matrix, $$A$$. How we chose to model $$A$$ reflects our understanding and beliefs about the nature of the system we are investigating. Consider the following three popular models:
 
-$$ A_{i, j} \sim Bernoulli(\rho_{z_i}, \rho_{z_j}), $$
+#### Erdös-Rényi Network
+In the Erdös-Rényi model, each connection in the model ($$a_{i, j}$$) is sampled independently from a \text{Bern} distribution:
 
-where $$z_k$$ is the latent class of the $$k$$-th node.
+$$a_{i, j} \sim \text{Bern}(\rho)$$
 
-### Latent Distance Network
-In the Latent Distance Network, the distance between networks determines the probability of a connection between nodes.
+This modeling approach reflects a *lack* of structure in the network.
+
+#### Stochastic Block Network
+The Stochastic Block model adds (latent) structure to the network by assigning a class, $$z_i$$, to each node. Connections are sampled independently *conditional* on their class:
+
+$$ a_{i, j} \sim \text{Bern}(\rho_{z_i}, \rho_{z_j}), $$
+
+where $$z_k$$ is the latent class of the $$k$$-th node. The latent class itself requires a prior distribution, and a standard choice is a compound discrete distribution:
+
+$$ z_i \sim \text{Discrete}(\pi), $$
+
+$$ \pi \sim \text{Dir}(\alpha \mathbf{1}_K).$$
+
+This approach is analogous to a Gaussian mixture model and reflects a belief that connections between particular nodes are more or less likely.
+
+#### Latent Distance Network
+If nodes are associated with characteristics/features, then it may be appropriate to model the likelihood of connections as dependent on the similarity between these features. In the Latent Distance Network, the distance between networks determines the probability of a connection between nodes. For a given metric, $$\| \cdot \|$$, the probability of a connection between nodes is
+
+$$ p(a_{i, j} = 1 \ | \ z) = \sigma \left( - \| z_i -z_j \|_2^2 + \gamma_0 \right) $$
+
+The features $$z$$ can be either observed features or latent class features. In the latter case, we need to specify a prior distribution of latent locations. A Normal-InverseGamma prior is a standard choice:
+
+$$ z_i \sim \mathcal{N} (0, \tau I), $$
+
+$$ \tau \sim \text{IGa}(1, 1).$$
+
 
 ## Point Processes
 Point processes model sequences of events:
@@ -120,4 +148,3 @@ $$ \lambda_n(t) = \lambda_n^{(0)} + \sum_{s_m < t} A_{c_m, n} \cdot W_{c_m, n} \
 where $$A_{c_m, n} \in \{0, 1\}$$.
 
 - The network model and the temporal model are *almost* disjoint: they connect through the influence of $$A$$ on the latent parent variables.
-
