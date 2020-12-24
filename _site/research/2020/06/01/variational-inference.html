@@ -85,93 +85,148 @@
 
             <!-- tags... -->
 
-            <h2 id="setting">Setting</h2>
-<ul>
-  <li>Assume a joint distribution of the form</li>
-</ul>
+            <p>Consider a general probabilistic model of the form</p>
 
 <script type="math/tex; mode=display">p(x, z, \beta \ | \ \alpha) = p(\beta \ | \ \alpha) \prod_{n=1}^N p(x_n, z_n \ | \ \beta)</script>
 
-<ul>
-  <li><script type="math/tex">\beta</script> is a global variable with hyperparameter <script type="math/tex">\alpha</script></li>
-  <li><script type="math/tex">x = x_{1:N}</script> is the data/observations</li>
-  <li><script type="math/tex">z = z_{1:N}</script> are local variables</li>
-  <li>
-    <p>We call <script type="math/tex">\{x_n, z_n\}</script> the <script type="math/tex">n</script>th “local context” (local in the sense that they are conditionally independent given the global variables, <script type="math/tex">\beta</script>).</p>
-  </li>
-  <li>Assume that the “complete conditionals” are in the exponential family:</li>
-</ul>
+<p>In this joint distribution, <script type="math/tex">\beta</script> is a global variable (determined by the hyperparameter <script type="math/tex">\alpha</script>), <script type="math/tex">x_{1:N}</script> is observed data, and <script type="math/tex">z_{1:N}</script> represents local latent variables. We refer to <script type="math/tex">\{x_i, z_i\}</script> as the <script type="math/tex">i</script>th “local context”. It is local in the sense that it is conditionally independent given the global variable.</p>
+
+<p>We will assume that the “complete conditionals” are in the exponential family,</p>
 
 <script type="math/tex; mode=display">p(\beta \ | \ x, z, \alpha) = h(\beta) \exp \{ \eta_g(x, z, \alpha)^{\intercal} t(\beta) - a_g(\eta_g(x, z, \alpha)) \}</script>
 
-<script type="math/tex; mode=display">p(z \ | \ x, \beta) = h(z) \exp \{ \eta_l(x, \beta)^{\intercal} t(z) - a_l(\eta_l(x, \beta)) \}</script>
+<script type="math/tex; mode=display">p(z \ | \ x, \beta) = h(z) \exp \{ \eta_l(x, \beta)^{\intercal} t(z) - a_l(\eta_l(x, \beta)) \},</script>
 
-<ul>
-  <li>Assume that the prior distribution is also in the exponential family:</li>
-</ul>
+<p>as well as the prior distribution,</p>
 
 <script type="math/tex; mode=display">p(\beta) = h(\beta) \exp \{ \alpha^\intercal t(\beta) - a_g(\alpha) \}</script>
 
-<ul>
-  <li>These assumptions imply that the global variable has a complete conditional in the same exponential family as the prior with natural parameter</li>
-</ul>
+<p>These are mild restriction: given the latter, the prior is satisfied by any conjugate model. In fact, the assumptions imply that the global variable has a complete conditional in the same exponential family as the prior with natural parameter</p>
 
 <script type="math/tex; mode=display">\eta_g(x, z, \alpha) = (\alpha_1 + \sum_{n=1}^N t(z_n, x_n), \alpha_2 + N)</script>
 
 <h2 id="mean-field-variational-inference">Mean-Field Variational Inference</h2>
-<ul>
-  <li>
-    <p>Variational inference is based on converting the inference problem into an optimization problem. The value to be optimized—the “variational objective”—is called the “evidence lower bound”, so-called because it describes a lower bound on the “evidence” <script type="math/tex">p(x)</script>.</p>
-  </li>
-  <li>
-    <p>Suppose we introduce a distribution <script type="math/tex">q(z, \beta)</script> that we think of as an approximation to <script type="math/tex">p(z, \beta \ \vert \ x)</script>. Using Jensen’s inequality, we can show that</p>
-  </li>
-</ul>
+<p>Variational inference works by converting the inference problem (i.e. determining the posterior distribution) into an optimization problem. The value to be optimized—the “variational objective”—is called the “evidence lower bound”, so-called because it provides a lower bound on the “evidence”, <script type="math/tex">p(x)</script>, provided an approximation of the posterior distribution, <script type="math/tex">q(z, \beta)</script>.</p>
+
+<p>We think of <script type="math/tex">q(z, \beta)</script> that we think of as an approximation to <script type="math/tex">p(z, \beta \ \vert \ x)</script>, which is referred to as the “proposal” distribution. Using Jensen’s inequality, we can show that</p>
 
 <script type="math/tex; mode=display">\log p(x) \ge \mathbb{E}_q \left[ \log p(x, z, \beta) \right] - \mathbb{E}_q \left[ \log q(z, \beta) \right] = \text{ELBO}</script>
 
-<ul>
-  <li>Alternative, consider the KL divergence between <script type="math/tex">p(z, \beta \ \vert \ x)</script> and <script type="math/tex">q(z, \beta)</script>:</li>
-</ul>
+<p>The righthand side of the above equation is the evidence lower bound, or ELBO. Maximizes the ELBO is equivalent to finding the proposal distribution that is “closest” to the true posterior distribution. Distance between probability distributions is often measured by their KL divergence. For distributions <script type="math/tex">p(z, \beta \ \vert \ x)</script> and <script type="math/tex">q(z, \beta)</script> the KL divergence is</p>
 
-<script type="math/tex; mode=display">\text{KL}(q, p) = \mathbb{E}_q \left[ \log q(z, \beta) \right] - \mathbb{E}_q \left[ \log p(z, \beta \ \vert \ x) \right] = - \text{ELBO} + \text{const}.</script>
+<script type="math/tex; mode=display">\text{KL}(q, p) = \mathbb{E}_q \left[ \log q(z, \beta) \right] - \mathbb{E}_q \left[ \log p(z, \beta \ \vert \ x) \right] = - \text{ELBO} + \text{const},</script>
 
-<ul>
-  <li>
-    <p>Minimizing the ELBO is thus equivalent to selecting the distribution <script type="math/tex">q(z, \beta)</script> that is closest to the posterior.</p>
-  </li>
-  <li>
-    <p>The “mean-field” family of variational distributions is a fully-factorized distribution</p>
-  </li>
-</ul>
+<p>where the constant represents terms that don’t depend on <script type="math/tex">q</script>.</p>
+
+<p>Mean-field variational inference relies a family of variational distributions that is fully-factorized</p>
 
 <script type="math/tex; mode=display">q(z, \beta) = q(\beta \ \vert \ \lambda) \prod_{n=1}^N q(z_n \ \vert \ \phi_n)</script>
 
-<ul>
-  <li>Moreover, we assume that the marginals belong to the same exponential family as the complete conditionals, with natural parameters equal to <script type="math/tex">\lambda</script> and <script type="math/tex">\phi_n</script> above:</li>
-</ul>
+<p>Moreover, we assume that the marginal distributions belong to the same exponential family as the complete conditionals above:</p>
 
-<script type="math/tex; mode=display">q(\beta \ \vert \ \lambda) = h(\beta) \exp \{ \lambda^{\intercal} t(\beta) - a_g(\lambda) \}</script>
+<script type="math/tex; mode=display">q(\beta \ \vert \ \lambda) = h(\beta) \exp \{ \lambda^{\intercal} t(\beta) - a_g(\lambda) \},</script>
 
-<script type="math/tex; mode=display">q(z \ \vert \ \phi_n) = h(z_n) \exp \{ \phi_n^\intercal t(z_n) - a_l(\phi_n) \}</script>
+<script type="math/tex; mode=display">q(z \ \vert \ \phi_n) = h(z_n) \exp \{ \phi_n^\intercal t(z_n) - a_l(\phi_n) \},</script>
 
-<ul>
-  <li>Under these assumptions, we can calculate the ELBO as well as its gradient. It can be shown that:</li>
-</ul>
+<p>with natural parameters <script type="math/tex">\lambda</script> and <script type="math/tex">\phi_n</script>.</p>
+
+<p>Under these assumptions, we can calculate the ELBO as well as its gradient. In fact, the first-order conditions take a particularly simple form:</p>
 
 <script type="math/tex; mode=display">\nabla_\lambda \text{ELBO} = 0 \iff \lambda = \mathbb{E} \left[ \eta_g(x, z, \alpha) \right]</script>
 
 <script type="math/tex; mode=display">\nabla_{\phi_n} \text{ELBO} = 0 \iff \phi_n = \mathbb{E} \left[ \eta_l(x, \beta) \right]</script>
 
-<ul>
-  <li>This implies the following coordinate ascent algorithm maximizes the ELBO:</li>
-</ul>
+<p>This implies the following coordinate ascent algorithm:</p>
 
-<p><strong>NOTE</strong>: The algorithm requires an update to <strong>every</strong> local variable before the global parameter is updated. This is quite wasteful.</p>
+<h5 id="algorithm-mean-field-variational-inference">Algorithm: (Mean-Field) Variational Inference</h5>
+<blockquote>
+
+  <ul>
+    <li>Select a random <script type="math/tex">\lambda^{(0)}</script></li>
+    <li>Repeat until convergence:
+      <ul>
+        <li>Update each local variational parameter, <script type="math/tex">\phi_i^{(t)} = \mathbb{E}_{\lambda^{(t - 1)}} \left[ \eta_l (x_{1:N}, \beta) \right]</script></li>
+        <li>Update the global variational parameter, <script type="math/tex">\lambda^{(t)} = \mathbb{E}_{\phi^{(t)}} \left[ \eta_g (x_{1:N}, z_{1:N}) \right]</script></li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+
+<p>In practice, the updates would be converted back to their usual representation/parameterization (instead of working directly with the natural parameters—see the example below).</p>
 
 <h2 id="stochastic-variational-inference">Stochastic Variational Inference</h2>
+<p>The variational inference algorithm above requires an update to <em>every</em> local variable before the global parameter is updated. This is inefficient because the expectation of the global natural parameter is the sum over independent local contexts (observation plus local latent variables), and we can therefore approximate the update in an unbiased fashion using any random subsample.</p>
 
-<h3 id="natural-gradients-a-detour">Natural Gradients: a Detour</h3>
+<p>Specifically, in the case of mean-field variational inference, the global natural parameter (ignoring the second component) is</p>
+
+<script type="math/tex; mode=display">\eta_g(x, z, \alpha) = \alpha + \sum_{n=1}^N t(x_n, z_n)</script>
+
+<p>Replacing <script type="math/tex">\sum_{n=1}^N t(x_n, z_n)</script> by <script type="math/tex">N \times t(x_i, z_i)</script> for a randomly chosen <script type="math/tex">i \in 1, \dots, N</script> results in an unbiased estimate of the true sum, and is obviously <em>much</em> cheaper than using all of the samples when <script type="math/tex">N</script> is large. The new overall stochastic variational inference algorithm therefore looks like this:</p>
+
+<h5 id="algorithm-mean-field-stochastic-variational-inference">Algorithm: (Mean-Field) Stochastic Variational Inference</h5>
+<blockquote>
+
+  <ul>
+    <li>Select a random <script type="math/tex">\lambda^{(0)}</script></li>
+    <li>Repeat until convergence:
+      <ul>
+        <li>Select a random data point, <script type="math/tex">x_i \sim \text{Uniform}(\{x_i\}_{i=1}^N)</script></li>
+        <li>Update the local variational parameter, <script type="math/tex">\phi = \mathbb{E}_{\lambda^{(t - 1)}} \left[ \eta_l (x, \beta) \right]</script></li>
+        <li>Update the global variational parameter, <script type="math/tex">\lambda^{(t)} = \mathbb{E}_{\phi} \left[ \alpha + N \times t(x_i, z_i) \right]</script></li>
+      </ul>
+    </li>
+  </ul>
+</blockquote>
+
+<p>This is the only real difference between stochastic variational inference and plain-ole variational inference. But nonlinear optimization, and stochastic optimization in particular, contains many tricks and variations that can improve the stability of speed of convergence depending on the nature of the problem at hand, and certainly you can expect to improve on this “vanila” algorithm by adopting some of those strategies.</p>
+
+<p>For example, in Hoffman et al. (2013), the authors actually recommend an algorithm based on the “natural gradient”, an idea that shows up in reinforcement learning and deserves its own lecture. Simply put, the natural gradient accounts for the topology/geometry of the optimization problem introduced by the probability distribution, which tends to lead to better results. (Remember, the real problem that we’re trying to solve is finding the distribution in one family that is closest to a distribution in some other family. The action is happening in an abstract space).</p>
+
+<p>There is nothing magical going on here: this is “just” a natural modification of the coordinate ascent algorithm, which is pervasive in machine learning algorithms (most notably, deep learning). It is an rather important modification because it allows the algorithm to <em>scale</em>. We want to perform inference on complex models in domains with abundant datasets, and the nature of these models is such that the number of variables scales with the size of the data. This simple extension means that the cost of our inference algorithm grows at a substantially lower rate. One way to think about this is that we don’t really need to see every observation in a dataset to understand what is going on at a global level. Once we have seen “enough” data, we know how the model works—the additional data is gratuitous. (On the other hand, if the model is complex, then “enough” data might be quite a bit).</p>
+
+<p>By the way, this is why you need to mark independence in the Pyro probabilistic programming language if you want to get reasonable performance: it lets the package know where it can use stochastic optimization. If you don’t mark independence, the algorithm will still work, but it will essentially fall back to treating everything as a global variable. You can think of the process as marking local context.</p>
+
+<p>Finally, you might wonder if using stochastic gradient optimization is really an advantage. After all, the approximation makes the updates noisier. There are a few reasons why this tends to work better in practice. For one thing, remember that we are starting from a random guess, which means that there isn’t much reliable information in the early stages of optimization: taking a full step means acting with certainty on poor data. Adding randomness might also be beneficial by preventing the algorithm from getting stuck in a <em>local</em> optimum.</p>
+
+<h2 id="example-word-model">Example: Word Model</h2>
+<p>This example is a simplification of the application in Hoffman et al. (2013). Here we imagine a single document in which each word has a specific type, and the probability of each word depends on its type. For example, if the type of the word is “sports noun”, then the distribution might place higher probability on words like “ball” and “throw”. There are a finite number of word types and a finite number of words. The model looks like this:</p>
+
+<script type="math/tex; mode=display">\theta_z \sim \text{Dirichlet}(\alpha_z)</script>
+
+<script type="math/tex; mode=display">\theta_{w_k} \sim \text{Dirichlet}(\alpha_w) \ \ \ (k = 1, \dots, K)</script>
+
+<script type="math/tex; mode=display">z_i \sim \text{Cat}(\theta_z)</script>
+
+<script type="math/tex; mode=display">w_i \sim \text{Cat}(\theta_{w_{z_i}})</script>
+
+<p>The model is fully-conjugate, thus the variational distributions are</p>
+
+<script type="math/tex; mode=display">\theta_z \sim \text{Dirichlet}(\tilde{\alpha}_z),</script>
+
+<script type="math/tex; mode=display">\theta_{w_k} \sim \text{Dirichlet}(\tilde{\alpha}_w),</script>
+
+<p>and</p>
+
+<script type="math/tex; mode=display">z_i \sim \text{Cat}(\tilde{\theta})</script>
+
+<p>where <script type="math/tex">\tilde{\alpha}_z</script>, <script type="math/tex">\tilde{\alpha}_w</script>, and <script type="math/tex">\tilde{\theta}</script> are variational parameters.</p>
+
+<p>The complete conditionals of this model are</p>
+
+<script type="math/tex; mode=display">\tilde{\alpha}_k = \alpha_k + \sum_{i=1}^N \mathbb{I}(z_i = k)</script>
+
+<script type="math/tex; mode=display">\theta \ \vert \ \{w_i, z_i \}_{i=1}^N, \{ \theta_{w_k} \}_{k=1}^K \sim \text{Dirichlet}(\tilde{\alpha})</script>
+
+<script type="math/tex; mode=display">\tilde{\gamma}_j^{(k)} = \gamma_j^{(k)} + \sum_{i=1}^N \mathbb{I}(z_i = k) \mathbb{I}(w_i = j)</script>
+
+<script type="math/tex; mode=display">\theta_w^{(k)} \ \vert \ \{w_i, z_i \}_{i=1}^N, \theta_z \sim \text{Dirichlet}(\tilde{\gamma}^{(k)})</script>
+
+<script type="math/tex; mode=display">\tilde{\theta}_k \propto \theta_z^{(k)} \times p(w_i \ \vert \ z_i = k)</script>
+
+<script type="math/tex; mode=display">z_i \ \vert \ w_{1:N}, z_{-i}, \theta_z, \theta_w \sim \text{Cat}(\tilde{\theta})</script>
+
+<h3 id="vi">VI</h3>
+<h3 id="svi">SVI</h3>
 
 
         </article>
