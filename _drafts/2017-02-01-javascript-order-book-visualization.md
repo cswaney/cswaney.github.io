@@ -8,4 +8,4 @@ category: development
 tags: [finance, javascript]
 ---
 
-The modern approach to reinforcement learning (neural network function approximation), taking vanilla policy gradient as a baseline.
+A tutorial on d3.js or Vue.js that demonstrates orderbook visualization.
