@@ -83,7 +83,7 @@ pre[class*="language-"], pre[class*="language-"] {
 
 .tm-article-title > a::before {
   color: rgba(153, 153, 153, 0.2);
-  content: "#";
+  /* content: "#"; */
   display: block;
   height: 33px;
   margin-left: -35px;
@@ -124,7 +124,7 @@ li > strong {
 }
 .uk-article > h2::before {
   color: rgba(153, 153, 153, 0.2);
-  content: "#";
+  /* content: "#"; */
   display: block;
   height: 33px;
   margin-left: -25px;
@@ -133,7 +133,7 @@ li > strong {
 }
 .uk-article > h3::before {
   color: rgba(153, 153, 153, 0.2);
-  content: "##";
+  /* content: "##"; */
   display: block;
   height: 33px;
   margin-left: -40px;
@@ -142,7 +142,7 @@ li > strong {
 }
 .uk-article > h4::before {
   color: rgba(153, 153, 153, 0.2);
-  content: "###";
+  /* content: "###"; */
   display: block;
   height: 33px;
   margin-left: -50px;

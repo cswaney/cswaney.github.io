@@ -70,15 +70,18 @@
 
 
         <div class="uk-section uk-section-default uk-section-small uk-padding-remove-top uk-margin-small-top">
+        <!-- <div class="uk-section uk-section-default uk-section-small uk-margin-large-top"> -->
 
                 <div class="uk-container uk-container-small uk-position-relative">
 
     <div>
         <article class="uk-article">
 
-            <h1 class="uk-article-title"><a class="uk-link-reset" href="">Event-Driven Bayesian Models (Pt. II)</a></h1>
+            <!-- <h1 class="uk-article-title"><a class="uk-link-reset" href="">Event-Driven Bayesian Models (Pt. II)</a></h1> -->
+            <h1 class="uk-article-title uk-margin-medium-top">Event-Driven Bayesian Models (Pt. II)</h1>
 
-            <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Friday, May 1, 2020</a></p>
+            <!-- <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Friday, May 1, 2020</a></p> -->
+            <p class="uk-article-meta tm-article-meta">Friday, May 1, 2020</p>
 
             <!-- tags... -->
 
@@ -106,7 +109,7 @@ L( \{s_m, c_m, \omega_m\} \ | \ \lambda^{(0)}, A, W, \theta) = \prod_{n=1}^N \te
 
 <p>Unfortunately, this likelihood requires <script type="math/tex">\mathcal{O}(M^2)</script> evaluations of the impulse-response function because <em>every</em> event prior to the <script type="math/tex">m^{th}</script> is a potential parent (despite the fact that the probability decays exponentially). Nonetheless, we can evaluate the likelihood and maximize it numerically using standard methods. (Note as well that all of the model parameters are constrained to be <em>non-negative</em>).</p>
 
-<h2 id="maximum-a-posteriori-estimation-map">Maximum a Posteriori Estimation (MAP)</h2>
+<h3 id="maximum-a-posteriori-estimation-map">Maximum a Posteriori Estimation (MAP)</h3>
 <p>An alternative point estimation method is to calculate the parameters that maximize the posterior distribution. Recall that the posterior distribution of a probabilistic model with likelihood <script type="math/tex">p(\mathcal{D} \ | \ \Theta)</script> and prior distribution <script type="math/tex">p(\Theta \ | \ \nu)</script> is given by</p>
 
 <script type="math/tex; mode=display">p(\Theta \ | \ \mathcal{D}, \nu) = \frac{p(\mathcal{D} \ | \ \Theta) p(\Theta \ | \ \nu)}{p(\mathcal{D})},</script>
@@ -123,7 +126,7 @@ L( \{s_m, c_m, \omega_m\} \ | \ \lambda^{(0)}, A, W, \theta) = \prod_{n=1}^N \te
 
 <p>The priors are independent, and the joint prior is therefore the product of the individual priors. With this information, we can again use standard numerical optimization methods to calculate <script type="math/tex">\Theta_{MAP}</script>.</p>
 
-<h2 id="bayesian-inference">Bayesian Inference</h2>
+<h3 id="bayesian-inference">Bayesian Inference</h3>
 <p>MLE and MAP point estimates provide incomplete pictures of the model parameters. To fully explore the model, we want to sample from the marginal posterior distributions. We can use the Markov Chain Monte Carlo technique known as Gibbs sampling to do so. Gibbs sampling works by sampling from the conditional marginal distributions, which are often tractable, even though the joint distribution is intractable. Using gamma priors allows us to easily sample the conditional marginal distributions: they all follow a Gamma distribution due to conjugacy.</p>
 
 <p>Let’s walk through the priors one variable at a time. Start with the background intensity, <script type="math/tex">\lambda^{(0)}</script>. The marginal prior depends on the length of the observation period <script type="math/tex">T</script>, and the number of events that occur on each channel attributed to the background process,</p>

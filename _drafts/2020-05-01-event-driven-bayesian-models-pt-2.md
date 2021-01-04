@@ -32,7 +32,7 @@ $$ L( \{s_m, c_m, \omega_m\} \ | \ \lambda^{(0)}, A, W, \theta) = \prod_{n=1}^N 
 Unfortunately, this likelihood requires $$\mathcal{O}(M^2)$$ evaluations of the impulse-response function because *every* event prior to the $$m^{th}$$ is a potential parent (despite the fact that the probability decays exponentially). Nonetheless, we can evaluate the likelihood and maximize it numerically using standard methods. (Note as well that all of the model parameters are constrained to be *non-negative*).
 
 
-## Maximum a Posteriori Estimation (MAP)
+### Maximum a Posteriori Estimation (MAP)
 An alternative point estimation method is to calculate the parameters that maximize the posterior distribution. Recall that the posterior distribution of a probabilistic model with likelihood $$p(\mathcal{D} \ | \ \Theta)$$ and prior distribution $$p(\Theta \ | \ \nu)$$ is given by
 
 $$ p(\Theta \ | \ \mathcal{D}, \nu) = \frac{p(\mathcal{D} \ | \ \Theta) p(\Theta \ | \ \nu)}{p(\mathcal{D})}, $$
@@ -50,7 +50,7 @@ $$ \theta_{n, m} \sim \text{Gamma}\left(\alpha_\theta, \beta_\theta \right) $$
 The priors are independent, and the joint prior is therefore the product of the individual priors. With this information, we can again use standard numerical optimization methods to calculate $$\Theta_{MAP}$$.
 
 
-## Bayesian Inference
+### Bayesian Inference
 MLE and MAP point estimates provide incomplete pictures of the model parameters. To fully explore the model, we want to sample from the marginal posterior distributions. We can use the Markov Chain Monte Carlo technique known as Gibbs sampling to do so. Gibbs sampling works by sampling from the conditional marginal distributions, which are often tractable, even though the joint distribution is intractable. Using gamma priors allows us to easily sample the conditional marginal distributions: they all follow a Gamma distribution due to conjugacy.
 
 Let's walk through the priors one variable at a time. Start with the background intensity, $$\lambda^{(0)}$$. The marginal prior depends on the length of the observation period $$T$$, and the number of events that occur on each channel attributed to the background process,
