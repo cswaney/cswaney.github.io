@@ -1,7 +1,7 @@
 ---
 layout: post
 author: Colin Swaney
-title: "Receiver Operating Characteristic (ROC) Curves"
+title: Receiver Operating Characteristic (ROC) Curves
 date: 2020-05-8
 categories: [research]
 category: research
