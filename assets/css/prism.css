@@ -10,14 +10,15 @@ code[class*="language-"],
 pre[class*="language-"] {
 	color: black;
 	background: none;
-	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	/* font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; */
+	font-family: 'Roboto Mono',monospace;
 	font-size: 1em;
 	text-align: left;
 	white-space: pre;
 	word-spacing: normal;
 	word-break: normal;
 	word-wrap: normal;
-	line-height: 1.5;
+	/* line-height: 1.5; */
 
 	-moz-tab-size: 4;
 	-o-tab-size: 4;
@@ -40,8 +41,8 @@ pre[class*="language-"]>code {
 	position: relative;
 	/* border-left: 10px solid #358ccb;
 	box-shadow: -1px 0px 0px 0px #358ccb, 0px 0px 0px 1px #dfdfdf; */
-	border-left: 10px solid rgb(31, 158, 248);
-	box-shadow: -1px 0px 0px 0px rgb(31, 158, 248), 0px 0px 0px 1px #dfdfdf;
+	border-left: 10px solid rgb(40,140,240);
+	box-shadow: -1px 0px 0px 0px rgb(40,140,240), 0px 0px 0px 1px #dfdfdf;
 	background-color: #fdfdfd;
 	background-image: linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
 	background-size: 3em 3em;
@@ -69,16 +70,26 @@ pre[class*="language-"] {
 
 /* Inline code */
 :not(pre) > code[class*="language-"] {
-	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+	/* font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; */
+	font-family: 'Roboto Mono',monospace;
+	/* font-size: 10pt; */
 	font-size: 10pt;
-	/* position: relative; */
-	padding: .2em;
-	/* border-radius: 0.3em; */
-	/* color: #c92c2c; */
-	color: rgb(31, 158, 248);
-	border: 1px solid rgba(0, 0, 0, 0.1);
+	position: relative;
+	/* padding: .1em; */
+	padding: 2px 6px;
+	border-radius: 0.1em;
+	/* color: rgb(40,140,240); */
+	color: #f0506e;
+	/* border: 1px solid rgba(0, 0, 0, 0.1); */
 	display: inline;
-	white-space: normal;
+	/* white-space: normal; */
+	white-space: nowrap;
+    /* font-family: 'Roboto Mono',monospace; */
+    /* font-size: 13px; */
+    /* color: #f0506e; */
+    /* white-space: nowrap; */
+    /* padding: 2px 6px; */
+    background: #f8f8f8;
 }
 
 pre[class*="language-"]:before,
