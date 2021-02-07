@@ -2,17 +2,20 @@ em {
   color: #666;
 }
 a {
-  color: #f0506e;
+  /* color: #f0506e; */
+  color: rgb(31, 158, 248);
 }
 a:hover {
-  color: #f0506e;
+  /* color: #f0506e; */
+  color: rgb(31, 158, 248);
 }
 blockquote {
   font-size: 100%;
   font-weight: lighter;
   font-style: normal;
   color: rgba(0, 0, 0, .75);
-  border-left: 4px solid rgb(252, 99, 100);
+  /* border-left: 4px solid rgb(252, 99, 100); */
+  border-left: 4px solid rgb(50, 50, 50);
   padding-left: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -75,9 +78,11 @@ pre[class*="language-"], pre[class*="language-"] {
   /* color: rgb(51, 51, 51); */
 }
 
-.tm-footer-item {
-  font-family: 'Fjalla One', sans-serif;
+#footer-url {
+  /* font-family: 'Fjalla One', sans-serif; */
+  font-family: 'Indie Flower', cursive;
   font-size: 1.25rem;
+  text-transform: none;
   color: rgb(51, 51, 51);
 }
 
@@ -155,4 +160,18 @@ li > strong {
   padding-bottom: 20px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.uk-article-title {
+  font-family: 'Fjalla One', sans-serif;
+}
+
+:not(pre) > code, :not(pre) > kbd, :not(pre) > samp {
+	font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  font-size: 10pt;
+	padding: .2em;
+	color: rgb(31, 158, 248);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	display: inline;
+	white-space: normal;
 }
