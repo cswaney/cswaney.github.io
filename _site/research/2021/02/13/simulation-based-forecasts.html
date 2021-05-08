@@ -84,21 +84,85 @@
     <div>
         <article class="uk-article uk-margin-large-top">
 
-            <!-- <h1 class="uk-article-title"><a class="uk-link-reset" href="">The Linked List Cycle Problem</a></h1> -->
-            <h1 class="uk-article-title">The Linked List Cycle Problem</h1>
+            <!-- <h1 class="uk-article-title"><a class="uk-link-reset" href="">Simulation-Based Forecasts</a></h1> -->
+            <h1 class="uk-article-title">Simulation-Based Forecasts</h1>
 
-            <!-- <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Tuesday, September 17, 2019</a></p> -->
-            <p class="uk-article-meta tm-article-meta">Tuesday, September 17, 2019</p>
+            <!-- <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Saturday, February 13, 2021</a></p> -->
+            <p class="uk-article-meta tm-article-meta">Saturday, February 13, 2021</p>
 
             <!-- tags... -->
 
-            <p>I’ve been studying basic computer science concepts recently because I don’t have a “traditional” programming background, but people like to ask these types of questions at interviews for some reason (I don’t exactly understand why). In any case, some of the practice problems are kind of fun, like the one I’m about to describe concerning linked lists. First, what is a linked list? It’s merely a collection of objects (usually called “nodes”) in which each object holds a value and a pointer to one of the other objects. Linked lists are useful for implementing stacks and queues because it is easy to remove objects from the beginning or end of a linked list. (On the other hand, they aren’t too useful as iterable objects due to the way the memory of the nodes is laid out). However, a linked list could contain a cycle in which the “last” object points back to an object that came before it. The question is simply how to detect whether a linked list contains such a cycle assuming that you’ve been told which node is “first” in the list.</p>
+            <h2 id="bayesian-inference">Bayesian Inference</h2>
+<ul>
+  <li>You can do everything with this but…</li>
+  <li>Generally simplify the model to apply inference methods…</li>
+  <li>But new flexibility from Turing.jl, etc.?</li>
+</ul>
 
-<p>There is an obvious answer to this question: iterate through the linked list, keeping track of each node you see in a dictionary and return <code class="language-plaintext highlighter-rouge">true</code> if you find a node that points back to a node in your dictionary. This solution is <script type="math/tex">\mathcal{O}(n)</script> in time and space. It turns out, however, that there is a simple solution that reduces the space complexity to <script type="math/tex">\mathcal{O}(1)</script>, which I’ll now explain.</p>
+<h2 id="simulation-based-inference">Simulation-Based Inference</h2>
+<ul>
+  <li>
+    <p>What you can do:</p>
+  </li>
+  <li>
+    <p>What you can’t (easily) do:</p>
+    <ul>
+      <li>Parameter inference
+        <ul>
+          <li>No Posterior distribution (can Turing.jl, etc. do this?)</li>
+          <li>Maybe asymptotic MLE distribution?</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
 
-<p>Let’s imagine two people “walking” through the linked list. The first person walks slowly, moving one node each step; the second person walks twice as fast (two nodes per iteration). We start our walkers out at the first node and pause each step to check each walker’s position. Now our first claim is that the walkers will meet at some point in time if and only if the linked list contains a cycle. Intuitively, if the walkers enter a cycle, we know that the faster walker will eventually catch up with the slower walker. Otherwise, the speedier walker will always remain ahead of his leisurely partner, so this method will return <code class="language-plaintext highlighter-rouge">true</code> if and only the linked list contains a cycle. But how can we be sure that the faster walker will catch the slower walker in <script type="math/tex">\mathcal{O}(n)</script> time?</p>
+<h2 id="example-state-space-model">Example: State-Space Model</h2>
+<p>Here is an interesting example. Interesting because it demonstrates that relatively complex statistical methodology can be approximated by simpler, but highly detailed, simulation model, and vice-a-versa.</p>
 
-<p>In fact, we can calculate <em>exactly</em> when the walkers will meet. The reason boils down to the following observation: a person starting <script type="math/tex">k</script> steps behind but walking twice as fast as another person will catch the slower person in precisely <script type="math/tex">k</script> steps! Now consider the moment when our slow walker has just arrived at the beginning of a cycle that contains <script type="math/tex">k</script> nodes. Wherever our fast walker is, we can be sure that it is at most <script type="math/tex">k</script> nodes ahead. In terms of catching up to the slow walker, that means the fast walker is effectively at most <script type="math/tex">k</script> nodes <em>behind</em>. But that means that she will catch the slow walker in <script type="math/tex">k</script> steps. So not only will our walkers cross, but they will in fact land on the same node after some number of steps, and that will always happen within at worst <script type="math/tex">n</script> iterations.</p>
+<p>The statistical model we have in mind is a state-space model, but let’s give it some interpretation for fun. So imagine we are trying to model election outcomes based soley on polling data. Polls are imperfect measurements of the true percent of voters that will vote for a given candidate at a given time. That percent can and will change over time. Our goal is to forecast what the percent will be when the election arrives.</p>
+
+<h3 id="classic-approach">Classic Approach</h3>
+<p>Let’s write down a model.</p>
+
+<p>First, the true percent of voters that will vote for a given candidate at any time (what we’re modeling) is a time series. We could give it any dynamics we want, but let’s say for simplicity that it just bounces around with normal errors:</p>
+
+<script type="math/tex; mode=display">\rho_t = \rho_{t - 1} + \epsilon_t, \ \  \epsilon_t \sim N(0, \sigma_p^2)</script>
+
+<p>Next, polls are imperfect observations of the true probability. In reality, we would observe <em>many</em> polls, all of which represent imperfect information about the true percent of voters. But let’s simplify life by assuming we have access to a consolidated poll. It varies around the true percent of voters with normal errors as well:</p>
+
+<script type="math/tex; mode=display">s_t = \rho_t + \eta_t, \ \ \eta_t \sim N(0, \sigma_s^2)</script>
+
+<p>Now our goal is to forecast the percent of voters on election day, <script type="math/tex">\rho_T</script>. With our model, the current value of <script type="math/tex">\rho_t</script> is also the most likely value on election day, but we’re interesting in a distribution of <script type="math/tex">\rho_T</script>. If we <em>know</em> what the current percent is, then all we need to do is simulate <script type="math/tex">\rho_t</script> forward to see what that distribution is. So we really only need to estimate the current percent.</p>
+
+<p>This model is actually a classical model. Formally, we want to estimate the percent of voters conditional on all polling data observed up to and including the current time, <script type="math/tex">p(\rho_t \vert s_{1:t})</script>. There is a standard technique for estimating this value known as Kalman filtering. The key idea to is to start with beliefs about the value of <script type="math/tex">\rho_t</script>, and then iterative update those beliefs as information is revealed through <script type="math/tex">s_t</script>.</p>
+
+<p>Working in this manner, beliefs at any time <script type="math/tex">t</script> incorporate all information up to that time and <em>adjust for the staleness of infomration</em>. That is, our current estimate of accounts for the fact that we saw <script type="math/tex">s_{t - \Delta t}</script>, but if <script type="math/tex">\Delta t</script> is large, then its impact on <script type="math/tex">\hat{p}_t</script> is small.</p>
+
+<h3 id="simulation-approach">Simulation Approach</h3>
+<ul>
+  <li>There isn’t much to do here… all the (initial) work goes to pooling information from polls intelligently.</li>
+  <li>Then you can simulate past information…</li>
+  <li>Then you can simulate future evolution…</li>
+  <li>Add any details you like really…</li>
+</ul>
+
+<p>As an slight aside, the standard deviation of the the forecast scales with the square root of the days between now and the election. For example, if the election is 100 days out, then the standard deviation of <script type="math/tex">\rho_T</script> is ten times that of <script type="math/tex">\rho_t</script>. As a result, the effect of new information of our <em>forecast</em> is considerable smaller than its effect on our current estimate<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>.</p>
+
+<p><img src="/assets/img/forecast.pdf" alt="Forecast" /></p>
+
+<p>Practical challenges to think about:</p>
+<ol>
+  <li>How would we actually handle multiple polls?</li>
+  <li>How would we deal with polls arriving on different days?</li>
+</ol>
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>This seems to be Naseem Talib’s critique of the FiveThirtyEight prediction model. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
 
 
         </article>

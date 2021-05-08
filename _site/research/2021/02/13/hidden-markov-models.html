@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>colinswaney</title>
+        <link rel="icon" type="image/png" href="/favicon.ico">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- UIKit -->
+        <link rel="stylesheet" href="/assets/css/uikit.min.css"/>
+        <link rel="stylesheet" href="/assets/css/theme.css"/>
+        <script src="/assets/js/uikit.min.js"></script>
+        <script src="/assets/js/uikit-icons.min.js"></script>
+        <!-- Prism -->
+        <!-- <link rel="stylesheet" href="/assets/css/prism.css"/>
+        <script src="/assets/js/prism.js"></script> -->
+        <!-- Highlight Rouge -->
+        <!-- <link rel="stylesheet" href="/assets/css/syntax.css"/> -->
+        <link rel="stylesheet" href="/assets/css/base16.css"/>
+        <!-- Highlightjs -->
+        <!-- <link rel="stylesheet" href="/assets/highlight/default.css"/>
+        <script src="/assets/highlight/highlight.pack.js"></script> -->
+        <!-- GoogleFonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+        <!-- KaTeX -->
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"></script>
+    </head>
+
+    <body class="uk-background uk-height-viewport">
+
+        <div class="tm-navbar-container" uk-sticky="animation: uk-animation-slide-top; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-transparent; top: 300">
+
+    <nav class="uk-navbar-container" uk-navbar style="position: relative; z-index: 980;">
+
+        <div class="uk-navbar-center">
+
+            <div class="uk-navbar-center-left">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        
+                            <li class="uk-active"><a class="tm-navbar-item" href="/index.html">Blog</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+
+            <a class="uk-navbar-item uk-logo" href="#">
+                <img uk-svg src="/assets/img/wave.png" style="width: 56px; height: 56px;">
+            </a>
+
+            <div class="uk-navbar-center-right">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        
+                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
+                        
+                        <!-- <li>
+                            <a href="https://github.com/cswaney" uk-icon="icon: github; ratio: 1.5"></a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/SwaneyColin?lang=en" uk-icon="icon: twitter; ratio: 1.5"></a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </nav>
+
+</div>
+
+
+        <div class="uk-section uk-section-default uk-section-small uk-padding-remove-top uk-margin-small-top">
+        <!-- <div class="uk-section uk-section-default uk-section-small uk-margin-large-top"> -->
+
+                <div class="uk-container uk-container-small uk-position-relative uk-height-viewport">
+
+    <div>
+        <article class="uk-article uk-margin-large-top">
+
+            <!-- <h1 class="uk-article-title"><a class="uk-link-reset" href="">Hidden Markov Models</a></h1> -->
+            <h1 class="uk-article-title">Hidden Markov Models</h1>
+
+            <!-- <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Saturday, February 13, 2021</a></p> -->
+            <p class="uk-article-meta tm-article-meta">Saturday, February 13, 2021</p>
+
+            <!-- tags... -->
+
+            <!-- Add an introduction here. -->
+<p>Hidden Markov models are a classic way to model time series data. The basic idea is to combine two models together. The first model represents a hidden state of the world that moves along in a simple fashion. The second model describes what type of data we expect to observe conditional on the hidden state. Combining these two models together leads to more complicated time series than either model could achieve on its own. The most popular methods for estimating hidden Markov models is not Bayesian (that is, they don’t calculate posterior distributions), but they rely on ideas that are unmistakenly Bayesian.</p>
+
+<h2 id="markov-chains">Markov Chains</h2>
+<p>As the name suggests, hidden Markov models rely on something called a <strong>Markov chain</strong>. Markov chains are a simple way to model a sequence of discrete, finite values. The defining characteristics of Markov chains are:</p>
+
+<ol>
+  <li>The probability of moving from one state to another is always the same, and</li>
+  <li>The probability of moving from one state to another only depends on the current state.</li>
+</ol>
+
+<p>A Markov chain is defined entirely by these probabilities, represented by a matrix, <script type="math/tex">P</script>, where the probability of transitioning from state <script type="math/tex">i</script> to state <script type="math/tex">j</script> is <script type="math/tex">P_{i,j}</script>.</p>
+
+<p>What if we want to know the probability of transitioning from state <script type="math/tex">i</script> to state <script type="math/tex">j</script> in <script type="math/tex">t</script> steps? Let’s take <script type="math/tex">t=2</script>. If there are <script type="math/tex">K</script> possible states, then there are <script type="math/tex">K</script> different ways to arrive in state <script type="math/tex">j</script>: one way going through each of the possible states. To calculate the probability, we need to sum up the probability of each of these <script type="math/tex">K</script> possible paths, which turns to be the <script type="math/tex">P^2_{i,j}</script>. It is easy to show that this calculation generalizes to any <script type="math/tex">t</script>. That is, the probability of moving the state <script type="math/tex">i</script> to state <script type="math/tex">j</script> in exactly <script type="math/tex">t</script> steps is given by <script type="math/tex">P^t_{i,j}</script>.</p>
+
+<p>Markov chains have many interesting and useful properties, but we don’t need to concern ourselves with those for now.</p>
+
+<h2 id="hidden-markov-models">Hidden Markov Models</h2>
+<!-- Change the scenario to a coin toss -->
+<p>To understand the motivation behind hidden Markov models, let’s start by considering a baseline model. Say that we observe a some discrete, finite quantity over time—repeated throws of a six-sided die, for example. We can represent this by a simple model: if <script type="math/tex">x_t</script> represents the outcome of the <script type="math/tex">t</script>-th outcome, then the probability that <script type="math/tex">x_t</script> is <script type="math/tex">i</script> is given by <script type="math/tex">p_i</script>.</p>
+
+<p>Now this is obviously not a very interesting model. The reason is that even though the observations take place over time, and we’ve bothered to index them by <script type="math/tex">t</script>, time plays no meaningful role. To make things more interesting, let’s introduce a Markov chain. So suppose that we now have <em>two</em> six-sided die. One of these die is fair, so <script type="math/tex">p_i = \frac{1}{6}</script> for all <script type="math/tex">i</script>. The other die has two had the six replaced by one such that <script type="math/tex">p_1 = \frac{2}{6}</script> and <script type="math/tex">p_6 = 0</script>.</p>
+
+<p>We generate a time series from these two die as follows. First, we choose one of the die to roll randomly. After we roll the die, we select the next die to roll according to Markov transition probabilities, <script type="math/tex">P</script>, and repeat. As long as we know which die is rolled each time period, this experiment is equivalent to two independent trials of the first experiment using two different die.</p>
+
+<p>But what if we don’t know which die is rolled?</p>
+
+<p>In that case, we have arrived at an experiment that is exactly represented by a hidden Markov model. Hidden Markov models are more general than that, but the essential components are an unobserved Markov chain combined with an observed variable. Formally, a hidden Markov model consists of a <strong>transition model</strong>,</p>
+
+<script type="math/tex; mode=display">z_t | z_{t-1} \sim P_{i,j}</script>
+
+<p>and an <strong>observation model</strong>,</p>
+
+<script type="math/tex; mode=display">x_t | z_t \sim P(x_t | z_t).</script>
+
+<p>Typical choices for the observation model include the discrete model from the example above and the Gaussian model,</p>
+
+<script type="math/tex; mode=display">x_t | z_t = i \sim \mathcal{N}(\mu_i, \sigma^2_i).</script>
+
+<!-- ![HMM](/assets/img/hmm.pdf) -->
+
+<p>These types of models are clearly useful for representing situation where we believe there are important—but unobserved—forces at play. In such cases, the model can improve time series forcasts (because it is more accurate), but it also provides a method for infering the hidden state. In many situtations, the latter is of greater significance than the prior.</p>
+
+<p><img src="/assets/img/hmm/dishonest-casino.svg" alt="Dishonest Casino" /></p>
+
+<h3 id="example-boom-bust-cycle">Example: Boom-Bust Cycle</h3>
+<!-- Example of expected return in high-low growth -->
+<p>As another example, consider the GDP growth of fictional country Kwazistan. Imagine that Kwazistan is subject to a pernicious “boom-bust” cycle. That is, it experiences periods of high growth, followed by periods or low growth, etc. We can model Kwazistan’s monthly GDP growth as follows. Let <script type="math/tex">z_t</script> represent economic conditions: <script type="math/tex">z_t = 1</script> if the economy is booming, and <script type="math/tex">z_t = 0</script> if Kwazistan is in a recession. Monthly GDP growth is represented by <script type="math/tex">x_t</script> and is normally distributed conditional on the state of the economy:</p>
+
+<script type="math/tex; mode=display">x_t \sim \mathcal{N}(\mu_{z_t}, \sigma^2_{z_t}),</script>
+
+<p>where <script type="math/tex">\mu_1 > \mu0</script>. If the state of the economy <script type="math/tex">z_t</script> is a Markov chain, then this becomes a standard hidden Markov model with normal observations. The tools below provide a disciplined way of determining whether Kwazistan is in a recession or expansion.</p>
+
+<!-- ![Boom-Bust](/assets/img/hmm/boom-bust.png) -->
+
+<h2 id="inference">Inference</h2>
+<p>Inference is the process of estimating the values of the hidden state variables, <script type="math/tex">{z_t}_{t=1}^T</script>. There are many different ways to go about this, depending on the nature of the problem. The two main methods are <em>filtering</em> and <em>smoothing</em>. Simply put, filtering means to infer the distribution of <script type="math/tex">z_t</script> conditional on information known up to time <script type="math/tex">t</script>, whereas smoothing means to determine the same distribution using all available information. Both methods rely of a process on Bayesian updating. Filtering forms a belief about the current period’s state given yesterday’s state, then updates that belief after observing today’s observation. Smoothing uses the same updates, but then runs updating in reverse.</p>
+
+<h3 id="filtering">Filtering</h3>
+<p>Filtering is performed via the so-called “forwards algorithm”.</p>
+<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
+Run forwards (filtering) algorithm. Returns filtered probabilities (`a`) and log evidence (`z`).
+"""</span>
+<span class="k">function</span><span class="nf"> forwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">,</span> <span class="n">π0</span><span class="x">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">x</span><span class="x">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">π0</span><span class="x">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Float64</span><span class="x">,</span><span class="mi">2</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">,</span> <span class="n">K</span><span class="x">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Float64</span><span class="x">,</span><span class="mi">1</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">)</span>
+    <span class="n">a</span><span class="x">[</span><span class="mi">1</span><span class="x">,</span> <span class="o">:</span><span class="x">],</span> <span class="n">Z</span><span class="x">[</span><span class="mi">1</span><span class="x">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="x">(</span><span class="n">B</span><span class="x">[</span><span class="o">:</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="mi">1</span><span class="x">]]</span> <span class="o">.*</span> <span class="x">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">π0</span><span class="x">))</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">2</span><span class="o">:</span><span class="n">T</span>
+        <span class="n">a</span><span class="x">[</span><span class="n">t</span><span class="x">,</span> <span class="o">:</span><span class="x">],</span> <span class="n">Z</span><span class="x">[</span><span class="n">t</span><span class="x">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="x">(</span><span class="n">B</span><span class="x">[</span><span class="o">:</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="n">t</span><span class="x">]]</span> <span class="o">.*</span> <span class="x">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">a</span><span class="x">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="x">,</span> <span class="o">:</span><span class="x">]))</span>
+    <span class="k">end</span>
+    <span class="n">ll</span> <span class="o">=</span> <span class="n">sum</span><span class="x">(</span><span class="n">log</span><span class="o">.</span><span class="x">(</span><span class="n">Z</span><span class="x">))</span>
+    <span class="k">return</span> <span class="n">a</span><span class="x">,</span> <span class="n">ll</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> normalize</span><span class="x">(</span><span class="n">u</span><span class="x">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">sum</span><span class="x">(</span><span class="n">u</span><span class="x">)</span>
+    <span class="n">v</span> <span class="o">=</span> <span class="n">u</span> <span class="o">./</span> <span class="n">Z</span>
+    <span class="k">return</span> <span class="n">v</span><span class="x">,</span> <span class="n">Z</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="smoothing">Smoothing</h3>
+<p>Smoothing combines the forwards algorithm with a second “backwards algorithm” to incorporate future information into our estimates. This process can effectively be thought of as filtering in reverse: updating our beliefs about time <script type="math/tex">t</script> based on the future. It’s important to understand that <strong>all</strong> future information relevant to time <script type="math/tex">t</script> is contained in <script type="math/tex">z_{t+1}</script> in a hidden Markov model. Graphically, all information “flows” through <script type="math/tex">z_{t+1}</script> on its way to <script type="math/tex">z_t</script>.</p>
+
+<!-- Backwards Algorithm -->
+<!-- $$ $$ -->
+
+<!-- Forwards-Backwards Algorithm (Smoothing) -->
+<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
+Run forwards-backwards (smoothing) algorithm. Returns the smoothed probabilities (`γ`).
+"""</span>
+<span class="k">function</span><span class="nf"> forwards_backwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">,</span> <span class="n">π0</span><span class="x">)</span>
+    <span class="n">α</span><span class="x">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">forwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">,</span> <span class="n">π0</span><span class="x">)</span>
+    <span class="n">β</span> <span class="o">=</span> <span class="n">backwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">)</span>
+    <span class="n">γ</span> <span class="o">=</span> <span class="n">α</span> <span class="o">.*</span> <span class="n">β</span>
+    <span class="k">return</span> <span class="n">γ</span> <span class="o">./</span> <span class="n">sum</span><span class="x">(</span><span class="n">γ</span><span class="x">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="x">)</span>
+<span class="k">end</span>
+
+<span class="k">function</span><span class="nf"> backwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">x</span><span class="x">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">hmm</span><span class="o">.</span><span class="n">L</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Float64</span><span class="x">,</span><span class="mi">2</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">,</span> <span class="n">L</span><span class="x">)</span>
+    <span class="n">b</span><span class="x">[</span><span class="n">T</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">.=</span> <span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">:</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">T</span> <span class="o">-</span> <span class="n">i</span>
+        <span class="n">b</span><span class="x">[</span><span class="n">t</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="x">(</span><span class="n">B</span><span class="x">[</span><span class="o">:</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="x">]]</span> <span class="o">.*</span> <span class="n">b</span><span class="x">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="x">])</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">b</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p><img src="/assets/img/hmm/dishonest-casino-inference.svg" alt="Dishonest Casino Inference" /></p>
+
+<h3 id="viterbi">Viterbi</h3>
+<p>Instead of figuring out the most like state at each time, we could instead determine the most likely <em>sequence</em> of events. These aren’t the same thing (you can try think of a two-period counter-example). For hidden Markov models, this type of inference is called <em>Viterbi</em> filtering, and it results in paths of <script type="math/tex">{z_t}_{t=1}{T}</script> that are even smoother than those generated by the smoothing algorithm. 
+<!-- Viterbi Algorithm --></p>
+<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
+Compute the most probable sequence of states conditional on `x`, i.e., argmax_z_1:T p(z_1:T | x_1:T).
+"""</span>
+<span class="k">function</span><span class="nf"> viterbi</span><span class="x">(</span><span class="n">hmm</span><span class="x">,</span> <span class="n">x</span><span class="x">,</span> <span class="n">π0</span><span class="x">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">x</span><span class="x">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">π0</span><span class="x">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Int64</span><span class="x">,</span><span class="mi">1</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">)</span>
+    <span class="n">logδ</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Float64</span><span class="x">,</span><span class="mi">2</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">,</span> <span class="n">K</span><span class="x">)</span>
+    <span class="n">α</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Int64</span><span class="x">,</span><span class="mi">2</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">,</span> <span class="n">K</span><span class="x">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">transition</span><span class="x">(</span><span class="n">hmm</span><span class="x">)</span>
+    <span class="c"># forwards</span>
+    <span class="n">ϕ</span> <span class="o">=</span> <span class="n">observation</span><span class="x">(</span><span class="n">hmm</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="mi">1</span><span class="x">])</span>
+    <span class="n">logδ</span><span class="x">[</span><span class="mi">1</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="x">(</span><span class="n">π0</span> <span class="o">.*</span> <span class="n">ϕ</span><span class="x">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">2</span><span class="o">:</span><span class="n">T</span>
+        <span class="n">ϕ</span> <span class="o">=</span> <span class="n">observation</span><span class="x">(</span><span class="n">hmm</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="n">t</span><span class="x">])</span>
+        <span class="c"># q = A .* (δ[t - 1, :] * ϕ')  - REPLACE w/ LOG (FASTER + NO UNDERFLOW)</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="x">(</span><span class="n">A</span><span class="x">)</span> <span class="o">.+</span> <span class="x">(</span><span class="n">logδ</span><span class="x">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">.+</span> <span class="n">log</span><span class="o">.</span><span class="x">(</span><span class="n">ϕ</span><span class="x">)</span><span class="err">'</span><span class="x">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">argmax</span><span class="x">(</span><span class="n">q</span><span class="x">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">1</span><span class="x">)</span>
+        <span class="n">logδ</span><span class="x">[</span><span class="n">t</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">=</span> <span class="n">q</span><span class="x">[</span><span class="n">a</span><span class="x">]</span>
+        <span class="n">α</span><span class="x">[</span><span class="n">t</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">=</span> <span class="n">map</span><span class="x">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">I</span><span class="x">[</span><span class="mi">1</span><span class="x">]</span> <span class="x">,</span><span class="n">a</span><span class="x">)</span>
+    <span class="k">end</span>
+    <span class="c"># Backwards: z[t] = a[t + 1, z[t + 1]] for T - 1, ..., 1</span>
+    <span class="n">z</span><span class="x">[</span><span class="n">T</span><span class="x">]</span> <span class="o">=</span> <span class="n">argmax</span><span class="x">(</span><span class="n">logδ</span><span class="x">[</span><span class="n">T</span><span class="x">,</span> <span class="o">:</span><span class="x">])</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">:</span><span class="x">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="x">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">T</span> <span class="o">-</span> <span class="n">i</span>
+        <span class="n">println</span><span class="x">(</span><span class="s">"t=</span><span class="si">$</span><span class="s">t, z[t+1] = </span><span class="si">$</span><span class="s">(z[t + 1])"</span><span class="x">)</span>
+        <span class="n">z</span><span class="x">[</span><span class="n">t</span><span class="x">]</span> <span class="o">=</span> <span class="n">α</span><span class="x">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="x">,</span> <span class="n">z</span><span class="x">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="x">]]</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">z</span><span class="x">,</span> <span class="n">α</span><span class="x">,</span> <span class="n">logδ</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="example-sneaky-casino">Example: Sneaky Casino</h3>
+<h3 id="example-boom-bust-cycle-1">Example: Boom-Bust Cycle</h3>
+
+<h2 id="learning">Learning</h2>
+<p>Inference assumes that we already know the parameters of the model. For example, is a discrete observation model, it assumes that we know the transition probabilities <script type="math/tex">P</script> as well as the observation matrix <script type="math/tex">B</script>. In some settings, these might be reasonable assumptions. But, in general, we will not know these values, and will instead need to <em>learn</em> them from the data.</p>
+
+<p>Learning for hidden Markov models is complicated by the fact that the likelihood of data depends on the hidden state variable. These variables are effectively additional parameters, and their number of scales with the number of observations. Therefore, learning amounts to large-scale optimization.</p>
+
+<p>Fortunately, the structure of the hidden Markov model permits a clever approach to optimization known as expectation-maximization. The key to this approach is to recognize that <em>if</em> we know the parameters, then inference provides an exact solution to the optimal latent variables. Furthermore, given beliefs about the latent variables, we can easily maximize likelihood with respect to the parameters. Expectation-maximization works by alternating between these inference and maximization steps, which turns out to force parameter estimates towards their likelihood-maximizing values.</p>
+
+<p>Formally,…</p>
+
+<!-- Baum-Welch Algorithm -->
+<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+</code></pre></div></div>
+
+<h3 id="example-sneaky-casino-1">Example: Sneaky Casino</h3>
+
+<h3 id="example-boom-bust-cycle-2">Example: Boom-Bust Cycle</h3>
+
+<p>Hidden Markov models are the simplest for of dynamic probabilistic model that you might think of. There are all sorts of extensions and complications that we might add to the model, for example, adding a “forcing” variable to observations, or permitting autocorrelated observations. You might also think about allowing the hidden variable to have a continuous distribution. We’ll look at all of these topics in future posts.</p>
+
+
+        </article>
+    </div>
+
+    <div style="position: absolute; width: 200px; top: 0px; left: 860px;">
+        <div uk-sticky="offset: 260">
+            <ul class="uk-nav uk-nav-default uk-nav-parent-icon tm-nav" uk-scrollspy-nav="closest: li; scroll: true; offset: 100">
+                
+            </ul>
+        </div>
+    </div>
+
+    <div id="disqus_thread" class="uk-margin-large-top"></div>
+    <script>
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        /*
+        var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://katabaticwindblog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+
+        </div>
+
+        <div class="uk-section uk-section-xsmall tm-footer">
+    <div class="uk-container uk-container-small uk-position-relative">
+        <ul class="uk-navbar-nav uk-align-center">
+            <li>
+                <a id="footer-url" href="#">cswaney.github.io</a>
+            </li>
+            <!-- <li>
+                <p class="uk-text-center uk-text-small">Created with <a href="https://getuikit.com" uk-icon="icon: uikit; ratio: 1.0"></a></p>
+            </li> -->
+        </ul>
+    </div>
+</div>
+
+
+        <!-- convert MathJax to KaTex -->
+        <script>
+          $("script[type='math/tex']").replaceWith(function() {
+              var tex = $(this).text();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: false});
+          });
+
+          $("script[type='math/tex; mode=display']").replaceWith(function() {
+              var tex = $(this).html();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: true});
+          });
+        </script>
+
+    </body>
+
+</html>

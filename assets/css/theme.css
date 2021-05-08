@@ -93,7 +93,8 @@ strong {
  background:#f8f8f8
 }
 em {
- color:#f0506e
+ /* color:#f0506e */
+ color: #666;
 }
 ins {
  background:#ffd;
@@ -134,6 +135,8 @@ video {
 canvas,
 img,
 video {
+    display: block;
+    margin: 0 auto;
  max-width:100%;
  height:auto;
  box-sizing:border-box
@@ -2137,6 +2140,7 @@ select.uk-form-width-xsmall {
  margin-top:70px
 }
 .uk-article-title {
+ font-family: 'Fjalla One', sans-serif;
  font-size:32.3px;
  line-height:1.2
 }
@@ -9601,7 +9605,7 @@ iframe.uk-cover {
   page-break-inside:avoid
  }
  img {
-  max-width:100% !important
+    max-width:100% !important
  }
  @page {
   margin:.5cm

@@ -84,21 +84,73 @@
     <div>
         <article class="uk-article uk-margin-large-top">
 
-            <!-- <h1 class="uk-article-title"><a class="uk-link-reset" href="">The Linked List Cycle Problem</a></h1> -->
-            <h1 class="uk-article-title">The Linked List Cycle Problem</h1>
+            <!-- <h1 class="uk-article-title"><a class="uk-link-reset" href="">How I Made This Website</a></h1> -->
+            <h1 class="uk-article-title">How I Made This Website</h1>
 
-            <!-- <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Tuesday, September 17, 2019</a></p> -->
-            <p class="uk-article-meta tm-article-meta">Tuesday, September 17, 2019</p>
+            <!-- <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Saturday, February 13, 2021</a></p> -->
+            <p class="uk-article-meta tm-article-meta">Saturday, February 13, 2021</p>
 
             <!-- tags... -->
 
-            <p>I’ve been studying basic computer science concepts recently because I don’t have a “traditional” programming background, but people like to ask these types of questions at interviews for some reason (I don’t exactly understand why). In any case, some of the practice problems are kind of fun, like the one I’m about to describe concerning linked lists. First, what is a linked list? It’s merely a collection of objects (usually called “nodes”) in which each object holds a value and a pointer to one of the other objects. Linked lists are useful for implementing stacks and queues because it is easy to remove objects from the beginning or end of a linked list. (On the other hand, they aren’t too useful as iterable objects due to the way the memory of the nodes is laid out). However, a linked list could contain a cycle in which the “last” object points back to an object that came before it. The question is simply how to detect whether a linked list contains such a cycle assuming that you’ve been told which node is “first” in the list.</p>
+            <!-- Jekyll -->
+<p>Follow the instructions on the Jekyll website to install Jekyll and its dependencies. I also recommended that you install <code class="language-plaintext highlighter-rouge">rbenv</code> to manage Ruby environments (this will make it easier to get a hold of and use a version of Ruby that in compatible with Jekyll, which may not work perfectly with the lastest Ruby release).</p>
 
-<p>There is an obvious answer to this question: iterate through the linked list, keeping track of each node you see in a dictionary and return <code class="language-plaintext highlighter-rouge">true</code> if you find a node that points back to a node in your dictionary. This solution is <script type="math/tex">\mathcal{O}(n)</script> in time and space. It turns out, however, that there is a simple solution that reduces the space complexity to <script type="math/tex">\mathcal{O}(1)</script>, which I’ll now explain.</p>
+<p>The other things to do are:</p>
 
-<p>Let’s imagine two people “walking” through the linked list. The first person walks slowly, moving one node each step; the second person walks twice as fast (two nodes per iteration). We start our walkers out at the first node and pause each step to check each walker’s position. Now our first claim is that the walkers will meet at some point in time if and only if the linked list contains a cycle. Intuitively, if the walkers enter a cycle, we know that the faster walker will eventually catch up with the slower walker. Otherwise, the speedier walker will always remain ahead of his leisurely partner, so this method will return <code class="language-plaintext highlighter-rouge">true</code> if and only the linked list contains a cycle. But how can we be sure that the faster walker will catch the slower walker in <script type="math/tex">\mathcal{O}(n)</script> time?</p>
+<ul>
+  <li>Create a new Jekyll project using the default settings</li>
+  <li>Custom the project by adding <code class="language-plaintext highlighter-rouge">_includes</code>, <code class="language-plaintext highlighter-rouge">_layouts</code>, and <code class="language-plaintext highlighter-rouge">index.html</code>.</li>
+  <li>Add support for LaTeX.</li>
+</ul>
 
-<p>In fact, we can calculate <em>exactly</em> when the walkers will meet. The reason boils down to the following observation: a person starting <script type="math/tex">k</script> steps behind but walking twice as fast as another person will catch the slower person in precisely <script type="math/tex">k</script> steps! Now consider the moment when our slow walker has just arrived at the beginning of a cycle that contains <script type="math/tex">k</script> nodes. Wherever our fast walker is, we can be sure that it is at most <script type="math/tex">k</script> nodes ahead. In terms of catching up to the slow walker, that means the fast walker is effectively at most <script type="math/tex">k</script> nodes <em>behind</em>. But that means that she will catch the slow walker in <script type="math/tex">k</script> steps. So not only will our walkers cross, but they will in fact land on the same node after some number of steps, and that will always happen within at worst <script type="math/tex">n</script> iterations.</p>
+<p>To add support for LaTeX, first modify the <code class="language-plaintext highlighter-rouge">_config.yml</code> file to use <code class="language-plaintext highlighter-rouge">kramdown</code> with <code class="language-plaintext highlighter-rouge">mathjax</code>:</p>
+
+<div class="language-yml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Build settings</span>
+<span class="na">markdown</span><span class="pi">:</span> <span class="s">kramdown</span>
+<span class="na">kramdown</span><span class="pi">:</span>
+  <span class="na">math_engine</span><span class="pi">:</span> <span class="s">mathjax</span>
+<span class="na">theme</span><span class="pi">:</span> <span class="s">minima</span>
+<span class="na">plugins</span><span class="pi">:</span>
+  <span class="pi">-</span> <span class="s">jekyll-feed</span>
+</code></pre></div></div>
+
+<p>Next, in the projects <code class="language-plaintext highlighter-rouge">default.html</code>, include <code class="language-plaintext highlighter-rouge">KaTeX</code> in the <code class="language-plaintext highlighter-rouge">head</code>:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"//code.jquery.com/jquery-1.11.1.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<!-- UIKit -->
+<p>I really like UIKit. Not only did I use UIKit to create the layout for the website, but I also cloned quite a bit of the styling from the UIKit website. To include UIKit for layout, all you need to do is download the core JavaScript and CSS modules from the UIKit website and throw them in your source files. Specifically, you’ll want to add:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/assets/css/uikit.css
+/assets/css/uikit.min.css
+/assets/js/uikit.js
+/assets/js/uikit.min.js
+/assets/js/uikit-icons.js
+/assets/js/uikit-icons.min.js
+</code></pre></div></div>
+
+<p>In order to clone the UIKit website styling, first get a copy of the CSS:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> ./assets/css
+wget ... theme.css
+</code></pre></div></div>
+
+<p>Then, you’ll want to get a copy of the fonts used by the UIKit website:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir ./assets/fonts
+cd ./assets/fonts
+wget ... montserrat-600.woff
+...
+</code></pre></div></div>
+
+<!-- Syntax Highlighting -->
+<p>The Jekyll setup includes an HTML syntax highliger, <code class="language-plaintext highlighter-rouge">Rouge</code>, which tags <code class="language-plaintext highlighter-rouge">pre</code> components with the <code class="language-plaintext highlighter-rouge">highlighter-rouge</code> class, and adds additional tags to text within <code class="language-plaintext highlighter-rouge">pre</code> components. In order to actually get syntax highlighting, you’ll need to add some additional styling. You can create your own CSS, but <code class="language-plaintext highlighter-rouge">Rouge</code> includes a commmand-line tool to generate themed CSS. For example, to create a CSS file with the default <code class="language-plaintext highlighter-rouge">Rougify</code> theme, run</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rougify style base16 <span class="o">&gt;</span> /assets/css/syntax.css
+</code></pre></div></div>
 
 
         </article>
