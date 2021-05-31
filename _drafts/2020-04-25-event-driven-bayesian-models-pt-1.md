@@ -54,9 +54,6 @@ $$ z_i \sim \mathcal{N} (0, \tau I), $$
 
 $$ \tau \sim \text{IGa}(1, 1).$$ -->
 
-
-
-
 <!-- ## Outline
 
 I. Poisson Processes

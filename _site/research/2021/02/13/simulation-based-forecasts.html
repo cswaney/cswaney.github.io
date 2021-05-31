@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>colinswaney</title>
+        <link rel="icon" type="image/png" href="/favicon.ico">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- UIKit -->
+        <link rel="stylesheet" href="/assets/css/uikit.min.css"/>
+        <link rel="stylesheet" href="/assets/css/theme.css"/>
+        <script src="/assets/js/uikit.min.js"></script>
+        <script src="/assets/js/uikit-icons.min.js"></script>
+        <!-- Prism -->
+        <!-- <link rel="stylesheet" href="/assets/css/prism.css"/>
+        <script src="/assets/js/prism.js"></script> -->
+        <!-- Highlight Rouge -->
+        <!-- <link rel="stylesheet" href="/assets/css/syntax.css"/> -->
+        <link rel="stylesheet" href="/assets/css/base16.css"/>
+        <!-- Highlightjs -->
+        <!-- <link rel="stylesheet" href="/assets/highlight/default.css"/>
+        <script src="/assets/highlight/highlight.pack.js"></script> -->
+        <!-- GoogleFonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
+        <!-- KaTeX -->
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.js"></script>
+    </head>
+
+    <body class="uk-background uk-height-viewport">
+
+        <div class="tm-navbar-container" uk-sticky="animation: uk-animation-slide-top; sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky; cls-inactive: uk-navbar-transparent; top: 300">
+
+    <nav class="uk-navbar-container" uk-navbar style="position: relative; z-index: 980;">
+
+        <div class="uk-navbar-center">
+
+            <div class="uk-navbar-center-left">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        
+                            <li class="uk-active"><a class="tm-navbar-item" href="/index.html">Blog</a></li>
+                        
+                    </ul>
+                </div>
+            </div>
+
+            <a class="uk-navbar-item uk-logo" href="#">
+                <img uk-svg src="/assets/img/wave.png" style="width: 56px; height: 56px;">
+            </a>
+
+            <div class="uk-navbar-center-right">
+                <div>
+                    <ul class="uk-navbar-nav">
+                        
+                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
+                        
+                        <!-- <li>
+                            <a href="https://github.com/cswaney" uk-icon="icon: github; ratio: 1.5"></a>
+                        </li>
+                        <li>
+                            <a href="https://twitter.com/SwaneyColin?lang=en" uk-icon="icon: twitter; ratio: 1.5"></a>
+                        </li> -->
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+    </nav>
+
+</div>
+
+
+        <div class="uk-section uk-section-default uk-section-small uk-padding-remove-top uk-margin-small-top">
+        <!-- <div class="uk-section uk-section-default uk-section-small uk-margin-large-top"> -->
+
+                <div class="uk-container uk-container-small uk-position-relative uk-height-viewport">
+
+    <div class="uk-margin-large-bottom">
+        <article class="uk-article uk-margin-large-top">
+
+            <!-- <h1 class="uk-article-title"><a class="uk-link-reset" href="">Simulation-Based Forecasts</a></h1> -->
+            <h1 class="uk-article-title">Simulation-Based Forecasts</h1>
+
+            <!-- <p class="uk-article-meta tm-article-meta">Written by <a href="#">Colin Swaney</a> on Saturday, February 13, 2021</a></p> -->
+            <p class="uk-article-meta tm-article-meta">Saturday, February 13, 2021</p>
+
+            <!-- tags... -->
+
+            <h2 id="bayesian-inference">Bayesian Inference</h2>
+<ul>
+  <li>You can do everything with this but…</li>
+  <li>Generally simplify the model to apply inference methods…</li>
+  <li>But new flexibility from Turing.jl, etc.?</li>
+</ul>
+
+<h2 id="simulation-based-inference">Simulation-Based Inference</h2>
+<ul>
+  <li>
+    <p>What you can do:</p>
+  </li>
+  <li>
+    <p>What you can’t (easily) do:</p>
+    <ul>
+      <li>Parameter inference
+        <ul>
+          <li>No Posterior distribution (can Turing.jl, etc. do this?)</li>
+          <li>Maybe asymptotic MLE distribution?</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="example-state-space-model">Example: State-Space Model</h2>
+<p>Here is an interesting example. Interesting because it demonstrates that relatively complex statistical methodology can be approximated by simpler, but highly detailed, simulation model, and vice-a-versa.</p>
+
+<p>The statistical model we have in mind is a state-space model, but let’s give it some interpretation for fun. So imagine we are trying to model election outcomes based soley on polling data. Polls are imperfect measurements of the true percent of voters that will vote for a given candidate at a given time. That percent can and will change over time. Our goal is to forecast what the percent will be when the election arrives.</p>
+
+<h3 id="classic-approach">Classic Approach</h3>
+<p>Let’s write down a model.</p>
+
+<p>First, the true percent of voters that will vote for a given candidate at any time (what we’re modeling) is a time series. We could give it any dynamics we want, but let’s say for simplicity that it just bounces around with normal errors:</p>
+
+<script type="math/tex; mode=display">\rho_t = \rho_{t - 1} + \epsilon_t, \ \  \epsilon_t \sim N(0, \sigma_p^2)</script>
+
+<p>Next, polls are imperfect observations of the true probability. In reality, we would observe <em>many</em> polls, all of which represent imperfect information about the true percent of voters. But let’s simplify life by assuming we have access to a consolidated poll. It varies around the true percent of voters with normal errors as well:</p>
+
+<script type="math/tex; mode=display">s_t = \rho_t + \eta_t, \ \ \eta_t \sim N(0, \sigma_s^2)</script>
+
+<p>Now our goal is to forecast the percent of voters on election day, <script type="math/tex">\rho_T</script>. With our model, the current value of <script type="math/tex">\rho_t</script> is also the most likely value on election day, but we’re interesting in a distribution of <script type="math/tex">\rho_T</script>. If we <em>know</em> what the current percent is, then all we need to do is simulate <script type="math/tex">\rho_t</script> forward to see what that distribution is. So we really only need to estimate the current percent.</p>
+
+<p>This model is actually a classical model. Formally, we want to estimate the percent of voters conditional on all polling data observed up to and including the current time, <script type="math/tex">p(\rho_t \vert s_{1:t})</script>. There is a standard technique for estimating this value known as Kalman filtering. The key idea to is to start with beliefs about the value of <script type="math/tex">\rho_t</script>, and then iterative update those beliefs as information is revealed through <script type="math/tex">s_t</script>.</p>
+
+<p>Working in this manner, beliefs at any time <script type="math/tex">t</script> incorporate all information up to that time and <em>adjust for the staleness of infomration</em>. That is, our current estimate of accounts for the fact that we saw <script type="math/tex">s_{t - \Delta t}</script>, but if <script type="math/tex">\Delta t</script> is large, then its impact on <script type="math/tex">\hat{p}_t</script> is small.</p>
+
+<h3 id="simulation-approach">Simulation Approach</h3>
+<ul>
+  <li>There isn’t much to do here… all the (initial) work goes to pooling information from polls intelligently.</li>
+  <li>Then you can simulate past information…</li>
+  <li>Then you can simulate future evolution…</li>
+  <li>Add any details you like really…</li>
+</ul>
+
+<p>As an slight aside, the standard deviation of the the forecast scales with the square root of the days between now and the election. For example, if the election is 100 days out, then the standard deviation of <script type="math/tex">\rho_T</script> is ten times that of <script type="math/tex">\rho_t</script>. As a result, the effect of new information of our <em>forecast</em> is considerable smaller than its effect on our current estimate<sup id="fnref:1"><a href="#fn:1" class="footnote">1</a></sup>.</p>
+
+<p><img src="/assets/img/forecast.pdf" alt="Forecast" /></p>
+
+<p>Practical challenges to think about:</p>
+<ol>
+  <li>How would we actually handle multiple polls?</li>
+  <li>How would we deal with polls arriving on different days?</li>
+</ol>
+<div class="footnotes">
+  <ol>
+    <li id="fn:1">
+      <p>This seems to be Naseem Talib’s critique of the FiveThirtyEight prediction model. <a href="#fnref:1" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+
+        </article>
+    </div>
+
+    <div style="position: absolute; width: 200px; top: 0px; left: 860px;">
+        <div uk-sticky="offset: 260">
+            <ul class="uk-nav uk-nav-default uk-nav-parent-icon tm-nav" uk-scrollspy-nav="closest: li; scroll: true; offset: 100">
+                
+            </ul>
+        </div>
+    </div>
+
+    <div id="disqus_thread" class="uk-margin-large-top"></div>
+    <script>
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        /*
+        var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() { // DON'T EDIT BELOW THIS LINE
+            var d = document, s = d.createElement('script');
+            s.src = 'https://katabaticwindblog.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+</div>
+
+
+        </div>
+
+        <div class="uk-section uk-section-xsmall tm-footer">
+    <div class="uk-container uk-container-small uk-position-relative">
+        <ul class="uk-navbar-nav uk-align-center">
+            <li>
+                <a id="footer-url" href="#">cswaney.github.io</a>
+            </li>
+            <!-- <li>
+                <p class="uk-text-center uk-text-small">Created with <a href="https://getuikit.com" uk-icon="icon: uikit; ratio: 1.0"></a></p>
+            </li> -->
+        </ul>
+    </div>
+</div>
+
+
+        <!-- convert MathJax to KaTex -->
+        <script>
+          $("script[type='math/tex']").replaceWith(function() {
+              var tex = $(this).text();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: false});
+          });
+
+          $("script[type='math/tex; mode=display']").replaceWith(function() {
+              var tex = $(this).html();
+              return katex.renderToString(tex.replace(/%.*/g, ''), {displayMode: true});
+          });
+        </script>
+
+    </body>
+
+</html>

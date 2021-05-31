@@ -14,29 +14,28 @@
                         {% else %}
                             <li><a class="tm-navbar-item" href="/index.html">Blog</a></li>
                         {% endif %}
-
-                        {% if page.url == "/info.html" %}
-                            <li class="uk-active"><a class="tm-navbar-item" href="#">Info</a></li>
-                        {% else %}
-                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
-                        {% endif %}
                     </ul>
                 </div>
             </div>
 
             <a class="uk-navbar-item uk-logo" href="#">
-                <img uk-svg src="/assets/img/penguin.svg" style="width:56px; height: 56px;">
+                <img uk-svg src="/assets/img/wave.png" style="width: 56px; height: 56px;">
             </a>
 
             <div class="uk-navbar-center-right">
                 <div>
                     <ul class="uk-navbar-nav">
-                        <li>
+                        {% if page.url == "/info.html" %}
+                            <li class="uk-active"><a class="tm-navbar-item" href="#">Info</a></li>
+                        {% else %}
+                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
+                        {% endif %}
+                        <!-- <li>
                             <a href="https://github.com/cswaney" uk-icon="icon: github; ratio: 1.5"></a>
                         </li>
                         <li>
                             <a href="https://twitter.com/SwaneyColin?lang=en" uk-icon="icon: twitter; ratio: 1.5"></a>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>

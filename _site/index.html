@@ -2,21 +2,29 @@
 <html>
 
     <head>
-        <title>Blog</title>
+        <title>colinswaney</title>
+        <link rel="icon" type="image/png" href="/favicon.ico">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- theme -->
-        <link rel="stylesheet" href="/assets/css/prism.css"/>
         <!-- UIKit -->
         <link rel="stylesheet" href="/assets/css/uikit.min.css"/>
+        <link rel="stylesheet" href="/assets/css/theme.css"/>
         <script src="/assets/js/uikit.min.js"></script>
         <script src="/assets/js/uikit-icons.min.js"></script>
         <!-- Prism -->
-        <link rel="stylesheet" href="/assets/css/theme.css"/>
-        <script src="/assets/js/prism.js"></script>
+        <!-- <link rel="stylesheet" href="/assets/css/prism.css"/>
+        <script src="/assets/js/prism.js"></script> -->
+        <!-- Highlight Rouge -->
+        <!-- <link rel="stylesheet" href="/assets/css/syntax.css"/> -->
+        <link rel="stylesheet" href="/assets/css/base16.css"/>
+        <!-- Highlightjs -->
+        <!-- <link rel="stylesheet" href="/assets/highlight/default.css"/>
+        <script src="/assets/highlight/highlight.pack.js"></script> -->
         <!-- GoogleFonts -->
+        <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css?family=Lora" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Fjalla+One" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
         <!-- KaTeX -->
         <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.10.2/dist/katex.min.css">
@@ -37,27 +45,26 @@
                         
                             <li class="uk-active"><a class="tm-navbar-item" href="/index.html">Blog</a></li>
                         
-
-                        
-                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
-                        
                     </ul>
                 </div>
             </div>
 
             <a class="uk-navbar-item uk-logo" href="#">
-                <img uk-svg src="/assets/img/penguin.svg" style="width:56px; height: 56px;">
+                <img uk-svg src="/assets/img/wave.png" style="width: 56px; height: 56px;">
             </a>
 
             <div class="uk-navbar-center-right">
                 <div>
                     <ul class="uk-navbar-nav">
-                        <li>
+                        
+                            <li><a class="tm-navbar-item" href="/info.html">Info</a></li>
+                        
+                        <!-- <li>
                             <a href="https://github.com/cswaney" uk-icon="icon: github; ratio: 1.5"></a>
                         </li>
                         <li>
                             <a href="https://twitter.com/SwaneyColin?lang=en" uk-icon="icon: twitter; ratio: 1.5"></a>
-                        </li>
+                        </li> -->
                     </ul>
                 </div>
             </div>
@@ -72,7 +79,7 @@
         <div class="uk-section uk-section-default uk-section-small uk-padding-remove-top uk-margin-small-top">
         <!-- <div class="uk-section uk-section-default uk-section-small uk-margin-large-top"> -->
 
-                <div class="uk-container uk-container-small uk-position-relative">
+                <div class="uk-container uk-container-small uk-position-relative uk-height-viewport">
 
     <div class="uk-margin-large-bottom" uk-filter="target: .js-filter">
 
@@ -95,6 +102,69 @@
         </div>
 
         <ul class="js-filter uk-margin-large-top" uk-grid>
+            
+            <li id="Simulation-Based Forecasts" post-date="2021-02-13 00:00:00 -0500" post-category="research">
+                <article class="uk-article uk-width-1-1">
+
+                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/research/2021/02/13/simulation-based-forecasts.html"> Simulation-Based Forecasts</a></h1>
+
+                    <p class="uk-article-meta tm-article-meta">Posted on Saturday, February 13, 2021</p>
+
+                    <p class="uk-text-lead tm-text-lead"><p></p></p>
+
+                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
+                        <div>
+                            <a class="uk-button uk-button-text" href="/research/2021/02/13/simulation-based-forecasts.html">Read more</a>
+                        </div>
+                        <!-- <div>
+                            <a class="uk-button uk-button-text" href="#">Comments</a>
+                        </div> -->
+                    </div>
+
+                </article>
+            </li>
+            
+            <li id="How I Made This Website" post-date="2021-02-13 00:00:00 -0500" post-category="development">
+                <article class="uk-article uk-width-1-1">
+
+                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/development/2021/02/13/how-i-made-this-website.html"> How I Made This Website</a></h1>
+
+                    <p class="uk-article-meta tm-article-meta">Posted on Saturday, February 13, 2021</p>
+
+                    <p class="uk-text-lead tm-text-lead"><p></p></p>
+
+                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
+                        <div>
+                            <a class="uk-button uk-button-text" href="/development/2021/02/13/how-i-made-this-website.html">Read more</a>
+                        </div>
+                        <!-- <div>
+                            <a class="uk-button uk-button-text" href="#">Comments</a>
+                        </div> -->
+                    </div>
+
+                </article>
+            </li>
+            
+            <li id="Hidden Markov Models" post-date="2021-02-13 00:00:00 -0500" post-category="research">
+                <article class="uk-article uk-width-1-1">
+
+                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/research/2021/02/13/hidden-markov-models.html"> Hidden Markov Models</a></h1>
+
+                    <p class="uk-article-meta tm-article-meta">Posted on Saturday, February 13, 2021</p>
+
+                    <p class="uk-text-lead tm-text-lead"><p>A brief summary of hidden Markov models, including an explanation of methods for inference and estimation.</p></p>
+
+                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
+                        <div>
+                            <a class="uk-button uk-button-text" href="/research/2021/02/13/hidden-markov-models.html">Read more</a>
+                        </div>
+                        <!-- <div>
+                            <a class="uk-button uk-button-text" href="#">Comments</a>
+                        </div> -->
+                    </div>
+
+                </article>
+            </li>
             
             <li id="Variational Inference" post-date="2020-06-01 00:00:00 -0400" post-category="research">
                 <article class="uk-article uk-width-1-1">
@@ -171,27 +241,6 @@
                     <div class="uk-grid-small uk-child-width-auto" uk-grid>
                         <div>
                             <a class="uk-button uk-button-text" href="/research/2020/04/25/event-driven-bayesian-models-pt-1.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="The Neural Network Ecosystem" post-date="2019-10-03 00:00:00 -0400" post-category="research">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/research/2019/10/03/the-neural-network-ecosystem.html"> The Neural Network Ecosystem</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Thursday, October 3, 2019</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>A high-level description of the types of neural networks now in use and a comparison to the situation in neuroscience where we know of a large number of neuron types.</p></p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/research/2019/10/03/the-neural-network-ecosystem.html">Read more</a>
                         </div>
                         <!-- <div>
                             <a class="uk-button uk-button-text" href="#">Comments</a>
@@ -306,52 +355,6 @@
                 </article>
             </li>
             
-            <li id="Recurrent Neural Networks" post-date="2019-07-05 00:00:00 -0400" post-category="research">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/research/2019/07/05/recurrent-networks.html"> Recurrent Neural Networks</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Friday, July 5, 2019</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>An introduction to recurrent neural networks.</p>
-
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/research/2019/07/05/recurrent-networks.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="Actor-Critic Methods" post-date="2019-07-03 00:00:00 -0400" post-category="research">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/research/2019/07/03/actor-critic-methods.html"> Actor-Critic Methods</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Wednesday, July 3, 2019</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>There are two standard algorithms in reinforcement learning: Q-learning and the policy gradient method. These methods represent orthogonal approaches. Policy gradient methods work on the policy function; Q-learning works on the action-value function. Policy gradient methods use Monte Carlo approximation; Q-learning uses bootstrap updates. And finally, policy gradient methods are low bias, high variance, while Q-learning is a low variance, high bias approach. In statistical learning, there is always some balance of bias and variance that provides the best outcome. Actor-critic methods provide, in some sense, a compromise between Q-learning and policy gradient methods, and can be thought of as a way to balance out the costs and benefits of these approaches.</p>
-
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/research/2019/07/03/actor-critic-methods.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
             <li id="Welcome!" post-date="2019-07-01 00:00:00 -0400" post-category="other">
                 <article class="uk-article uk-width-1-1">
 
@@ -364,161 +367,6 @@
                     <div class="uk-grid-small uk-child-width-auto" uk-grid>
                         <div>
                             <a class="uk-button uk-button-text" href="/other/2019/07/01/welcome.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="Deep-Q Learning" post-date="2019-07-01 00:00:00 -0400" post-category="development">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/research/development/2019/07/01/deep-Q-learning.html"> Deep-Q Learning</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Monday, July 1, 2019</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>An introduction to deep reinforcement learning using Deep-Q learning.</p>
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/research/development/2019/07/01/deep-Q-learning.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="How I Created This Blog" post-date="2019-06-24 00:00:00 -0400" post-category="development">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/development/2019/06/24/how-i-created-this-blog.html"> How I Created This Blog</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Monday, June 24, 2019</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>The modern approach to reinforcement learning (neural network function approximation), taking vanilla policy gradient as a baseline.</p>
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/development/2019/06/24/how-i-created-this-blog.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="Deep Reinforcement Learning" post-date="2019-06-08 00:00:00 -0400" post-category="research">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/research/2019/06/08/deep-reinforcement-learning.html"> Deep Reinforcement Learning</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Saturday, June 8, 2019</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>The modern approach to reinforcement learning (neural network function approximation), taking vanilla policy gradient as a baseline.</p>
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/research/2019/06/08/deep-reinforcement-learning.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="Classical Reinforcement Learning" post-date="2019-06-08 00:00:00 -0400" post-category="research">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/research/2019/06/08/classical-reinforcement-learning.html"> Classical Reinforcement Learning</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Saturday, June 8, 2019</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>“Old school” approaches to reinforcement learning (dynamic programming).</p>
-
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/research/2019/06/08/classical-reinforcement-learning.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="Collecting NCAA Football Data" post-date="2017-02-01 00:00:00 -0500" post-category="development">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/development/2017/02/01/ncaa-football-data.html"> Collecting NCAA Football Data</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Wednesday, February 1, 2017</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>Building a play-by-play dataset to study NCAA football.</p>
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/development/2017/02/01/ncaa-football-data.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="Javascript Order Book Visualization" post-date="2017-02-01 00:00:00 -0500" post-category="development">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/development/2017/02/01/javascript-order-book-visualization.html"> Javascript Order Book Visualization</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Wednesday, February 1, 2017</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>A tutorial on d3.js or Vue.js that demonstrates orderbook visualization.</p>
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/development/2017/02/01/javascript-order-book-visualization.html">Read more</a>
-                        </div>
-                        <!-- <div>
-                            <a class="uk-button uk-button-text" href="#">Comments</a>
-                        </div> -->
-                    </div>
-
-                </article>
-            </li>
-            
-            <li id="Processing ITCH Data" post-date="2017-02-01 00:00:00 -0500" post-category="tutorial">
-                <article class="uk-article uk-width-1-1">
-
-                    <h1 class="uk-article-title tm-article-title"><a class="uk-link-reset" href="/development/research/tutorial/2017/02/01/itch-data-processing.html"> Processing ITCH Data</a></h1>
-
-                    <p class="uk-article-meta tm-article-meta">Posted on Wednesday, February 1, 2017</p>
-
-                    <p class="uk-text-lead tm-text-lead"><p>How I processed Nasdaq’s ITCH data to study limit order book dynamics.</p>
-</p>
-
-                    <div class="uk-grid-small uk-child-width-auto" uk-grid>
-                        <div>
-                            <a class="uk-button uk-button-text" href="/development/research/tutorial/2017/02/01/itch-data-processing.html">Read more</a>
                         </div>
                         <!-- <div>
                             <a class="uk-button uk-button-text" href="#">Comments</a>
@@ -541,7 +389,7 @@
     <div class="uk-container uk-container-small uk-position-relative">
         <ul class="uk-navbar-nav uk-align-center">
             <li>
-                <a href="#">cswaney.github.io</a>
+                <a id="footer-url" href="#">cswaney.github.io</a>
             </li>
             <!-- <li>
                 <p class="uk-text-center uk-text-small">Created with <a href="https://getuikit.com" uk-icon="icon: uikit; ratio: 1.0"></a></p>
