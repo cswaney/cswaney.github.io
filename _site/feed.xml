@@ -1,4 +1,191 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-05-31T10:03:26-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">colinswaney</title><subtitle>A research and development blog.</subtitle><entry><title type="html">Receiver Operating Characteristic (ROC) Curves</title><link href="http://localhost:4000/research/2020/05/08/classification-roc-curves.html" rel="alternate" type="text/html" title="Receiver Operating Characteristic (ROC) Curves" /><published>2020-05-08T00:00:00-04:00</published><updated>2020-05-08T00:00:00-04:00</updated><id>http://localhost:4000/research/2020/05/08/classification-roc-curves</id><content type="html" xml:base="http://localhost:4000/research/2020/05/08/classification-roc-curves.html">&lt;h2 id=&quot;background&quot;&gt;Background&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2021-05-31T10:36:00-04:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">colinswaney</title><subtitle>A research and development blog.</subtitle><entry><title type="html">Hidden Markov Models</title><link href="http://localhost:4000/research/2021/02/13/hidden-markov-models.html" rel="alternate" type="text/html" title="Hidden Markov Models" /><published>2021-02-13T00:00:00-05:00</published><updated>2021-02-13T00:00:00-05:00</updated><id>http://localhost:4000/research/2021/02/13/hidden-markov-models</id><content type="html" xml:base="http://localhost:4000/research/2021/02/13/hidden-markov-models.html">&lt;p&gt;Hidden Markov models are a classic approach to represent time series data using a combination of models. One model represents a hidden state of the world that bounces along in a simple, random fashion. The second model describes the data we observe conditional on the hidden state. Joining these two models permits more complex behavior than either model can achieve on its own.&lt;/p&gt;
+
+&lt;p&gt;These notes summarize methods commonly used for inference and estimation of hidden Markov models. Popular methods are not Bayesian per se (they do not calculate posterior distributions), but they rely on unmistakenly Bayesian ideas. We will closely follow the presentation in [Murphy, 2012], and the interested reader can refer there for additional detail and references.&lt;/p&gt;
+
+&lt;h2 id=&quot;markov-chains&quot;&gt;Markov Chains&lt;/h2&gt;
+&lt;p&gt;As the name suggests, hidden Markov models build upon &lt;em&gt;Markov chains&lt;/em&gt;, which provide a base for time series analysis. Markov chains model sequences of discrete states such that:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;The probability of moving from one state to another is always the same, and&lt;/li&gt;
+  &lt;li&gt;The probability of moving from one state to another only depends on the current state.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;A Markov chain is defined entirely by its transition probabilities, represented by a matrix, &lt;script type=&quot;math/tex&quot;&gt;\mathbf{A}&lt;/script&gt;, where &lt;script type=&quot;math/tex&quot;&gt;a_{i,j} = \mathbf{A}\left[i,j\right]&lt;/script&gt; denotes the probability of transitioning from state &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; to state &lt;script type=&quot;math/tex&quot;&gt;j&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;What if we want to know the probability of transitioning from state &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; to &lt;script type=&quot;math/tex&quot;&gt;j&lt;/script&gt; in exactly &lt;script type=&quot;math/tex&quot;&gt;t&lt;/script&gt; steps? Let’s begin with the case where &lt;script type=&quot;math/tex&quot;&gt;t=2&lt;/script&gt;. If there are &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; possible states, then there are &lt;script type=&quot;math/tex&quot;&gt;k&lt;/script&gt; different ways to arrive at state &lt;script type=&quot;math/tex&quot;&gt;j&lt;/script&gt;: one way going through each of the possible states. To calculate the probability, we need to sum up the probabilities of the possible paths, which is conveniently calculated as &lt;script type=&quot;math/tex&quot;&gt;\mathbf{A}^2&lt;/script&gt;. In fact, this calculation generalizes to any &lt;script type=&quot;math/tex&quot;&gt;t&lt;/script&gt;: the probability of moving from state &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt; to state &lt;script type=&quot;math/tex&quot;&gt;j&lt;/script&gt; in exactly &lt;script type=&quot;math/tex&quot;&gt;t&lt;/script&gt; steps is given by &lt;script type=&quot;math/tex&quot;&gt;\mathbf{A}^t&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;Markov chains possess many more interesting and useful properties, but these are the essential facts we require for now.&lt;/p&gt;
+
+&lt;h2 id=&quot;hidden-markov-models&quot;&gt;Hidden Markov Models&lt;/h2&gt;
+&lt;p&gt;To understand the motivation behind hidden Markov models, let’s start by looking a baseline model. Suppose that we observe some discrete, finite quantity over time—repeated tosses of a coin, for example. We can represent this with a simple model: if &lt;script type=&quot;math/tex&quot;&gt;x_t&lt;/script&gt; represents the outcome of the &lt;script type=&quot;math/tex&quot;&gt;t&lt;/script&gt;-th toss, then the probability that &lt;script type=&quot;math/tex&quot;&gt;x_t = i&lt;/script&gt; is given by &lt;script type=&quot;math/tex&quot;&gt;p_i&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now this is obviously not a terribly interesting model. Although the observations take place over time (and we’ve bothered to index them by time), time plays no meaningful role. To make things more interesting, let’s introduce a Markov chain. Suppose that we now have two coins. One of these coins is fair, while the other is modified such that &lt;script type=&quot;math/tex&quot;&gt;p_1 = \frac{4}{5}&lt;/script&gt; and &lt;script type=&quot;math/tex&quot;&gt;p_2 = \frac{1}{5}&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;We generate observations from these two coins as follows. First, we randomly choose one of the coins to toss. After we toss the coin, we select the next coin to toss according to Markov transition probabilities, &lt;script type=&quot;math/tex&quot;&gt;P&lt;/script&gt;, and repeat. If we know which coin is tossed each period, this experiment is equivalent to two independent trials of the first experiment using two different coins. But what if we don’t know which coin is tossed?&lt;/p&gt;
+
+&lt;p&gt;In that case, our experiment is exactly represented by a hidden Markov model. Hidden Markov models can represent considerably more complex phenomena, but the experiment contains the essential components: an &lt;em&gt;unobserved&lt;/em&gt; Markov chain and an &lt;em&gt;observed&lt;/em&gt; time series.&lt;/p&gt;
+
+&lt;p&gt;Formally, a hidden Markov model consists of a &lt;em&gt;transition model&lt;/em&gt;,&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;z_t \ \vert \ z_{t-1} \sim \mathbf{A}&lt;/script&gt;
+
+&lt;p&gt;and an &lt;em&gt;observation model&lt;/em&gt;,&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;x_t \ \vert \ z_t \sim p(x_t \ \vert \ z_t).&lt;/script&gt;
+
+&lt;p&gt;Typical choices for the observation model include the discrete model from the example above and the Gaussian model,&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;x_t \ \vert \ z_t \sim \mathcal{N}(\mathbf{\mu}_{z_t}, \mathbf{\Sigma}_{z_t}).&lt;/script&gt;
+
+&lt;p&gt;Such models are clearly helpful for representing situations where we believe that unobserved forces play a significant role. In such cases, these models can improve time series forecasts, but they also provide a means of inferring hidden states of the world—an essential part of many scientific inquiries.&lt;/p&gt;
+
+&lt;p&gt;As another example, consider the GDP growth of a fictional country, Kwazistan, subject to a pernicious “boom-bust” growth cycle. Kwazistan experiences periods of expansive growth, followed by periods of low investment, high unemployment, and generally poor economic conditions. We might model Kwazistan’s monthly GDP growth as follows. Let &lt;script type=&quot;math/tex&quot;&gt;z_t&lt;/script&gt; represent economic conditions: &lt;script type=&quot;math/tex&quot;&gt;z_t = 1&lt;/script&gt; if the economy is booming, and &lt;script type=&quot;math/tex&quot;&gt;z_t = 0&lt;/script&gt; if Kwazistan is in a recession. Monthly GDP growth is represented by &lt;script type=&quot;math/tex&quot;&gt;x_t&lt;/script&gt; and is normally distributed conditional on the state of the economy:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;x_t \ \vert \ z_t \sim \mathcal{N}(\mu_{z_t}, \sigma^2_{z_t}),&lt;/script&gt;
+
+&lt;p&gt;where &lt;script type=&quot;math/tex&quot;&gt;\mu_1 &gt; \mu_0&lt;/script&gt;. If the state of the economy is a Markov chain, then this is a standard hidden Markov model with normally distributed observations. The methods described below will allow us to estimate whether Kwazistan is (or was) in a recession or expansion at any point in time.&lt;/p&gt;
+
+&lt;h2 id=&quot;inference&quot;&gt;Inference&lt;/h2&gt;
+&lt;p&gt;Inference is the process of estimating the values of hidden state variables, &lt;script type=&quot;math/tex&quot;&gt;\{z_t\}_{t=1}^T&lt;/script&gt;. There are several ways to go about this, depending on the nature of the problem, but let us start with the basics: &lt;em&gt;filtering&lt;/em&gt; and &lt;em&gt;smoothing&lt;/em&gt;. Simply put, filtering infers the distribution of &lt;script type=&quot;math/tex&quot;&gt;z_t&lt;/script&gt; conditional on information known up to time &lt;script type=&quot;math/tex&quot;&gt;t&lt;/script&gt;, whereas smoothing determines this distribution using all available information. Both methods rely on a process of Bayesian updating. Filtering forms a belief about the current period’s state given yesterday’s state, then updates that belief after observing today’s data. Smoothing follows essentially the same updating procedure but then repeats the procedure in reverse, thereby incorporating future knowledge into estimates.&lt;/p&gt;
+
+&lt;h3 id=&quot;filtering&quot;&gt;Filtering&lt;/h3&gt;
+&lt;p&gt;Our task is to determine beliefs about the current state, &lt;script type=&quot;math/tex&quot;&gt;z_t&lt;/script&gt;, given all observations up until the current time and our beliefs about the previous state, &lt;script type=&quot;math/tex&quot;&gt;z_{t-1}&lt;/script&gt;. We will break the problem into two parts. First, we translate beliefs about the previous state to beliefs about the current state &lt;em&gt;ignoring&lt;/em&gt; the new information provided by the current observation. Next, we update the translated beliefs to incorporate the new observation. Let’s denote our beliefs about state by vector &lt;script type=&quot;math/tex&quot;&gt;a^{(t)}&lt;/script&gt; such that &lt;script type=&quot;math/tex&quot;&gt;a^{(t)}_i = p(z_t = i \ \vert \ x_t, \dots, x_1)&lt;/script&gt;. Given the Markov nature of the state variable, we see that for a transition matrix &lt;script type=&quot;math/tex&quot;&gt;\mathbf{A}&lt;/script&gt;,&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;katex-display&quot;&gt;&lt;script type=&quot;math/tex&quot;&gt;p(z_t = i \ \vert \ z_{t-1}) = \mathbf{A} a^{(t-1)}&lt;/script&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;We treat this probability as a prior and apply Bayesian updating:&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;katex-display&quot;&gt;&lt;script type=&quot;math/tex&quot;&gt;a^{(t)} \propto \psi^{(t)} \odot \mathbf{A} a^{(t-1)},&lt;/script&gt;&lt;/span&gt; &lt;!-- Why isn't this centered? --&gt;&lt;/p&gt;
+
+&lt;p&gt;where &lt;script type=&quot;math/tex&quot;&gt;\psi^{(t)}&lt;/script&gt; is a vector whose &lt;script type=&quot;math/tex&quot;&gt;i&lt;/script&gt;-th element equals &lt;script type=&quot;math/tex&quot;&gt;p(x_t \ \vert \ z_t = i)&lt;/script&gt;.&lt;/p&gt;
+
+&lt;p&gt;The figure below demonstrates the filter algorithm applied to the coin-tossing problem described above. In this example, the probability of remaining in the same state is high—90%—and design the to be easily distinguishable: the first is heads 90% of the time, while the second is tails with 90% probability. The blue dots represent the maximum-likelihood states, according to the filtered probabilities, &lt;script type=&quot;math/tex&quot;&gt;a_t&lt;/script&gt;. This problem is quite simple for the filtering algorithm, as the filtered estimates (blue) closely follow the actual states (red).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/hmm/filter.svg&quot; alt=&quot;Filtering&quot; /&gt;&lt;/p&gt;
+&lt;div class=&quot;uk-text-center&quot;&gt;&lt;b&gt;The Filtering Algorithm&lt;/b&gt; applied to the coin-tossing problem. Red dots represent true states and blue dots represent filtered states, with y-values jittered for easier visualization.&lt;/div&gt;
+
+&lt;h3 id=&quot;smoothing&quot;&gt;Smoothing&lt;/h3&gt;
+&lt;p&gt;In smoothing, our task is to estimate the current state given &lt;em&gt;all&lt;/em&gt; observations, &lt;script type=&quot;math/tex&quot;&gt;\mathbf{x}_{1:T} = x_1, \dots, x_T&lt;/script&gt;. The filter algorithm above tells us how to use all information prior to a given period. The same algorithm, run in reverse, estimates the hidden states using all information &lt;em&gt;following&lt;/em&gt; a given period. In fact, we can solve our problem by simply following the filtering algorithm twice: once forwards and once backward &lt;sup id=&quot;fnref:smoothing&quot;&gt;&lt;a href=&quot;#fn:smoothing&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;However, we can also find a convenient formulation using the following decomposition:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;p(z_t = j \ \vert \ \mathbf{x}_{1:T}) \propto p(z_t = j, \mathbf{x}_{t+1:T} \ \vert \ \mathbf{x}_{1:t}) \propto p(z_t = j \ \vert \ \mathbf{x}_{1:t}) p(\mathbf{x}_{t+1:T} \ \vert \ z_t = j),&lt;/script&gt;
+
+&lt;p&gt;where we’ve used the fact that &lt;script type=&quot;math/tex&quot;&gt;\mathbf{x}_{t+1:T}&lt;/script&gt; is independent of &lt;script type=&quot;math/tex&quot;&gt;\mathbf{x}_{1:t}&lt;/script&gt; conditional on &lt;script type=&quot;math/tex&quot;&gt;z_t&lt;/script&gt; in the final expression. Defining &lt;script type=&quot;math/tex&quot;&gt;b_j^{(t)} = p(\mathbf{x}_{t+1:T} \ \vert \ z_t = j)&lt;/script&gt; and the smoothed marginals by &lt;script type=&quot;math/tex&quot;&gt;\gamma_j^{(t)} = p(z_t \ \vert \ \mathbf{x}_{1:T})&lt;/script&gt;, this gives the convenient expression&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\gamma_j^{(t)} \propto a_j^{(t)} b_j^{(t)}&lt;/script&gt;
+
+&lt;p&gt;This expression is just Bayes rule: it states that our beliefs about &lt;script type=&quot;math/tex&quot;&gt;z_t&lt;/script&gt; are proportional to our “prior” beliefs (having seen data up to time &lt;script type=&quot;math/tex&quot;&gt;t&lt;/script&gt;) times the likelihood of the (new) data. And it turns out that these likelihoods can be easily calculated recursively. Starting from&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;b_j^{(T)} = p(\mathbf{x}_{T+1:T} \ \vert \ z_T = j) = 1&lt;/script&gt;
+
+&lt;p&gt;we have&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;b_i^{(t-1)} = \sum_{j=1}^K p(z_t = j \ \vert \ z_{t-1} = i) p(x_t \ \vert \ z_t = j) p(\mathbf{x}_{t+1:T} \ \vert \ z_t = j),&lt;/script&gt;
+
+&lt;p&gt;Or, more compactly,&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;b_i^{(t-1)} = \sum_{j=1}^K \mathbf{A}_{i,j} \psi_j^{(t)} b_j^{(t)}&lt;/script&gt;
+
+&lt;p&gt;To sum up, smoothing requires two passes through the data—one forwards, one backward—each consisting of recursively multiplying by transition and observation probabilities. Given pre-computed observation probabilities, the same algorithm works for any observation model.&lt;/p&gt;
+
+&lt;p&gt;The figure below demonstrates the smoothing algorithm applied to the coin-tossing example. It appears similar to the figure demonstrating the filtering algorithm on the same simulated data set. However, notice that around the period &lt;script type=&quot;math/tex&quot;&gt;t=35&lt;/script&gt;, the state “unexpectedly” changes. The filtered estimates follow the state, but the smoothed estimates remain constant, demonstrating the source of the smoothing algorithm’s name: it generates estimates that are “smoother” than those of the filtering algorithm. In this case, we can understand why this happens by looking at the data following the change in state, which quickly reverts to the first coin and remains there for the following 30 periods. &lt;em&gt;Ex-post&lt;/em&gt; a change of state appears extremely unlikely, but this information isn’t known to the filtering algorithm&lt;sup id=&quot;fnref:smoothed-vs-filtered&quot;&gt;&lt;a href=&quot;#fn:smoothed-vs-filtered&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/hmm/smooth.svg&quot; alt=&quot;Smoothing&quot; /&gt;&lt;/p&gt;
+&lt;div class=&quot;uk-text-center&quot;&gt;&lt;b&gt;The Smoothing Algorithm&lt;/b&gt; applied to the coin-tossing problem. Red dots represent true states and blue dots represent smoothed states, with y-values jittered for easier visualization.&lt;/div&gt;
+
+&lt;p&gt;It is worthwhile to make a brief observation about the conditional probability of &lt;script type=&quot;math/tex&quot;&gt;z_t&lt;/script&gt;. When we condition on a sequence of observations, information passes forwards to our current location. That is, each &lt;script type=&quot;math/tex&quot;&gt;x_1, \dots, x_{t-1}&lt;/script&gt; contains information relevant to &lt;script type=&quot;math/tex&quot;&gt;z_t&lt;/script&gt;. However, as soon as we resolve uncertainty at any prior hidden state, the observations up to that period become irrelevant. Intuitively, those observations only inform the current state insofar as they affect the now-revealed hidden state. The same is true in reverse, and we can summarize this observation by stating that&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;“All information flows through the states.”&lt;/p&gt;
+  &lt;/blockquote&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This property is a simple example of a more general property of probabilistic graphical models.&lt;/p&gt;
+
+&lt;h3 id=&quot;viterbi&quot;&gt;Viterbi&lt;/h3&gt;
+&lt;p&gt;Instead of figuring out the most likely state at each point in time, we could determine the most likely &lt;em&gt;sequence&lt;/em&gt; of states. States are conditionally dependent (due to the Markov dynamics), and therefore a sequence that maximizes likelihood at each period does not generally maximize overall likelihood. For hidden Markov models, we call this type of inference &lt;em&gt;Viterbi&lt;/em&gt; filtering, and it results in paths &lt;script type=&quot;math/tex&quot;&gt;\{ z_t \}_{t=1}^{T}&lt;/script&gt; that are more “internally consistent” than those generated by the smoothing algorithm.&lt;/p&gt;
+
+&lt;p&gt;Formally, our task is to find&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\mathbf{z}^* = \argmax_{\mathbf{z}_{1:T}} p(\mathbf{z}_{1:t} \ \vert \mathbf{x}_{1:T})&lt;/script&gt;
+
+&lt;p&gt;Again, a recursive strategy presents itself. Let&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\delta_j^{(t)} = \max_{\mathbf{z}_{1:t-1}} p(\mathbf{z}_{1:t-1}, z_t = j \ \vert \ \mathbf{x}_{1:t})&lt;/script&gt;
+
+&lt;p&gt;That is, &lt;script type=&quot;math/tex&quot;&gt;\delta_j^{(t)}&lt;/script&gt; is the (conditional) probability of arriving at state &lt;script type=&quot;math/tex&quot;&gt;j&lt;/script&gt; following a most likely path. If we follow the most likely path up to &lt;script type=&quot;math/tex&quot;&gt;t-1&lt;/script&gt;, then we can continue on a most likely path at time &lt;script type=&quot;math/tex&quot;&gt;t&lt;/script&gt; by maximizing probability over the next step. This insight leads to the formula&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\delta_j^{(t)} \propto \max_i \delta_i^{(t-1)} p(z_{t -1} = i, z_t = j) p(x_t \ \vert \ z_t = j)&lt;/script&gt;
+
+&lt;p&gt;Furthermore, at each state, it allows us to find the the preceeding state along the most likely path:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\hat{z}_j^{(t)} = \argmax_i \delta_i^{(t-1)} p(z_{t -1} = i, z_t = j) p(x_t \ \vert \ z_t = j)&lt;/script&gt;
+
+&lt;p&gt;Following this recursion to time &lt;script type=&quot;math/tex&quot;&gt;T&lt;/script&gt;, we can determine the terminal state along the most likely path,&lt;/p&gt;
+
+&lt;p&gt;&lt;span class=&quot;katex-display&quot;&gt;&lt;script type=&quot;math/tex&quot;&gt;z_T^* = \argmax_i \delta_i^{(T)},&lt;/script&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/p&gt;
+
+&lt;p&gt;after which finding the full path is a simple matter of tracing back using the previous computed predecessors:&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;z_{t}^* = \hat{z}_{z_{t+1}^*}^{(t+1)}&lt;/script&gt;
+
+&lt;p&gt;The only detail left is to determine where to start, but as there is no initial transition, we define&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;\delta_j^{(1)} = p(z_1 = j \ \vert \ x_1) \propto p(z_1 = j)p(x_1 \ \vert \ z_1 = j).&lt;/script&gt;
+
+&lt;p&gt;Finally, note that in practice we can run the recursion on &lt;script type=&quot;math/tex&quot;&gt;\log \delta^{(t)}&lt;/script&gt; to avoid numerical underflow (which works because &lt;script type=&quot;math/tex&quot;&gt;\log \max = \max \log&lt;/script&gt;).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/hmm/viterbi.svg&quot; alt=&quot;Viterbi Coding&quot; /&gt;&lt;/p&gt;
+&lt;div class=&quot;uk-text-center&quot;&gt;&lt;b&gt;The Viterbi Algorithm&lt;/b&gt; applied to the coin-tossing problem. Red dots represent true states and blue dots represent the maximum-likelihood states generated by the Viterbi coding, with y-values jittered for easier visualization.&lt;/div&gt;
+
+&lt;h3 id=&quot;sampling&quot;&gt;Sampling&lt;/h3&gt;
+&lt;p&gt;Another interesting idea is to generate sample paths conditional on the observed data, &lt;script type=&quot;math/tex&quot;&gt;\mathbf{z}_{1:T} \sim p(\mathbf{z}_{1:T} \ \vert \ \mathbf{x}_{1:T})&lt;/script&gt;. A straight-forward method to generate such samples involves running the forward-backward algorithm to calculate smoothed two-period probabilities, &lt;script type=&quot;math/tex&quot;&gt;p(z_t, z_{t+1} \ \vert \ \mathbf{x}_{1:T})&lt;/script&gt;, and then calculating corresponding smoothed transition probabilities&lt;/p&gt;
+
+&lt;script type=&quot;math/tex; mode=display&quot;&gt;p(z_t \ \vert \ z_{t-1}, \mathbf{x}_{1:T}) = \frac{p(z_{t-1}, z_t \ \vert \ \mathbf{x}_{1:T})}{p(z_{t-1} \ \vert \ \mathbf{x}_{1:T})}&lt;/script&gt;
+
+&lt;p&gt;The latter probabilities allow us to generate new samples starting from &lt;script type=&quot;math/tex&quot;&gt;z_1 \sim p(z_1)&lt;/script&gt;. In fact, there are more efficient methods for generating such samples (see [Murphy, 2021] for details).&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/img/hmm/sampling.svg&quot; alt=&quot;Path Sampling&quot; /&gt;&lt;/p&gt;
+&lt;div class=&quot;uk-text-center&quot;&gt;&lt;b&gt;Path Sampling&lt;/b&gt; applied to the coin-tossing problem. Red dots represent true states and blue dots represent sampled states, with y-values jittered for easier visualization. Locations with a higher density of blue dots represent more likely paths condtitional on the observed data.&lt;/div&gt;
+
+&lt;!-- ## Learning
+Inference assumes that we already know the parameters of the model. For example, is a discrete observation model, it assumes that we know the transition probabilities $$P$$ as well as the observation matrix $$B$$. In some settings, these might be reasonable assumptions. But, in general, we will not know these values, and will instead need to *learn* them from the data.
+
+Learning for hidden Markov models is complicated by the fact that the likelihood of data depends on the hidden state variable. These variables are effectively additional parameters, and their number of scales with the number of observations. Therefore, learning amounts to large-scale optimization.
+
+Fortunately, the structure of the hidden Markov model permits a clever approach to optimization known as expectation-maximization. The key to this approach is to recognize that *if* we know the parameters, then inference provides an exact solution to the optimal latent variables. Furthermore, given beliefs about the latent variables, we can easily maximize likelihood with respect to the parameters. Expectation-maximization works by alternating between these inference and maximization steps, which turns out to force parameter estimates towards their likelihood-maximizing values.
+
+Formally,... --&gt;
+
+&lt;!-- Baum-Welch Algorithm --&gt;
+&lt;!-- ```julia
+
+```
+
+### Example: Sneaky Casino
+
+
+### Example: Boom-Bust Cycle
+
+
+Hidden Markov models are the simplest for of dynamic probabilistic model that you might think of. There are all sorts of extensions and complications that we might add to the model, for example, adding a &quot;forcing&quot; variable to observations, or permitting autocorrelated observations. You might also think about allowing the hidden variable to have a continuous distribution. We'll look at all of these topics in future posts. --&gt;
+
+&lt;h3 id=&quot;references&quot;&gt;References&lt;/h3&gt;
+&lt;p&gt;[Murphy, 2012] &lt;em&gt;Machine Learning: a Probabilistic Perspective&lt;/em&gt;, Kevin Murphy.&lt;/p&gt;
+
+&lt;h3 id=&quot;notes&quot;&gt;Notes&lt;/h3&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:smoothing&quot;&gt;
+      &lt;p&gt;Moving backwards in time requires some modification to the algorithm, but works essentially the same. &lt;a href=&quot;#fnref:smoothing&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:smoothed-vs-filtered&quot;&gt;
+      &lt;p&gt;In this case, the filtering algorithm is correct, but obviously the smoothing algorithm gives superior estimates, on average, as it has access to a superior information set. &lt;a href=&quot;#fnref:smoothed-vs-filtered&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;</content><author><name>Colin Swaney</name></author><category term="research" /><category term="machine learning" /><summary type="html">A brief summary of hidden Markov models, including an explanation of methods for inference and estimation.</summary></entry><entry><title type="html">Receiver Operating Characteristic (ROC) Curves</title><link href="http://localhost:4000/research/2020/05/08/classification-roc-curves.html" rel="alternate" type="text/html" title="Receiver Operating Characteristic (ROC) Curves" /><published>2020-05-08T00:00:00-04:00</published><updated>2020-05-08T00:00:00-04:00</updated><id>http://localhost:4000/research/2020/05/08/classification-roc-curves</id><content type="html" xml:base="http://localhost:4000/research/2020/05/08/classification-roc-curves.html">&lt;h2 id=&quot;background&quot;&gt;Background&lt;/h2&gt;
 &lt;p&gt;From time to time, an idea emerges that basically has merit, but is also a bit confused, and persists in large part because it has simply been around long enough that everyone has decided to except it for what it is (which is also a pretty accurate description of many professors, and perhaps quite a few spouses). I think the receiver operating characteristic (ROC) curve falls into this category of ideas. It is useful, and it does make sense, but if someone proposed the idea to me now, I would be skeptical of its utility.&lt;/p&gt;
 
 &lt;p&gt;For background, the ROC curve was first proposed during World War II. Radar technology—pioneered in the U.K., and imported by the U.S.— was used throughout the war to monitor and detect incoming enemy aircraft. Radar “receiver operators” were assigned the task of analyzing radar signals to distinguish enemy aircraft from friendly aircraft (and noise). The ROC curve was developed as a part of “signal detection theory” as a means of assessing the “characteristics” of receiver operator ability.&lt;/p&gt;
