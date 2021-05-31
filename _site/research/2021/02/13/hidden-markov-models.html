@@ -81,7 +81,7 @@
 
                 <div class="uk-container uk-container-small uk-position-relative uk-height-viewport">
 
-    <div>
+    <div class="uk-margin-large-bottom">
         <article class="uk-article uk-margin-large-top">
 
             <!-- <h1 class="uk-article-title"><a class="uk-link-reset" href="">Hidden Markov Models</a></h1> -->
@@ -92,177 +92,194 @@
 
             <!-- tags... -->
 
-            <!-- Add an introduction here. -->
-<p>Hidden Markov models are a classic way to model time series data. The basic idea is to combine two models together. The first model represents a hidden state of the world that moves along in a simple fashion. The second model describes what type of data we expect to observe conditional on the hidden state. Combining these two models together leads to more complicated time series than either model could achieve on its own. The most popular methods for estimating hidden Markov models is not Bayesian (that is, they don’t calculate posterior distributions), but they rely on ideas that are unmistakenly Bayesian.</p>
+            <p>Hidden Markov models are a classic approach to represent time series data using a combination of models. One model represents a hidden state of the world that bounces along in a simple, random fashion. The second model describes the data we observe conditional on the hidden state. Joining these two models permits more complex behavior than either model can achieve on its own.</p>
+
+<p>These notes summarize methods commonly used for inference and estimation of hidden Markov models. Popular methods are not Bayesian per se (they do not calculate posterior distributions), but they rely on unmistakenly Bayesian ideas. We will closely follow the presentation in [Murphy, 2012], and the interested reader can refer there for additional detail and references.</p>
 
 <h2 id="markov-chains">Markov Chains</h2>
-<p>As the name suggests, hidden Markov models rely on something called a <strong>Markov chain</strong>. Markov chains are a simple way to model a sequence of discrete, finite values. The defining characteristics of Markov chains are:</p>
+<p>As the name suggests, hidden Markov models build upon <em>Markov chains</em>, which provide a base for time series analysis. Markov chains model sequences of discrete states such that:</p>
 
 <ol>
   <li>The probability of moving from one state to another is always the same, and</li>
   <li>The probability of moving from one state to another only depends on the current state.</li>
 </ol>
 
-<p>A Markov chain is defined entirely by these probabilities, represented by a matrix, <script type="math/tex">P</script>, where the probability of transitioning from state <script type="math/tex">i</script> to state <script type="math/tex">j</script> is <script type="math/tex">P_{i,j}</script>.</p>
+<p>A Markov chain is defined entirely by its transition probabilities, represented by a matrix, <script type="math/tex">\mathbf{A}</script>, where <script type="math/tex">a_{i,j} = \mathbf{A}\left[i,j\right]</script> denotes the probability of transitioning from state <script type="math/tex">i</script> to state <script type="math/tex">j</script>.</p>
 
-<p>What if we want to know the probability of transitioning from state <script type="math/tex">i</script> to state <script type="math/tex">j</script> in <script type="math/tex">t</script> steps? Let’s take <script type="math/tex">t=2</script>. If there are <script type="math/tex">K</script> possible states, then there are <script type="math/tex">K</script> different ways to arrive in state <script type="math/tex">j</script>: one way going through each of the possible states. To calculate the probability, we need to sum up the probability of each of these <script type="math/tex">K</script> possible paths, which turns to be the <script type="math/tex">P^2_{i,j}</script>. It is easy to show that this calculation generalizes to any <script type="math/tex">t</script>. That is, the probability of moving the state <script type="math/tex">i</script> to state <script type="math/tex">j</script> in exactly <script type="math/tex">t</script> steps is given by <script type="math/tex">P^t_{i,j}</script>.</p>
+<p>What if we want to know the probability of transitioning from state <script type="math/tex">i</script> to <script type="math/tex">j</script> in exactly <script type="math/tex">t</script> steps? Let’s begin with the case where <script type="math/tex">t=2</script>. If there are <script type="math/tex">k</script> possible states, then there are <script type="math/tex">k</script> different ways to arrive at state <script type="math/tex">j</script>: one way going through each of the possible states. To calculate the probability, we need to sum up the probabilities of the possible paths, which is conveniently calculated as <script type="math/tex">\mathbf{A}^2</script>. In fact, this calculation generalizes to any <script type="math/tex">t</script>: the probability of moving from state <script type="math/tex">i</script> to state <script type="math/tex">j</script> in exactly <script type="math/tex">t</script> steps is given by <script type="math/tex">\mathbf{A}^t</script>.</p>
 
-<p>Markov chains have many interesting and useful properties, but we don’t need to concern ourselves with those for now.</p>
+<p>Markov chains possess many more interesting and useful properties, but these are the essential facts we require for now.</p>
 
 <h2 id="hidden-markov-models">Hidden Markov Models</h2>
-<!-- Change the scenario to a coin toss -->
-<p>To understand the motivation behind hidden Markov models, let’s start by considering a baseline model. Say that we observe a some discrete, finite quantity over time—repeated throws of a six-sided die, for example. We can represent this by a simple model: if <script type="math/tex">x_t</script> represents the outcome of the <script type="math/tex">t</script>-th outcome, then the probability that <script type="math/tex">x_t</script> is <script type="math/tex">i</script> is given by <script type="math/tex">p_i</script>.</p>
+<p>To understand the motivation behind hidden Markov models, let’s start by looking a baseline model. Suppose that we observe some discrete, finite quantity over time—repeated tosses of a coin, for example. We can represent this with a simple model: if <script type="math/tex">x_t</script> represents the outcome of the <script type="math/tex">t</script>-th toss, then the probability that <script type="math/tex">x_t = i</script> is given by <script type="math/tex">p_i</script>.</p>
 
-<p>Now this is obviously not a very interesting model. The reason is that even though the observations take place over time, and we’ve bothered to index them by <script type="math/tex">t</script>, time plays no meaningful role. To make things more interesting, let’s introduce a Markov chain. So suppose that we now have <em>two</em> six-sided die. One of these die is fair, so <script type="math/tex">p_i = \frac{1}{6}</script> for all <script type="math/tex">i</script>. The other die has two had the six replaced by one such that <script type="math/tex">p_1 = \frac{2}{6}</script> and <script type="math/tex">p_6 = 0</script>.</p>
+<p>Now this is obviously not a terribly interesting model. Although the observations take place over time (and we’ve bothered to index them by time), time plays no meaningful role. To make things more interesting, let’s introduce a Markov chain. Suppose that we now have two coins. One of these coins is fair, while the other is modified such that <script type="math/tex">p_1 = \frac{4}{5}</script> and <script type="math/tex">p_2 = \frac{1}{5}</script>.</p>
 
-<p>We generate a time series from these two die as follows. First, we choose one of the die to roll randomly. After we roll the die, we select the next die to roll according to Markov transition probabilities, <script type="math/tex">P</script>, and repeat. As long as we know which die is rolled each time period, this experiment is equivalent to two independent trials of the first experiment using two different die.</p>
+<p>We generate observations from these two coins as follows. First, we randomly choose one of the coins to toss. After we toss the coin, we select the next coin to toss according to Markov transition probabilities, <script type="math/tex">P</script>, and repeat. If we know which coin is tossed each period, this experiment is equivalent to two independent trials of the first experiment using two different coins. But what if we don’t know which coin is tossed?</p>
 
-<p>But what if we don’t know which die is rolled?</p>
+<p>In that case, our experiment is exactly represented by a hidden Markov model. Hidden Markov models can represent considerably more complex phenomena, but the experiment contains the essential components: an <em>unobserved</em> Markov chain and an <em>observed</em> time series.</p>
 
-<p>In that case, we have arrived at an experiment that is exactly represented by a hidden Markov model. Hidden Markov models are more general than that, but the essential components are an unobserved Markov chain combined with an observed variable. Formally, a hidden Markov model consists of a <strong>transition model</strong>,</p>
+<p>Formally, a hidden Markov model consists of a <em>transition model</em>,</p>
 
-<script type="math/tex; mode=display">z_t | z_{t-1} \sim P_{i,j}</script>
+<script type="math/tex; mode=display">z_t \ \vert \ z_{t-1} \sim \mathbf{A}</script>
 
-<p>and an <strong>observation model</strong>,</p>
+<p>and an <em>observation model</em>,</p>
 
-<script type="math/tex; mode=display">x_t | z_t \sim P(x_t | z_t).</script>
+<script type="math/tex; mode=display">x_t \ \vert \ z_t \sim p(x_t \ \vert \ z_t).</script>
 
 <p>Typical choices for the observation model include the discrete model from the example above and the Gaussian model,</p>
 
-<script type="math/tex; mode=display">x_t | z_t = i \sim \mathcal{N}(\mu_i, \sigma^2_i).</script>
+<script type="math/tex; mode=display">x_t \ \vert \ z_t \sim \mathcal{N}(\mathbf{\mu}_{z_t}, \mathbf{\Sigma}_{z_t}).</script>
 
-<!-- ![HMM](/assets/img/hmm.pdf) -->
+<p>Such models are clearly helpful for representing situations where we believe that unobserved forces play a significant role. In such cases, these models can improve time series forecasts, but they also provide a means of inferring hidden states of the world—an essential part of many scientific inquiries.</p>
 
-<p>These types of models are clearly useful for representing situation where we believe there are important—but unobserved—forces at play. In such cases, the model can improve time series forcasts (because it is more accurate), but it also provides a method for infering the hidden state. In many situtations, the latter is of greater significance than the prior.</p>
+<p>As another example, consider the GDP growth of a fictional country, Kwazistan, subject to a pernicious “boom-bust” growth cycle. Kwazistan experiences periods of expansive growth, followed by periods of low investment, high unemployment, and generally poor economic conditions. We might model Kwazistan’s monthly GDP growth as follows. Let <script type="math/tex">z_t</script> represent economic conditions: <script type="math/tex">z_t = 1</script> if the economy is booming, and <script type="math/tex">z_t = 0</script> if Kwazistan is in a recession. Monthly GDP growth is represented by <script type="math/tex">x_t</script> and is normally distributed conditional on the state of the economy:</p>
 
-<p><img src="/assets/img/hmm/dishonest-casino.svg" alt="Dishonest Casino" /></p>
+<script type="math/tex; mode=display">x_t \ \vert \ z_t \sim \mathcal{N}(\mu_{z_t}, \sigma^2_{z_t}),</script>
 
-<h3 id="example-boom-bust-cycle">Example: Boom-Bust Cycle</h3>
-<!-- Example of expected return in high-low growth -->
-<p>As another example, consider the GDP growth of fictional country Kwazistan. Imagine that Kwazistan is subject to a pernicious “boom-bust” cycle. That is, it experiences periods of high growth, followed by periods or low growth, etc. We can model Kwazistan’s monthly GDP growth as follows. Let <script type="math/tex">z_t</script> represent economic conditions: <script type="math/tex">z_t = 1</script> if the economy is booming, and <script type="math/tex">z_t = 0</script> if Kwazistan is in a recession. Monthly GDP growth is represented by <script type="math/tex">x_t</script> and is normally distributed conditional on the state of the economy:</p>
-
-<script type="math/tex; mode=display">x_t \sim \mathcal{N}(\mu_{z_t}, \sigma^2_{z_t}),</script>
-
-<p>where <script type="math/tex">\mu_1 > \mu0</script>. If the state of the economy <script type="math/tex">z_t</script> is a Markov chain, then this becomes a standard hidden Markov model with normal observations. The tools below provide a disciplined way of determining whether Kwazistan is in a recession or expansion.</p>
-
-<!-- ![Boom-Bust](/assets/img/hmm/boom-bust.png) -->
+<p>where <script type="math/tex">\mu_1 > \mu_0</script>. If the state of the economy is a Markov chain, then this is a standard hidden Markov model with normally distributed observations. The methods described below will allow us to estimate whether Kwazistan is (or was) in a recession or expansion at any point in time.</p>
 
 <h2 id="inference">Inference</h2>
-<p>Inference is the process of estimating the values of the hidden state variables, <script type="math/tex">{z_t}_{t=1}^T</script>. There are many different ways to go about this, depending on the nature of the problem. The two main methods are <em>filtering</em> and <em>smoothing</em>. Simply put, filtering means to infer the distribution of <script type="math/tex">z_t</script> conditional on information known up to time <script type="math/tex">t</script>, whereas smoothing means to determine the same distribution using all available information. Both methods rely of a process on Bayesian updating. Filtering forms a belief about the current period’s state given yesterday’s state, then updates that belief after observing today’s observation. Smoothing uses the same updates, but then runs updating in reverse.</p>
+<p>Inference is the process of estimating the values of hidden state variables, <script type="math/tex">\{z_t\}_{t=1}^T</script>. There are several ways to go about this, depending on the nature of the problem, but let us start with the basics: <em>filtering</em> and <em>smoothing</em>. Simply put, filtering infers the distribution of <script type="math/tex">z_t</script> conditional on information known up to time <script type="math/tex">t</script>, whereas smoothing determines this distribution using all available information. Both methods rely on a process of Bayesian updating. Filtering forms a belief about the current period’s state given yesterday’s state, then updates that belief after observing today’s data. Smoothing follows essentially the same updating procedure but then repeats the procedure in reverse, thereby incorporating future knowledge into estimates.</p>
 
 <h3 id="filtering">Filtering</h3>
-<p>Filtering is performed via the so-called “forwards algorithm”.</p>
-<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
-Run forwards (filtering) algorithm. Returns filtered probabilities (`a`) and log evidence (`z`).
-"""</span>
-<span class="k">function</span><span class="nf"> forwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">,</span> <span class="n">π0</span><span class="x">)</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">x</span><span class="x">)</span>
-    <span class="n">K</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">π0</span><span class="x">)</span>
-    <span class="n">a</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Float64</span><span class="x">,</span><span class="mi">2</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">,</span> <span class="n">K</span><span class="x">)</span>
-    <span class="n">Z</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Float64</span><span class="x">,</span><span class="mi">1</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">)</span>
-    <span class="n">a</span><span class="x">[</span><span class="mi">1</span><span class="x">,</span> <span class="o">:</span><span class="x">],</span> <span class="n">Z</span><span class="x">[</span><span class="mi">1</span><span class="x">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="x">(</span><span class="n">B</span><span class="x">[</span><span class="o">:</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="mi">1</span><span class="x">]]</span> <span class="o">.*</span> <span class="x">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">π0</span><span class="x">))</span>
-    <span class="k">for</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">2</span><span class="o">:</span><span class="n">T</span>
-        <span class="n">a</span><span class="x">[</span><span class="n">t</span><span class="x">,</span> <span class="o">:</span><span class="x">],</span> <span class="n">Z</span><span class="x">[</span><span class="n">t</span><span class="x">]</span> <span class="o">=</span> <span class="n">normalize</span><span class="x">(</span><span class="n">B</span><span class="x">[</span><span class="o">:</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="n">t</span><span class="x">]]</span> <span class="o">.*</span> <span class="x">(</span><span class="n">A</span> <span class="o">*</span> <span class="n">a</span><span class="x">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="x">,</span> <span class="o">:</span><span class="x">]))</span>
-    <span class="k">end</span>
-    <span class="n">ll</span> <span class="o">=</span> <span class="n">sum</span><span class="x">(</span><span class="n">log</span><span class="o">.</span><span class="x">(</span><span class="n">Z</span><span class="x">))</span>
-    <span class="k">return</span> <span class="n">a</span><span class="x">,</span> <span class="n">ll</span>
-<span class="k">end</span>
+<p>Our task is to determine beliefs about the current state, <script type="math/tex">z_t</script>, given all observations up until the current time and our beliefs about the previous state, <script type="math/tex">z_{t-1}</script>. We will break the problem into two parts. First, we translate beliefs about the previous state to beliefs about the current state <em>ignoring</em> the new information provided by the current observation. Next, we update the translated beliefs to incorporate the new observation. Let’s denote our beliefs about state by vector <script type="math/tex">a^{(t)}</script> such that <script type="math/tex">a^{(t)}_i = p(z_t = i \ \vert \ x_t, \dots, x_1)</script>. Given the Markov nature of the state variable, we see that for a transition matrix <script type="math/tex">\mathbf{A}</script>,</p>
 
-<span class="k">function</span><span class="nf"> normalize</span><span class="x">(</span><span class="n">u</span><span class="x">)</span>
-    <span class="n">Z</span> <span class="o">=</span> <span class="n">sum</span><span class="x">(</span><span class="n">u</span><span class="x">)</span>
-    <span class="n">v</span> <span class="o">=</span> <span class="n">u</span> <span class="o">./</span> <span class="n">Z</span>
-    <span class="k">return</span> <span class="n">v</span><span class="x">,</span> <span class="n">Z</span>
-<span class="k">end</span>
-</code></pre></div></div>
+<p><span class="katex-display"><script type="math/tex">p(z_t = i \ \vert \ z_{t-1}) = \mathbf{A} a^{(t-1)}</script></span></p>
+
+<p>We treat this probability as a prior and apply Bayesian updating:</p>
+
+<p><span class="katex-display"><script type="math/tex">a^{(t)} \propto \psi^{(t)} \odot \mathbf{A} a^{(t-1)},</script></span> <!-- Why isn't this centered? --></p>
+
+<p>where <script type="math/tex">\psi^{(t)}</script> is a vector whose <script type="math/tex">i</script>-th element equals <script type="math/tex">p(x_t \ \vert \ z_t = i)</script>.</p>
+
+<p>The figure below demonstrates the filter algorithm applied to the coin-tossing problem described above. In this example, the probability of remaining in the same state is high—90%—and design the to be easily distinguishable: the first is heads 90% of the time, while the second is tails with 90% probability. The blue dots represent the maximum-likelihood states, according to the filtered probabilities, <script type="math/tex">a_t</script>. This problem is quite simple for the filtering algorithm, as the filtered estimates (blue) closely follow the actual states (red).</p>
+
+<p><img src="/assets/img/hmm/filter.svg" alt="Filtering" /></p>
+<div class="uk-text-center"><b>The Filtering Algorithm</b> applied to the coin-tossing problem. Red dots represent true states and blue dots represent filtered states, with y-values jittered for easier visualization.</div>
 
 <h3 id="smoothing">Smoothing</h3>
-<p>Smoothing combines the forwards algorithm with a second “backwards algorithm” to incorporate future information into our estimates. This process can effectively be thought of as filtering in reverse: updating our beliefs about time <script type="math/tex">t</script> based on the future. It’s important to understand that <strong>all</strong> future information relevant to time <script type="math/tex">t</script> is contained in <script type="math/tex">z_{t+1}</script> in a hidden Markov model. Graphically, all information “flows” through <script type="math/tex">z_{t+1}</script> on its way to <script type="math/tex">z_t</script>.</p>
+<p>In smoothing, our task is to estimate the current state given <em>all</em> observations, <script type="math/tex">\mathbf{x}_{1:T} = x_1, \dots, x_T</script>. The filter algorithm above tells us how to use all information prior to a given period. The same algorithm, run in reverse, estimates the hidden states using all information <em>following</em> a given period. In fact, we can solve our problem by simply following the filtering algorithm twice: once forwards and once backward <sup id="fnref:smoothing"><a href="#fn:smoothing" class="footnote">1</a></sup>.</p>
 
-<!-- Backwards Algorithm -->
-<!-- $$ $$ -->
+<p>However, we can also find a convenient formulation using the following decomposition:</p>
 
-<!-- Forwards-Backwards Algorithm (Smoothing) -->
-<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
-Run forwards-backwards (smoothing) algorithm. Returns the smoothed probabilities (`γ`).
-"""</span>
-<span class="k">function</span><span class="nf"> forwards_backwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">,</span> <span class="n">π0</span><span class="x">)</span>
-    <span class="n">α</span><span class="x">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">forwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">,</span> <span class="n">π0</span><span class="x">)</span>
-    <span class="n">β</span> <span class="o">=</span> <span class="n">backwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">)</span>
-    <span class="n">γ</span> <span class="o">=</span> <span class="n">α</span> <span class="o">.*</span> <span class="n">β</span>
-    <span class="k">return</span> <span class="n">γ</span> <span class="o">./</span> <span class="n">sum</span><span class="x">(</span><span class="n">γ</span><span class="x">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">2</span><span class="x">)</span>
-<span class="k">end</span>
+<script type="math/tex; mode=display">p(z_t = j \ \vert \ \mathbf{x}_{1:T}) \propto p(z_t = j, \mathbf{x}_{t+1:T} \ \vert \ \mathbf{x}_{1:t}) \propto p(z_t = j \ \vert \ \mathbf{x}_{1:t}) p(\mathbf{x}_{t+1:T} \ \vert \ z_t = j),</script>
 
-<span class="k">function</span><span class="nf"> backwards</span><span class="x">(</span><span class="n">x</span><span class="x">,</span> <span class="n">A</span><span class="x">,</span> <span class="n">B</span><span class="x">)</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">x</span><span class="x">)</span>
-    <span class="n">L</span> <span class="o">=</span> <span class="n">hmm</span><span class="o">.</span><span class="n">L</span>
-    <span class="n">b</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Float64</span><span class="x">,</span><span class="mi">2</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">,</span> <span class="n">L</span><span class="x">)</span>
-    <span class="n">b</span><span class="x">[</span><span class="n">T</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">.=</span> <span class="mi">1</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">:</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">T</span> <span class="o">-</span> <span class="n">i</span>
-        <span class="n">b</span><span class="x">[</span><span class="n">t</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="x">(</span><span class="n">B</span><span class="x">[</span><span class="o">:</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="x">]]</span> <span class="o">.*</span> <span class="n">b</span><span class="x">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="x">])</span>
-    <span class="k">end</span>
-    <span class="k">return</span> <span class="n">b</span>
-<span class="k">end</span>
-</code></pre></div></div>
+<p>where we’ve used the fact that <script type="math/tex">\mathbf{x}_{t+1:T}</script> is independent of <script type="math/tex">\mathbf{x}_{1:t}</script> conditional on <script type="math/tex">z_t</script> in the final expression. Defining <script type="math/tex">b_j^{(t)} = p(\mathbf{x}_{t+1:T} \ \vert \ z_t = j)</script> and the smoothed marginals by <script type="math/tex">\gamma_j^{(t)} = p(z_t \ \vert \ \mathbf{x}_{1:T})</script>, this gives the convenient expression</p>
 
-<p><img src="/assets/img/hmm/dishonest-casino-inference.svg" alt="Dishonest Casino Inference" /></p>
+<script type="math/tex; mode=display">\gamma_j^{(t)} \propto a_j^{(t)} b_j^{(t)}</script>
+
+<p>This expression is just Bayes rule: it states that our beliefs about <script type="math/tex">z_t</script> are proportional to our “prior” beliefs (having seen data up to time <script type="math/tex">t</script>) times the likelihood of the (new) data. And it turns out that these likelihoods can be easily calculated recursively. Starting from</p>
+
+<script type="math/tex; mode=display">b_j^{(T)} = p(\mathbf{x}_{T+1:T} \ \vert \ z_T = j) = 1</script>
+
+<p>we have</p>
+
+<script type="math/tex; mode=display">b_i^{(t-1)} = \sum_{j=1}^K p(z_t = j \ \vert \ z_{t-1} = i) p(x_t \ \vert \ z_t = j) p(\mathbf{x}_{t+1:T} \ \vert \ z_t = j),</script>
+
+<p>Or, more compactly,</p>
+
+<script type="math/tex; mode=display">b_i^{(t-1)} = \sum_{j=1}^K \mathbf{A}_{i,j} \psi_j^{(t)} b_j^{(t)}</script>
+
+<p>To sum up, smoothing requires two passes through the data—one forwards, one backward—each consisting of recursively multiplying by transition and observation probabilities. Given pre-computed observation probabilities, the same algorithm works for any observation model.</p>
+
+<p>The figure below demonstrates the smoothing algorithm applied to the coin-tossing example. It appears similar to the figure demonstrating the filtering algorithm on the same simulated data set. However, notice that around the period <script type="math/tex">t=35</script>, the state “unexpectedly” changes. The filtered estimates follow the state, but the smoothed estimates remain constant, demonstrating the source of the smoothing algorithm’s name: it generates estimates that are “smoother” than those of the filtering algorithm. In this case, we can understand why this happens by looking at the data following the change in state, which quickly reverts to the first coin and remains there for the following 30 periods. <em>Ex-post</em> a change of state appears extremely unlikely, but this information isn’t known to the filtering algorithm<sup id="fnref:smoothed-vs-filtered"><a href="#fn:smoothed-vs-filtered" class="footnote">2</a></sup>.</p>
+
+<p><img src="/assets/img/hmm/smooth.svg" alt="Smoothing" /></p>
+<div class="uk-text-center"><b>The Smoothing Algorithm</b> applied to the coin-tossing problem. Red dots represent true states and blue dots represent smoothed states, with y-values jittered for easier visualization.</div>
+
+<p>It is worthwhile to make a brief observation about the conditional probability of <script type="math/tex">z_t</script>. When we condition on a sequence of observations, information passes forwards to our current location. That is, each <script type="math/tex">x_1, \dots, x_{t-1}</script> contains information relevant to <script type="math/tex">z_t</script>. However, as soon as we resolve uncertainty at any prior hidden state, the observations up to that period become irrelevant. Intuitively, those observations only inform the current state insofar as they affect the now-revealed hidden state. The same is true in reverse, and we can summarize this observation by stating that</p>
+
+<blockquote>
+  <blockquote>
+    <p>“All information flows through the states.”</p>
+  </blockquote>
+</blockquote>
+
+<p>This property is a simple example of a more general property of probabilistic graphical models.</p>
 
 <h3 id="viterbi">Viterbi</h3>
-<p>Instead of figuring out the most like state at each time, we could instead determine the most likely <em>sequence</em> of events. These aren’t the same thing (you can try think of a two-period counter-example). For hidden Markov models, this type of inference is called <em>Viterbi</em> filtering, and it results in paths of <script type="math/tex">{z_t}_{t=1}{T}</script> that are even smoother than those generated by the smoothing algorithm. 
-<!-- Viterbi Algorithm --></p>
-<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">"""
-Compute the most probable sequence of states conditional on `x`, i.e., argmax_z_1:T p(z_1:T | x_1:T).
-"""</span>
-<span class="k">function</span><span class="nf"> viterbi</span><span class="x">(</span><span class="n">hmm</span><span class="x">,</span> <span class="n">x</span><span class="x">,</span> <span class="n">π0</span><span class="x">)</span>
-    <span class="n">T</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">x</span><span class="x">)</span>
-    <span class="n">K</span> <span class="o">=</span> <span class="n">length</span><span class="x">(</span><span class="n">π0</span><span class="x">)</span>
-    <span class="n">z</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Int64</span><span class="x">,</span><span class="mi">1</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">)</span>
-    <span class="n">logδ</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Float64</span><span class="x">,</span><span class="mi">2</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">,</span> <span class="n">K</span><span class="x">)</span>
-    <span class="n">α</span> <span class="o">=</span> <span class="kt">Array</span><span class="x">{</span><span class="kt">Int64</span><span class="x">,</span><span class="mi">2</span><span class="x">}(</span><span class="nb">undef</span><span class="x">,</span> <span class="n">T</span><span class="x">,</span> <span class="n">K</span><span class="x">)</span>
-    <span class="n">A</span> <span class="o">=</span> <span class="n">transition</span><span class="x">(</span><span class="n">hmm</span><span class="x">)</span>
-    <span class="c"># forwards</span>
-    <span class="n">ϕ</span> <span class="o">=</span> <span class="n">observation</span><span class="x">(</span><span class="n">hmm</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="mi">1</span><span class="x">])</span>
-    <span class="n">logδ</span><span class="x">[</span><span class="mi">1</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="x">(</span><span class="n">π0</span> <span class="o">.*</span> <span class="n">ϕ</span><span class="x">)</span>
-    <span class="k">for</span> <span class="n">t</span> <span class="o">=</span> <span class="mi">2</span><span class="o">:</span><span class="n">T</span>
-        <span class="n">ϕ</span> <span class="o">=</span> <span class="n">observation</span><span class="x">(</span><span class="n">hmm</span><span class="x">,</span> <span class="n">x</span><span class="x">[</span><span class="n">t</span><span class="x">])</span>
-        <span class="c"># q = A .* (δ[t - 1, :] * ϕ')  - REPLACE w/ LOG (FASTER + NO UNDERFLOW)</span>
-        <span class="n">q</span> <span class="o">=</span> <span class="n">log</span><span class="o">.</span><span class="x">(</span><span class="n">A</span><span class="x">)</span> <span class="o">.+</span> <span class="x">(</span><span class="n">logδ</span><span class="x">[</span><span class="n">t</span> <span class="o">-</span> <span class="mi">1</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">.+</span> <span class="n">log</span><span class="o">.</span><span class="x">(</span><span class="n">ϕ</span><span class="x">)</span><span class="err">'</span><span class="x">)</span>
-        <span class="n">a</span> <span class="o">=</span> <span class="n">argmax</span><span class="x">(</span><span class="n">q</span><span class="x">,</span> <span class="n">dims</span><span class="o">=</span><span class="mi">1</span><span class="x">)</span>
-        <span class="n">logδ</span><span class="x">[</span><span class="n">t</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">=</span> <span class="n">q</span><span class="x">[</span><span class="n">a</span><span class="x">]</span>
-        <span class="n">α</span><span class="x">[</span><span class="n">t</span><span class="x">,</span> <span class="o">:</span><span class="x">]</span> <span class="o">=</span> <span class="n">map</span><span class="x">(</span><span class="n">x</span> <span class="o">-&gt;</span> <span class="n">x</span><span class="o">.</span><span class="n">I</span><span class="x">[</span><span class="mi">1</span><span class="x">]</span> <span class="x">,</span><span class="n">a</span><span class="x">)</span>
-    <span class="k">end</span>
-    <span class="c"># Backwards: z[t] = a[t + 1, z[t + 1]] for T - 1, ..., 1</span>
-    <span class="n">z</span><span class="x">[</span><span class="n">T</span><span class="x">]</span> <span class="o">=</span> <span class="n">argmax</span><span class="x">(</span><span class="n">logδ</span><span class="x">[</span><span class="n">T</span><span class="x">,</span> <span class="o">:</span><span class="x">])</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">:</span><span class="x">(</span><span class="n">T</span> <span class="o">-</span> <span class="mi">1</span><span class="x">)</span>
-        <span class="n">t</span> <span class="o">=</span> <span class="n">T</span> <span class="o">-</span> <span class="n">i</span>
-        <span class="n">println</span><span class="x">(</span><span class="s">"t=</span><span class="si">$</span><span class="s">t, z[t+1] = </span><span class="si">$</span><span class="s">(z[t + 1])"</span><span class="x">)</span>
-        <span class="n">z</span><span class="x">[</span><span class="n">t</span><span class="x">]</span> <span class="o">=</span> <span class="n">α</span><span class="x">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="x">,</span> <span class="n">z</span><span class="x">[</span><span class="n">t</span> <span class="o">+</span> <span class="mi">1</span><span class="x">]]</span>
-    <span class="k">end</span>
-    <span class="k">return</span> <span class="n">z</span><span class="x">,</span> <span class="n">α</span><span class="x">,</span> <span class="n">logδ</span>
-<span class="k">end</span>
-</code></pre></div></div>
+<p>Instead of figuring out the most likely state at each point in time, we could determine the most likely <em>sequence</em> of states. States are conditionally dependent (due to the Markov dynamics), and therefore a sequence that maximizes likelihood at each period does not generally maximize overall likelihood. For hidden Markov models, we call this type of inference <em>Viterbi</em> filtering, and it results in paths <script type="math/tex">\{ z_t \}_{t=1}^{T}</script> that are more “internally consistent” than those generated by the smoothing algorithm.</p>
 
-<h3 id="example-sneaky-casino">Example: Sneaky Casino</h3>
-<h3 id="example-boom-bust-cycle-1">Example: Boom-Bust Cycle</h3>
+<p>Formally, our task is to find</p>
 
-<h2 id="learning">Learning</h2>
-<p>Inference assumes that we already know the parameters of the model. For example, is a discrete observation model, it assumes that we know the transition probabilities <script type="math/tex">P</script> as well as the observation matrix <script type="math/tex">B</script>. In some settings, these might be reasonable assumptions. But, in general, we will not know these values, and will instead need to <em>learn</em> them from the data.</p>
+<script type="math/tex; mode=display">\mathbf{z}^* = \argmax_{\mathbf{z}_{1:T}} p(\mathbf{z}_{1:t} \ \vert \mathbf{x}_{1:T})</script>
 
-<p>Learning for hidden Markov models is complicated by the fact that the likelihood of data depends on the hidden state variable. These variables are effectively additional parameters, and their number of scales with the number of observations. Therefore, learning amounts to large-scale optimization.</p>
+<p>Again, a recursive strategy presents itself. Let</p>
 
-<p>Fortunately, the structure of the hidden Markov model permits a clever approach to optimization known as expectation-maximization. The key to this approach is to recognize that <em>if</em> we know the parameters, then inference provides an exact solution to the optimal latent variables. Furthermore, given beliefs about the latent variables, we can easily maximize likelihood with respect to the parameters. Expectation-maximization works by alternating between these inference and maximization steps, which turns out to force parameter estimates towards their likelihood-maximizing values.</p>
+<script type="math/tex; mode=display">\delta_j^{(t)} = \max_{\mathbf{z}_{1:t-1}} p(\mathbf{z}_{1:t-1}, z_t = j \ \vert \ \mathbf{x}_{1:t})</script>
 
-<p>Formally,…</p>
+<p>That is, <script type="math/tex">\delta_j^{(t)}</script> is the (conditional) probability of arriving at state <script type="math/tex">j</script> following a most likely path. If we follow the most likely path up to <script type="math/tex">t-1</script>, then we can continue on a most likely path at time <script type="math/tex">t</script> by maximizing probability over the next step. This insight leads to the formula</p>
+
+<script type="math/tex; mode=display">\delta_j^{(t)} \propto \max_i \delta_i^{(t-1)} p(z_{t -1} = i, z_t = j) p(x_t \ \vert \ z_t = j)</script>
+
+<p>Furthermore, at each state, it allows us to find the the preceeding state along the most likely path:</p>
+
+<script type="math/tex; mode=display">\hat{z}_j^{(t)} = \argmax_i \delta_i^{(t-1)} p(z_{t -1} = i, z_t = j) p(x_t \ \vert \ z_t = j)</script>
+
+<p>Following this recursion to time <script type="math/tex">T</script>, we can determine the terminal state along the most likely path,</p>
+
+<p><span class="katex-display"><script type="math/tex">z_T^* = \argmax_i \delta_i^{(T)},</script><span></span></span></p>
+
+<p>after which finding the full path is a simple matter of tracing back using the previous computed predecessors:</p>
+
+<script type="math/tex; mode=display">z_{t}^* = \hat{z}_{z_{t+1}^*}^{(t+1)}</script>
+
+<p>The only detail left is to determine where to start, but as there is no initial transition, we define</p>
+
+<script type="math/tex; mode=display">\delta_j^{(1)} = p(z_1 = j \ \vert \ x_1) \propto p(z_1 = j)p(x_1 \ \vert \ z_1 = j).</script>
+
+<p>Finally, note that in practice we can run the recursion on <script type="math/tex">\log \delta^{(t)}</script> to avoid numerical underflow (which works because <script type="math/tex">\log \max = \max \log</script>).</p>
+
+<p><img src="/assets/img/hmm/viterbi.svg" alt="Viterbi Coding" /></p>
+<div class="uk-text-center"><b>The Viterbi Algorithm</b> applied to the coin-tossing problem. Red dots represent true states and blue dots represent the maximum-likelihood states generated by the Viterbi coding, with y-values jittered for easier visualization.</div>
+
+<h3 id="sampling">Sampling</h3>
+<p>Another interesting idea is to generate sample paths conditional on the observed data, <script type="math/tex">\mathbf{z}_{1:T} \sim p(\mathbf{z}_{1:T} \ \vert \ \mathbf{x}_{1:T})</script>. A straight-forward method to generate such samples involves running the forward-backward algorithm to calculate smoothed two-period probabilities, <script type="math/tex">p(z_t, z_{t+1} \ \vert \ \mathbf{x}_{1:T})</script>, and then calculating corresponding smoothed transition probabilities</p>
+
+<script type="math/tex; mode=display">p(z_t \ \vert \ z_{t-1}, \mathbf{x}_{1:T}) = \frac{p(z_{t-1}, z_t \ \vert \ \mathbf{x}_{1:T})}{p(z_{t-1} \ \vert \ \mathbf{x}_{1:T})}</script>
+
+<p>The latter probabilities allow us to generate new samples starting from <script type="math/tex">z_1 \sim p(z_1)</script>. In fact, there are more efficient methods for generating such samples (see [Murphy, 2021] for details).</p>
+
+<p><img src="/assets/img/hmm/sampling.svg" alt="Path Sampling" /></p>
+<div class="uk-text-center"><b>Path Sampling</b> applied to the coin-tossing problem. Red dots represent true states and blue dots represent sampled states, with y-values jittered for easier visualization. Locations with a higher density of blue dots represent more likely paths condtitional on the observed data.</div>
+
+<!-- ## Learning
+Inference assumes that we already know the parameters of the model. For example, is a discrete observation model, it assumes that we know the transition probabilities $$P$$ as well as the observation matrix $$B$$. In some settings, these might be reasonable assumptions. But, in general, we will not know these values, and will instead need to *learn* them from the data.
+
+Learning for hidden Markov models is complicated by the fact that the likelihood of data depends on the hidden state variable. These variables are effectively additional parameters, and their number of scales with the number of observations. Therefore, learning amounts to large-scale optimization.
+
+Fortunately, the structure of the hidden Markov model permits a clever approach to optimization known as expectation-maximization. The key to this approach is to recognize that *if* we know the parameters, then inference provides an exact solution to the optimal latent variables. Furthermore, given beliefs about the latent variables, we can easily maximize likelihood with respect to the parameters. Expectation-maximization works by alternating between these inference and maximization steps, which turns out to force parameter estimates towards their likelihood-maximizing values.
+
+Formally,... -->
 
 <!-- Baum-Welch Algorithm -->
-<div class="language-julia highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
-</code></pre></div></div>
+<!-- ```julia
 
-<h3 id="example-sneaky-casino-1">Example: Sneaky Casino</h3>
+```
 
-<h3 id="example-boom-bust-cycle-2">Example: Boom-Bust Cycle</h3>
+### Example: Sneaky Casino
 
-<p>Hidden Markov models are the simplest for of dynamic probabilistic model that you might think of. There are all sorts of extensions and complications that we might add to the model, for example, adding a “forcing” variable to observations, or permitting autocorrelated observations. You might also think about allowing the hidden variable to have a continuous distribution. We’ll look at all of these topics in future posts.</p>
+
+### Example: Boom-Bust Cycle
+
+
+Hidden Markov models are the simplest for of dynamic probabilistic model that you might think of. There are all sorts of extensions and complications that we might add to the model, for example, adding a "forcing" variable to observations, or permitting autocorrelated observations. You might also think about allowing the hidden variable to have a continuous distribution. We'll look at all of these topics in future posts. -->
+
+<h3 id="references">References</h3>
+<p>[Murphy, 2012] <em>Machine Learning: a Probabilistic Perspective</em>, Kevin Murphy.</p>
+
+<h3 id="notes">Notes</h3>
+<div class="footnotes">
+  <ol>
+    <li id="fn:smoothing">
+      <p>Moving backwards in time requires some modification to the algorithm, but works essentially the same. <a href="#fnref:smoothing" class="reversefootnote">&#8617;</a></p>
+    </li>
+    <li id="fn:smoothed-vs-filtered">
+      <p>In this case, the filtering algorithm is correct, but obviously the smoothing algorithm gives superior estimates, on average, as it has access to a superior information set. <a href="#fnref:smoothed-vs-filtered" class="reversefootnote">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
 
 
         </article>

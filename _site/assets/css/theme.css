@@ -296,7 +296,10 @@ blockquote {
  font-size:20px;
  line-height:1.5;
  font-style:italic;
- color:#222
+ font-weight: lighter;
+ /* color:#222; */
+ color: rgba(0,0,0,.5);
+ text-align: center;
 }
 *+blockquote {
  margin-top:20px
