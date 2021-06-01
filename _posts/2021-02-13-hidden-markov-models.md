@@ -63,11 +63,11 @@ Inference is the process of estimating the values of hidden state variables, $$\
 ### Filtering
 Our task is to determine beliefs about the current state, $$z_t$$, given all observations up until the current time and our beliefs about the previous state, $$z_{t-1}$$. We will break the problem into two parts. First, we translate beliefs about the previous state to beliefs about the current state *ignoring* the new information provided by the current observation. Next, we update the translated beliefs to incorporate the new observation. Let's denote our beliefs about state by vector $$a^{(t)}$$ such that $$a^{(t)}_i = p(z_t = i \ \vert \ x_t, \dots, x_1)$$. Given the Markov nature of the state variable, we see that for a transition matrix $$\mathbf{A}$$,
 
-<span class="katex-display">$$p(z_t = i \ \vert \ z_{t-1}) = \mathbf{A} a^{(t-1)}$$</span>
+$$p(z_t = i \ \vert \ z_{t-1}) = \mathbf{A} a^{(t-1)}$$
 
 We treat this probability as a prior and apply Bayesian updating:
 
-<span class="katex-display">$$a^{(t)} \propto \psi^{(t)} \odot \mathbf{A} a^{(t-1)},$$</span> <!-- Why isn't this centered? -->
+$$a^{(t)} \propto \psi^{(t)} \odot \mathbf{A} a^{(t-1)},$$
 
 where $$\psi^{(t)}$$ is a vector whose $$i$$-th element equals $$p(x_t \ \vert \ z_t = i)$$.
 
@@ -123,7 +123,7 @@ Instead of figuring out the most likely state at each point in time, we could de
 
 Formally, our task is to find
 
-$$ \mathbf{z}^* = \argmax_{\mathbf{z}_{1:T}} p(\mathbf{z}_{1:t} \ \vert \mathbf{x}_{1:T}) $$
+$$ \mathbf{z}^* = \underset{\mathbf{z}_{1:t}}{\operatorname{arg max}} p(\mathbf{z}_{1:t} \ \vert \mathbf{x}_{1:T}) $$
 
 Again, a recursive strategy presents itself. Let
 
@@ -135,11 +135,11 @@ $$ \delta_j^{(t)} \propto \max_i \delta_i^{(t-1)} p(z_{t -1} = i, z_t = j) p(x_t
 
 Furthermore, at each state, it allows us to find the the preceeding state along the most likely path:
 
-$$ \hat{z}_j^{(t)} = \argmax_i \delta_i^{(t-1)} p(z_{t -1} = i, z_t = j) p(x_t \ \vert \ z_t = j) $$
+$$ \hat{z}_j^{(t)} = \underset{i}{\operatorname{arg max}} \delta_i^{(t-1)} p(z_{t -1} = i, z_t = j) p(x_t \ \vert \ z_t = j) $$
 
 Following this recursion to time $$T$$, we can determine the terminal state along the most likely path,
 
-<span class="katex-display">$$z_T^* = \argmax_i \delta_i^{(T)},$$<span>
+$$z_T^* = \underset{i}{\operatorname{arg max}} \delta_i^{(T)},$$
 
 after which finding the full path is a simple matter of tracing back using the previous computed predecessors:
 
