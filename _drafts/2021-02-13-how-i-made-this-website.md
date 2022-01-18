@@ -2,12 +2,46 @@
 layout: post
 author: Colin Swaney
 title: How I Made This Website
-date: 2021-02-13
+date: 2021-06-2
 categories: [development]
 category: development
 tags: [development]
-excerpt: "<p></p>"
+excerpt: "<p>A template for creating a modern-ish blog with Jekyll.</p>"
 ---
+
+Outline
+I. Introduction
+- Something about choices when making an academic/research blog
+- Overview of Jekyll
+  - What use Jekyll?
+  - How does it work?
+
+II. Step-by-Step
+- Jekyll
+  - Can jump right in to how to setup/config b/c already introduced
+  - Configuration (leave install etc. to Jekyll website, but mention rbenv!)
+    - Syntax highlighting
+    - LaTeX
+- UIKit
+  - Brief intro
+  - Directions...
+- Styling?
+
+
+There are plenty of options out there for technical folks looking to create a blog. Many of them provide nice features and styling out-of-the-box (perhaps at a price). I've seen nice Wordpress examples and have heard good things about Ghost. Something along these lines is probably the way to go for someone that is just getting started.. But for those of us that insist on DIY, the solution of choice is Jekyll.
+
+After you learn a little bit about front-end web development and develop some general programming chops, you'll realize that creating a full-blown blog isn't really a scary proposition. The frontend tends to be pretty damn simple and there are many frameworks to help. Most of the work boils down to record keeping and converting text files into HTML.
+
+- There are two basic approaches to generating the blog.
+  1. Generate all HTML pages on the backend. With this approach, everything (well, most things) get done in advance and served up "complete". Every article has a corresponding HTML file and pages get populated with categories, article counts, and so forth based on the articles found. Basically, you write template HTML files for pages of the website and write plain text files for the articles and then run an engine that takes everything and creates the site. This is the approach taken by Jekyll.
+  2. With modern front-end tooling, there is no real reason (besides speed, perhaps) that everything needs to be "compiled" in advance. In effect, the blog is a presentation of a database, which happens to consist of a text files. Personally, I think this makes life a lot simpler and elegant. 
+
+
+Jekyll is static site *generator*: it takes text files (and, optionally, HTML) and creates a static website. Advantages of Jekyll are:
+1. Many people use Jekyll. You will typically find answers to questions (and you're going to have questions!) and there are a ton of plug-ins and themes available.
+2. Jekyll works with GitHub pages. This means that you can host your blog for free, and updating your blog is as simple as pushing to remote.
+<!-- 356 words -->
+
 
 <!-- Jekyll -->
 Follow the instructions on the Jekyll website to install Jekyll and its dependencies. I also recommended that you install `rbenv` to manage Ruby environments (this will make it easier to get a hold of and use a version of Ruby that in compatible with Jekyll, which may not work perfectly with the lastest Ruby release).
