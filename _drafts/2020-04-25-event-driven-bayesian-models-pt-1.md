@@ -8,69 +8,6 @@ category: research
 tags: [machine learning, forecasting]
 excerpt: "<p>A summary of basic facts about point processes. I review continuous and discrete Poisson processes, including so-called Hawkes processes, and demonstrate several methods for estimating the parameters of these models from data using Julia.</p>"
 ---
-<!-- I want to discuss a machine learning algorithm that transformed my understanding of what machine learning is, or rather what it *can be* in the hands of a strong mind. The class of models I want to discuss are rather complicated, but I hope to hold your hand through the process so that you can understand what is going on and hopefully illuminate to the model's brilliance and underlying simplicity.
-
-To set the scene, imagine we wish to predict the occurrence of a stream of events. The events come from a variety of related sources or "channels". (The paper that developed this model was motivated by computational neuroscience research, so you can think of these channels as being neurons and the events as electric impulses being fired off). We want to quantify the probability of an event on each of these channels in real-time, but we would also like a model that is interpretable, allowing us to understand the structure of the system.
-
-
-## Network Models
-
-
-### Spike-and-Slab
-So-called "spike-and-slab" models separate concerns between the existence of connections in a network and the strength of those connections. In particular, the network is represented by a random matrix of the form
-
-$$ A \odot W, $$
-
-where $$A$$ is a binary matrix and $$W \in \mathbb{R}^{N \times N}$$. $$A$$ represents the presence of a connection between nodes; $$W$$ captures the strength of the connection. To simplify, let's ignore $$W$$ for a moment and focus our attention on the connection matrix, $$A$$. How we chose to model $$A$$ reflects our understanding and beliefs about the nature of the system we are investigating. Consider the following three popular models:
-
-#### Erdös-Rényi Network
-In the Erdös-Rényi model, each connection in the model ($$a_{i, j}$$) is sampled independently from a \text{Bern} distribution:
-
-$$a_{i, j} \sim \text{Bern}(\rho)$$
-
-This modeling approach reflects a *lack* of structure in the network.
-
-#### Stochastic Block Network
-The Stochastic Block model adds (latent) structure to the network by assigning a class, $$z_i$$, to each node. Connections are sampled independently *conditional* on their class:
-
-$$ a_{i, j} \sim \text{Bern}(\rho_{z_i}, \rho_{z_j}), $$
-
-where $$z_k$$ is the latent class of the $$k$$-th node. The latent class itself requires a prior distribution, and a standard choice is a compound discrete distribution:
-
-$$ z_i \sim \text{Discrete}(\pi), $$
-
-$$ \pi \sim \text{Dir}(\alpha \mathbf{1}_K).$$
-
-This approach is analogous to a Gaussian mixture model and reflects a belief that connections between particular nodes are more or less likely.
-
-#### Latent Distance Network
-If nodes are associated with characteristics/features, then it may be appropriate to model the likelihood of connections as dependent on the similarity between these features. In the Latent Distance Network, the distance between networks determines the probability of a connection between nodes. For a given metric, $$\| \cdot \|$$, the probability of a connection between nodes is
-
-$$ p(a_{i, j} = 1 \ | \ z) = \sigma \left( - \| z_i -z_j \|_2^2 + \gamma_0 \right) $$
-
-The features $$z$$ can be either observed features or latent class features. In the latter case, we need to specify a prior distribution of latent locations. A Normal-InverseGamma prior is a standard choice:
-
-$$ z_i \sim \mathcal{N} (0, \tau I), $$
-
-$$ \tau \sim \text{IGa}(1, 1).$$ -->
-
-<!-- ## Outline
-
-I. Poisson Processes
-	a. Continuous
-	b. Discrete
-	c. Multivariate
-
-II. Hawkes Process
-	a. Continuous
-	b. Discrete
-	c. Multivariate
-
-III. Inference
-	a. Maximum-Likelihood Estimation
-	b. Markov Chain Monte Carlo
-	c. Variational Inference -->
-
 ## I. Poisson Processes
 
 Continuous point processes model sequences of events $$\{s_m\}_{m=1}^M$$. Typically, $$s_m$$ denotes the time at which an event occurs, $$s_m \in \left[0, T\right]$$, but it could just as well represent the location where an event occurs, $$s_m \in \mathbb{R}^D$$. For now, we will consider the point processes as a univariate process that measures a single type of event; in general, a point process can represent multiple—possibly interacting—event streams.
@@ -208,6 +145,21 @@ You can verify that simplifying and taking logs gives the same formula as above 
 [^3]: That is, if $$x \in \{x_1, \dots, x_n\}$$ and $$y \in \{y_1, \dots, y_m\}$$, then the sum of all possible combinations of $$x$$ and $$y$$ is given by $$(x_1 + \cdots + x_n)(y_1 + \cdots + y_m)$$.
 
 <!-- $$ L(\{s_m\}_{m=1}^M \ | \ \lambda_{tot}) = L(\{ \{s_m\}_{m=1}^{M_k} \}_{k=1}^K \ | \ \{ \lambda_k \}_{k=1}^K) $$ -->
+
+#### The exponential likelihood trick
+The final term of the Hawkes process loglikelihood involves a double summation, and thus a naive calculation is $$\mathcal{O}(M^2)$$. There is a trick, however, that allows us to perform the calculation in $$\mathcal{O}(M)$$ operations. Define the terms within the first summation as
+
+$$ \lambda_{tot}^{(m)} = \lambda^{(0)} + \sum_{m' < m} w \theta \exp \{ {-\theta(s_m - s_{m'})} \} $$
+
+Then we have
+
+$$ \lambda_{tot}^{(m)} = \lambda^{(0)} + w \theta R^{(m)} $$
+
+where $$R^{(0)} = 0$$ and $$R^{(m)} = \exp \{ {-\theta(s_m - s_{m-1})} \} \left(1 + R^{(m-1)}) \right)$$ for all $$m > 0$$. This works because at each step the multiplication cancels out the presence of $$s_{m-1}$$ terms from the previous step, leaving the new correct summation. A similar trick works for multivariate Hawkes processes, which we leave as an exercise for the reader.
+
+Unfortunately, this same trick doesn't work for calculating the derivative of the loglikelihood because
+
+$$\frac{d}{d \theta} \theta e^{ -\theta (s_m - s_{m-1}) } = e^{ -\theta (s_m - s_{m-1}) } - \theta (s_m - s_{m-1}) e^{ -\theta (s_m - s_{m-1}) }$$
 
 
 #### Example: Hawkes Process with Homogeneous Baseline
