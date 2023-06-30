@@ -136,6 +136,3 @@ $$ \theta_w^{(k)} \ \vert \ \{w_i, z_i \}_{i=1}^N, \theta_z \sim \text{Dirichlet
 $$ \tilde{\theta}_k \propto \theta_z^{(k)} \times p(w_i \ \vert \ z_i = k) $$
 
 $$ z_i \ \vert \ w_{1:N}, z_{-i}, \theta_z, \theta_w \sim \text{Cat}(\tilde{\theta}) $$
-
-### VI
-### SVI
